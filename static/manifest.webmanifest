@@ -1,0 +1,16 @@
+{
+  "name": "Küresel Müşteri Bulucu – GTİP 9303",
+  "short_name": "Müşteri Bulucu",
+  "description": "Av ve spor silahları sektöründe dünya genelinde potansiyel müşteri bulma",
+  "lang": "tr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#13263f",
+  "theme_color": "#13263f",
+  "icons": [
+    {"src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

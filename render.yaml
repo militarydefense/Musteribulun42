@@ -1,0 +1,17 @@
+# Render.com "Blueprint" – GitHub'a yükleyip Render'da "New → Blueprint" ile tek tıkla kurulum.
+services:
+  - type: web
+    name: musteri-bulucu
+    runtime: docker
+    plan: starter            # Arka plan taramaları için uyumayan ücretli plan önerilir
+    region: frankfurt
+    healthCheckPath: /login
+    envVars:
+      - key: APP_PUBLIC
+        value: "1"
+      - key: PANEL_PASSWORD
+        sync: false          # Render panelinde kendi şifrenizi girin
+    disk:
+      name: veri
+      mountPath: /app/data   # Müşteri veritabanı kalıcı diskte saklanır
+      sizeGB: 1

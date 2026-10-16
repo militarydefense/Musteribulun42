@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#13263f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Müşteri Bulucu">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<link rel="icon" href="/static/icon-192.png">
+<title>Müşteri Bulucu – GTİP 9303</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5" stroke="currentColor" stroke-width="2"/></svg>
+    <div><b>Küresel Müşteri Bulucu</b><small>Av &amp; Spor Silahları · GTİP 9303</small></div>
+  </div>
+  <nav id="tabs">
+    <button data-tab="panel" class="active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z"/></svg><span class="l">Panel</span><span class="s">Panel</span></button>
+    <button data-tab="maps"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="l">Google Maps Taraması</span><span class="s">Maps</span></button>
+    <button data-tab="gtip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h3v11H5zm5.5-5h3v16h-3zM16 13h3v7h-3z"/></svg><span class="l">GTİP Pazar Analizi</span><span class="s">GTİP</span></button>
+    <button data-tab="social"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2.4 1.2l-6.7-3.4a3 3 0 0 0 0-1.6l6.7-3.4A3 3 0 1 0 15 7c0 .3 0 .5.1.8L8.4 11.2a3 3 0 1 0 0 3.6l6.7 3.4c-.1.3-.1.5-.1.8a3 3 0 1 0 3-3z"/></svg><span class="l">Sosyal Medya</span><span class="s">Sosyal</span></button>
+    <button data-tab="leads"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h16v2H4z"/></svg><span class="l">Müşteri Listesi</span><span class="s">Liste</span></button>
+    <button data-tab="jobs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 11h-5v-2h3V6h2z"/></svg><span class="l">İşler</span><span class="s">İşler</span> <span id="runningBadge" class="badge hidden">0</span></button>
+    <button data-tab="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3h-4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1L11 21h4l.4-2.7c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg><span class="l">Ayarlar</span><span class="s">Ayarlar</span></button>
+  </nav>
+</header>
+
+<main>
+<!-- ============================ PANEL -->
+<section id="tab-panel" class="tab active">
+  <div class="kpis" id="kpis"></div>
+  <div class="grid2">
+    <div class="card"><h3>Harita</h3><div id="map"></div></div>
+    <div class="card"><h3>Ülkelere göre kayıtlar</h3><div class="scroll" id="byCountry"></div></div>
+  </div>
+  <div class="card"><h3>Son işler</h3><div id="recentJobs"></div></div>
+</section>
+
+<!-- ============================ MAPS -->
+<section id="tab-maps" class="tab">
+  <div class="grid2">
+    <div class="card">
+      <h3>1. Hedef ülkeler</h3>
+      <div class="presets" id="presetsMaps"></div>
+      <div class="country-picker" id="pickerMaps"></div>
+      <label class="mt">Şehirler (isteğe bağlı – her satıra bir şehir; boş bırakılırsa tüm ülke ızgara ile taranır)</label>
+      <textarea id="mCities" rows="3" placeholder="Houston&#10;Dallas&#10;Phoenix"></textarea>
+    </div>
+    <div class="card">
+      <h3>2. Arama kriterleri</h3>
+      <label>GTİP kodu</label>
+      <select id="mGtip"></select>
+      <label class="mt">Arama terimleri (virgülle; boş bırakılırsa GTİP'e göre otomatik + ülkenin yerel dili)</label>
+      <input id="mTerms" placeholder="gun shop, hunting store, armurerie ...">
+      <div class="hint" id="mTermsHint"></div>
+      <div class="row mt">
+        <div><label>Ülke başına terim sayısı</label><input id="mMaxTerms" type="number" value="3" min="1" max="10"></div>
+        <div><label>Bölme derinliği</label><input id="mDepth" type="number" value="4" min="0" max="7"></div>
+        <div><label>Maks. API çağrısı</label><input id="mMaxCalls" type="number" value="1500" min="10"></div>
+      </div>
+      <div class="checks mt">
+        <label><input type="checkbox" id="mLocal" checked> Yerel dil terimlerini ekle (Waffengeschäft, armería...)</label>
+        <label><input type="checkbox" id="mEnrich" checked> Bitince web sitelerinden e-posta &amp; sosyal medya topla</label>
+        <label><input type="checkbox" id="mFilter" checked> Alakasız sonuçları (restoran vb.) ele</label>
+      </div>
+      <div class="estimate" id="mEstimate"></div>
+      <button class="primary big" id="mStart">Taramayı Başlat</button>
+      <p class="hint">Google Places "Text Search" her sayfada 20 sonuç verir (sorgu başına en fazla 60). Ülke taramasında
+        bölge dolu gelirse 4 alt bölgeye bölünerek derinleşilir. Ücretlendirme Google Cloud hesabınıza yansır.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ GTIP -->
+<section id="tab-gtip" class="tab">
+  <div class="card">
+    <h3>GTİP / HS kodu ile hedef pazar analizi (UN Comtrade)</h3>
+    <div class="row">
+      <div><label>GTİP kodu</label><select id="gCode"></select></div>
+      <div><label>Yıl</label><select id="gYear"></select></div>
+      <div class="end"><button class="primary" id="gLoad">Analiz Et</button></div>
+    </div>
+    <p class="hint" id="gDesc"></p>
+    <div class="toolbar">
+      <span id="gInfo" class="muted"></span>
+      <span class="spacer"></span>
+      <button id="gSelectTop">İlk 20'yi seç (ambargosuz)</button>
+      <button class="primary" id="gScan" disabled>Seçili ülkeleri Google Maps'te tara</button>
+      <button id="gSocial" disabled>Seçili ülkeleri sosyal medyada tara</button>
+    </div>
+    <div class="scroll tall"><table class="tbl" id="gTable"></table></div>
+    <p class="hint">Not: GTİP kodu ile firma bazında ithalatçı listesi resmi kaynaklarda herkese açık değildir.
+      Program, 9303 için ülkelerin ithalat hacmini (ve Türkiye'den aldıkları payı) gösterir; seçtiğiniz ülkelerde
+      GTİP koduna karşılık gelen ürün terimleriyle firma taraması yapar. Firma bazlı gümrük verisi için
+      ImportGenius, Panjiva, Volza gibi ücretli kaynaklar kullanılabilir (CSV olarak içe aktarılabilir).</p>
+  </div>
+</section>
+
+<!-- ============================ SOCIAL -->
+<section id="tab-social" class="tab">
+  <div class="grid2">
+    <div class="card">
+      <h3>Hedef ülkeler</h3>
+      <div class="presets" id="presetsSocial"></div>
+      <div class="country-picker" id="pickerSocial"></div>
+    </div>
+    <div class="card">
+      <h3>Platformlar</h3>
+      <div class="checks inline">
+        <label><input type="checkbox" name="net" value="facebook" checked> Facebook</label>
+        <label><input type="checkbox" name="net" value="instagram" checked> Instagram</label>
+        <label><input type="checkbox" name="net" value="youtube_api" checked> YouTube (resmi API)</label>
+        <label><input type="checkbox" name="net" value="linkedin"> LinkedIn</label>
+        <label><input type="checkbox" name="net" value="tiktok"> TikTok</label>
+        <label><input type="checkbox" name="net" value="web"> Genel web</label>
+      </div>
+      <label class="mt">Arama terimleri (virgülle)</label>
+      <input id="sTerms" value="gun shop, hunting store, firearms dealer">
+      <div class="row mt">
+        <div><label>Sorgu başına sayfa (20 sonuç)</label><input id="sPages" type="number" value="2" min="1" max="10"></div>
+        <div><label>YouTube kanal sayısı / sorgu</label><input id="sYtMax" type="number" value="50" min="5" max="500"></div>
+      </div>
+      <div class="checks mt">
+        <label><input type="checkbox" id="sLocal" checked> Yerel dil terimini de ekle</label>
+        <label><input type="checkbox" id="sEnrich" checked> Bulunan web sitelerinden e-posta topla</label>
+      </div>
+      <button class="primary big" id="sStart">Derin Taramayı Başlat</button>
+      <p class="hint">Facebook / Instagram / LinkedIn / TikTok profilleri, arama motoru API'si (Serper.dev veya SerpApi)
+        ile herkese açık sonuçlardan bulunur; YouTube kanalları resmi YouTube Data API ile çekilir. Instagram işletme
+        hesaplarının biyografi, web sitesi ve takipçi bilgisi Meta Graph API anahtarı girilirse otomatik eklenir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ LEADS -->
+<section id="tab-leads" class="tab">
+  <div class="card">
+    <div class="filters">
+      <input id="fQ" placeholder="Ara: firma, şehir, e-posta, not...">
+      <select id="fCountry"><option value="">Tüm ülkeler</option></select>
+      <select id="fSource">
+        <option value="">Tüm kaynaklar</option><option value="google_maps">Google Maps</option>
+        <option value="facebook">Facebook</option><option value="instagram">Instagram</option>
+        <option value="youtube">YouTube</option><option value="linkedin">LinkedIn</option>
+        <option value="tiktok">TikTok</option><option value="web">Web</option>
+      </select>
+      <select id="fStatus"><option value="">Tüm durumlar</option></select>
+      <label class="chk"><input type="checkbox" id="fEmail"> E-postası olanlar</label>
+      <label class="chk"><input type="checkbox" id="fWeb"> Web sitesi olanlar</label>
+    </div>
+    <div class="toolbar">
+      <span id="lInfo" class="muted"></span><span class="spacer"></span>
+      <button id="lEnrich">Seçilileri zenginleştir</button>
+      <button id="lEnrichAll">Tüm eksikleri zenginleştir</button>
+      <button id="lDelete" class="danger">Seçilileri sil</button>
+      <button id="lCsv">CSV indir</button>
+      <button class="primary" id="lXlsx">Excel indir</button>
+    </div>
+    <div class="scroll tall"><table class="tbl" id="lTable"></table></div>
+    <div class="pager" id="lPager"></div>
+  </div>
+</section>
+
+<!-- ============================ JOBS -->
+<section id="tab-jobs" class="tab">
+  <div class="grid2 jobs">
+    <div class="card"><h3>İşler</h3><div id="jobList"></div></div>
+    <div class="card"><h3 id="jobTitle">İş detayı</h3><pre id="jobLog" class="log">Soldan bir iş seçin.</pre></div>
+  </div>
+</section>
+
+<!-- ============================ SETTINGS -->
+<section id="tab-settings" class="tab">
+  <div class="card" id="accessCard">
+    <h3>📱 Telefondan erişim</h3>
+    <div class="access">
+      <div id="qr" class="qr"></div>
+      <div>
+        <p>Telefonunuzun kamerasıyla QR kodu okutun veya adresi tarayıcıya yazın:</p>
+        <p><b id="accessUrl"></b></p>
+        <p class="hint" id="accessHint"></p>
+        <p class="hint"><b>Ana ekrana ekleme:</b> iPhone'da Safari → Paylaş → "Ana Ekrana Ekle"; Android'de Chrome → ⋮ → "Uygulamayı yükle".
+          Program telefonunuzda normal bir uygulama gibi tam ekran açılır.</p>
+        <a href="/logout" class="btn">Çıkış yap</a>
+      </div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>API anahtarları</h3>
+      <label>Google Maps Platform API anahtarı <small>(Places API (New) + Geocoding API açık olmalı)</small></label>
+      <input data-setting="google_api_key" type="password" autocomplete="off">
+      <label class="mt">YouTube Data API v3 anahtarı <small>(boşsa Google anahtarı kullanılır)</small></label>
+      <input data-setting="youtube_api_key" type="password" autocomplete="off">
+      <div class="row mt">
+        <div><label>Arama motoru sağlayıcı</label>
+          <select data-setting="search_provider"><option value="serper">Serper.dev</option><option value="serpapi">SerpApi</option></select></div>
+        <div><label>Arama motoru API anahtarı</label><input data-setting="search_api_key" type="password" autocomplete="off"></div>
+      </div>
+      <label class="mt">Meta Graph API erişim anahtarı <small>(isteğe bağlı – Instagram Business Discovery)</small></label>
+      <input data-setting="meta_access_token" type="password" autocomplete="off">
+      <label class="mt">Kendi Instagram işletme hesabı ID'niz</label>
+      <input data-setting="ig_user_id">
+      <label class="mt">UN Comtrade abonelik anahtarı <small>(isteğe bağlı – boşsa ücretsiz önizleme)</small></label>
+      <input data-setting="comtrade_api_key" type="password" autocomplete="off">
+    </div>
+    <div class="card">
+      <h3>Tarama ayarları</h3>
+      <div class="row">
+        <div><label>Site başına sayfa</label><input data-setting="crawl_pages" type="number" placeholder="6"></div>
+        <div><label>Paralel site</label><input data-setting="crawl_workers" type="number" placeholder="8"></div>
+        <div><label>İş başına maks. API</label><input data-setting="max_calls_per_job" type="number" placeholder="1500"></div>
+      </div>
+      <label class="mt">robots.txt kurallarına uy</label>
+      <select data-setting="respect_robots"><option value="1">Evet (önerilir)</option><option value="0">Hayır</option></select>
+      <label class="mt">Panel şifresi <small>(sunucuya internetten erişilecekse mutlaka belirleyin; kullanıcı adı herhangi)</small></label>
+      <input data-setting="panel_password" type="password" autocomplete="new-password">
+      <button class="primary big mt" id="saveSettings">Kaydet</button>
+      <div class="guide">
+        <h4>Anahtarlar nasıl alınır?</h4>
+        <ol>
+          <li><b>Google:</b> console.cloud.google.com → yeni proje → "Places API (New)", "Geocoding API" ve "YouTube Data API v3"ü etkinleştirin → Kimlik bilgileri → API anahtarı oluşturun. Faturalandırma hesabı gereklidir.</li>
+          <li><b>Serper.dev:</b> serper.dev'e kayıt olun, panelden API anahtarını kopyalayın (ilk 2.500 sorgu ücretsiz).</li>
+          <li><b>Meta (isteğe bağlı):</b> developers.facebook.com → uygulama oluşturun → Instagram Graph API → işletme hesabınıza bağlı uzun ömürlü erişim anahtarı ve IG kullanıcı ID'si.</li>
+        </ol>
+        <h4>Yasal hatırlatma</h4>
+        <p>9303 ürünlerinin ihracatı MSB / Ticaret Bakanlığı izinlerine tabidir; ambargolu ülkeler listede ⚠ ile işaretlenir.
+        Toplanan kişisel veriler (ör. AB'deki kişilere ait e-postalar) GDPR / KVKK kapsamındadır; toplu e-posta gönderiminde
+        meşru menfaat değerlendirmesi ve abonelikten çıkma seçeneği sunulmalıdır.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- Detay paneli -->
+<aside id="drawer" class="drawer hidden">
+  <div class="drawer-head"><h3 id="dName"></h3><button id="dClose" aria-label="Kapat">✕</button></div>
+  <div id="dBody"></div>
+</aside>
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
