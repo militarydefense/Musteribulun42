@@ -1,0 +1,13 @@
+[
+ {"scene": 1, "say": "Two brothers. Same salary. Same five dollars a day.", "show": "Two brothers. Same salary. Same $5 a day.", "pause": 0.35},
+ {"scene": 2, "say": "Max spends his on coffee.", "pause": 0.15},
+ {"scene": 2, "say": "Leo invests his, every single day.", "pause": 0.35},
+ {"scene": 3, "say": "Five dollars a day, is eighteen twenty-five a year.", "show": "$5 a day is $1,825 a year.", "pause": 0.35},
+ {"scene": 4, "say": "Ten years later, Max has a pile of empty cups. Leo has twenty-six thousand dollars.", "show": "10 years later, Max has a pile of empty cups. Leo has $26,438.", "pause": 0.2},
+ {"scene": 4, "say": "Twenty years? Eighty-three thousand.", "show": "20 years? $83,516.", "pause": 0.3},
+ {"scene": 5, "say": "Thirty years? Two hundred and six thousand dollars.", "show": "30 years? $206,742.", "pause": 0.2},
+ {"scene": 5, "say": "Max spent fifty-four thousand on coffee, and has nothing to show for it.", "show": "Max spent $54,750 on coffee, and has nothing to show for it.", "pause": 0.35},
+ {"scene": 6, "say": "That's compound interest. Your money earns money, and that money earns money too.", "pause": 0.35},
+ {"scene": 7, "say": "You don't need more money. You need more years.", "pause": 0.35},
+ {"scene": 8, "say": "So, which brother are you?", "show": "So… which brother are you?", "pause": 0.05}
+]
