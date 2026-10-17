@@ -376,19 +376,28 @@ function bigPrice(x, y, size, k, t) {
   return boxes;
 }
 
+// big opening question, also rebuilt at the end of scene 8 for a seamless loop
+function hookTitle(k) {
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = clamp(k);
+  text('WHY DID $39', W / 2, 200, 104, '#fff', { stroke: C.ink, strokeW: 16 });
+  text('SELL MORE?', W / 2, 315, 118, C.gold2, { stroke: C.ink, strokeW: 18, glow: C.gold, glowBlur: 40 });
+  ctx.restore();
+}
+
 const SCENES = {
   1(t, lt, d, L) {
+    // frame 0 is already fully composed: in the feed the viewer decides within half a second
     background(t, C.pink);
-    pill('SAME DRESS', 250, '#FF4F7B', prog(lt, .05, .3));
-    const dk = easeBack(prog(lt, 0, .5));
-    withT(W / 2, lerp(-300, 560, dk), 1, Math.sin(t * 2.2) * .04 * dk, () => drawDress(.95));
-    const tagA = pop(lt, .55, .35), tagB = pop(lt, 1.15, .35);
-    if (tagA > 0) withT(W / 2 - 250, 930, tagA, -.12, () => drawTag('$34', 330, '#C9CFDB'));
-    if (tagB > 0) withT(W / 2 + 250, 930, tagB * (lt > 1.7 ? 1.08 + .03 * Math.sin(t * 9) : 1), .1, () => drawTag('$39', 330));
+    hookTitle(1);
+    withT(W / 2, 600, 1 + .015 * Math.sin(t * 3), Math.sin(t * 2.2) * .04, () => drawDress(.85));
+    withT(W / 2 - 250, 960, 1, -.12, () => drawTag('$34', 330, '#C9CFDB'));
+    const win = lt > 1.7 ? 1.08 + .03 * Math.sin(t * 9) : 1 + .04 * Math.sin(t * 6);
+    withT(W / 2 + 250, 960, win, .1, () => drawTag('$39', 330));
     const ck = pop(lt, 1.7, .35);
-    if (ck > 0) { glowCircle(W / 2 + 250, 930, 300, C.gold, .35); withT(W / 2 + 250, 790, ck, .1, () => crown(1.1)); }
+    if (ck > 0) { glowCircle(W / 2 + 250, 960, 300, C.gold, .35); withT(W / 2 + 250, 820, ck, .1, () => crown(1.1)); }
     const sk = prog(lt, 2.0, .2);
-    if (sk > 0) withT(W / 2, 1160, lerp(2.2, 1, easeOut(sk)), -.06, () => drawStamp('MORE SALES', C.green, sk));
+    if (sk > 0) withT(W / 2, 1180, lerp(2.2, 1, easeOut(sk)), -.06, () => drawStamp('MORE SALES', C.green, sk));
   },
   2(t, lt, d, L) {
     background(t);
@@ -509,14 +518,15 @@ const SCENES = {
       drawTag('$_.99', 520, C.gold);
       text('?', 210, -150, 140, C.red, { stroke: C.ink, strokeW: 14 });
     });
-    const dk = easeBack(prog(lt, 2.1, .5));
+    const dk = easeOut(prog(lt, 2.1, .6));
     if (dk > 0) {
-      withT(W / 2, lerp(-300, 560, dk), 1, Math.sin(t * 2.2) * .04, () => drawDress(.95));
-      withT(W / 2 - 250, 930, pop(lt, 2.4, .3), -.12, () => drawTag('$34', 330, '#C9CFDB'));
-      withT(W / 2 + 250, 930, pop(lt, 2.6, .3), .1, () => drawTag('$39', 330));
+      hookTitle(dk);
+      withT(W / 2, lerp(-300, 600, dk), 1, Math.sin(t * 2.2) * .04, () => drawDress(.85));
+      withT(W / 2 - 250, 960, pop(lt, 2.3, .3), -.12, () => drawTag('$34', 330, '#C9CFDB'));
+      withT(W / 2 + 250, 960, pop(lt, 2.45, .3), .1, () => drawTag('$39', 330));
     }
     // silent follow CTA (the voice keeps looping instead of saying "follow")
-    const f = pop(lt, .6, .35);
+    const f = pop(lt, .6, .35) * (1 - prog(lt, 2.0, .3));
     if (f > 0) withT(W / 2, 1180, f * (1 + .04 * Math.sin(t * 6)), 0, () => {
       rr(-210, -50, 420, 100, 50); ctx.fillStyle = '#FF0033'; ctx.fill();
       text('FOLLOW 🧠', 0, 3, 50, '#fff');
