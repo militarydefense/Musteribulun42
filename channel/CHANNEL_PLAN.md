@@ -103,3 +103,32 @@ It's called the "pain of paying": cash hurts, cards don't, and companies design 
 | 28 | Why Bigger Plates Make You Spend More | "Size tricks your brain into wanting more." | Delboeuf illusion / upsizing |
 | 29 | The Latte Factor vs the Big 3 | "Housing, cars, food: where money really goes." | Spending breakdown |
 | 30 | 5 Money Biases in 60 Seconds | "Your brain has 5 bugs. Let's fix them." | Recap / series compilation |
+
+---
+
+## Growth playbook (research notes, Oct 2026)
+
+**Cadence:** 1 Short per day, same slot (21:00–00:00 Turkey = 14:00–17:00 US Eastern). Consistency matters more than the exact hour; after ~2 weeks switch to the hours in Studio → Audience → "When your viewers are on YouTube".
+
+**What the Shorts feed rewards:**
+- *Viewed vs swiped away*: the first test. ≥70% is good, 80%+ is strong, ~50% is average.
+- *Completion / replays*: since March 2025 every play counts as a view, so finishing and re-watching is the real signal. Target ≥75% average percentage viewed.
+- Compare each Short with the channel's own median, not with other channels.
+
+**Format rules for every video from Day 2 on:**
+1. Hook in the first 1–2 s: a number, a "you" statement or a curiosity gap. No logo or intro.
+2. Length 35–45 s (Video 1 was 54 s). Shorter videos finish more often.
+3. Something on screen changes every 2–3 s (a cut, a pop or a zoom).
+4. Open loop: ask the question early and answer it in the last third.
+5. Loop ending: the last line flows back into the first frame so replays feel natural.
+6. Keep the Brain + Wallet characters, colors and caption style in every video so the channel is recognizable.
+
+**Monetization reality:**
+- Ads (YPP): 1,000 subs + 10M Shorts views in 90 days (or 4,000 long-form watch hours). A tougher threshold for new applicants was announced for 2027; verify on YouTube's official page.
+- Shorts pay very little (cents per 1,000 views). Shorts are for discovery; long-form pays. From ~week 4, add one 6–8 min long-form video per week (e.g. "7 Money Biases Explained") built from the same assets.
+
+**Distribution:** Upload the same file to TikTok and Instagram Reels. Reply to good comments with a video reply; viewer questions become future topics.
+
+**Never:** buy views/subs, sub-for-sub groups, reupload other creators' clips, or delete and re-upload a Short that underperformed (Shorts often get a second wave days later).
+
+**Milestones:** Week 1: 7 Shorts, learn the baseline. Week 2–3: double down on the 2 best-performing topics as a series. Week 4: first long-form video. Day 90: review progress toward 1,000 subs.
