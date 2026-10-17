@@ -1,0 +1,12 @@
+[
+ {"scene": 1, "say": "You got a raise. So why are you still broke?", "pause": 0.35},
+ {"scene": 2, "say": "Nearly half of Americans earning over a hundred thousand dollars, say they live paycheck to paycheck.", "show": "Nearly half of Americans earning $100K+ say they live paycheck to paycheck.", "pause": 0.35},
+ {"scene": 3, "say": "It's called lifestyle inflation.", "pause": 0.15},
+ {"scene": 3, "say": "Every raise quietly turns into a bigger car, a nicer apartment, more takeout.", "pause": 0.35},
+ {"scene": 4, "say": "And your brain adapts fast. Psychologists call it, the hedonic treadmill.", "show": "And your brain adapts fast. Psychologists call it the hedonic treadmill.", "pause": 0.15},
+ {"scene": 4, "say": "The new stuff feels normal in weeks, so you need more to feel the same.", "pause": 0.35},
+ {"scene": 5, "say": "Income goes up. Spending goes up. Savings stay at zero.", "pause": 0.35},
+ {"scene": 6, "say": "The fix? Save half of every raise, the day it hits your account.", "pause": 0.15},
+ {"scene": 6, "say": "You'll never miss money you never got used to.", "pause": 0.35},
+ {"scene": 7, "say": "Because if you don't, next year you'll get another raise", "show": "Because if you don't, next year you'll get another raise…", "pause": 0.05}
+]
