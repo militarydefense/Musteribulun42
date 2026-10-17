@@ -1,4 +1,5 @@
 // Usage: node render.js <timings.json> <out> [--stills t1,t2,...]
+// SCENE=<path> selects the scene page (default: scene.html next to this file); timings.outro overrides OUTRO.
 // Renders scene.html frame by frame in headless Chromium and pipes JPEG frames into ffmpeg.
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const { spawn } = require('child_process');
@@ -9,11 +10,11 @@ const FPS = 30, OUTRO = 3.4;
 (async () => {
   const [timingsPath, out, flag, list] = process.argv.slice(2);
   const T = JSON.parse(fs.readFileSync(timingsPath, 'utf8'));
-  T.total = T.duration + OUTRO;
+  T.total = T.duration + (T.outro ?? OUTRO);
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   await page.addInitScript(t => { window.T = t; }, T);
-  await page.goto('file://' + path.resolve(__dirname, 'scene.html'));
+  await page.goto('file://' + path.resolve(process.env.SCENE || path.join(__dirname, 'scene.html')));
   await page.evaluate(() => Promise.all(['900', '800', '700'].map(w => document.fonts.load(`${w} 80px Inter`))).then(() => document.fonts.load('80px "Noto Color Emoji"', '🎰')));
   const grab = (t, type, q) => page.evaluate(([t, type, q]) => { render(t); return document.getElementById('c').toDataURL(type, q).split(',')[1]; }, [t, type, q]);
 

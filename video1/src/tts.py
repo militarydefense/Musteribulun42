@@ -1,4 +1,8 @@
-"""Render the voiceover line by line with Piper and write timings.json for captions/animation."""
+"""Render the voiceover line by line with Piper and write timings.json for captions/animation.
+
+Usage: tts.py <voice.onnx> <outdir> [script.json]
+script.json is a list of {"scene", "say", "show"?, "pause"}; without it the Video 1 script below is used.
+"""
 import json, sys, wave
 from pathlib import Path
 import numpy as np
@@ -34,6 +38,11 @@ LINES = [
 # Caption text (what is shown on screen) when it differs from the spoken text
 DISPLAY = {"At M.I.T., researchers auctioned tickets to a sold-out basketball game.":
            "At MIT, researchers auctioned tickets to a sold-out basketball game."}
+
+if len(sys.argv) > 3:
+    script = json.load(open(sys.argv[3]))
+    LINES = [(l["scene"], l["say"], l["pause"]) for l in script]
+    DISPLAY = {l["say"]: l["show"] for l in script if "show" in l}
 
 voice = PiperVoice.load(VOICE)
 sr = voice.config.sample_rate

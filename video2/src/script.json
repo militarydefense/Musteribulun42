@@ -1,0 +1,14 @@
+[
+ {"scene": 1, "say": "This dress sold more at thirty-nine dollars, than at thirty-four.", "show": "This dress sold MORE at $39 than at $34.", "pause": 0.3},
+ {"scene": 2, "say": "Researchers at M.I.T. and Chicago tested it.", "show": "Researchers at MIT and Chicago tested it.", "pause": 0.15},
+ {"scene": 2, "say": "Same dress. Higher price. More sales.", "pause": 0.35},
+ {"scene": 3, "say": "Why? Your brain reads prices from left to right, and it's lazy.", "pause": 0.15},
+ {"scene": 3, "say": "It sees the nine first, and stops.", "pause": 0.3},
+ {"scene": 4, "say": "So nine ninety-nine feels like nine. Not ten.", "show": "So $9.99 feels like $9. Not $10.", "pause": 0.35},
+ {"scene": 5, "say": "Psychologists call it, the left-digit effect.", "show": "Psychologists call it the left-digit effect.", "pause": 0.3},
+ {"scene": 6, "say": "That's why almost nothing costs a round number.", "pause": 0.1},
+ {"scene": 6, "say": "Four ninety-nine. Nineteen ninety-nine. Ninety-nine ninety-nine.", "show": "$4.99. $19.99. $99.99.", "pause": 0.35},
+ {"scene": 7, "say": "The fix? Round every price up in your head.", "pause": 0.1},
+ {"scene": 7, "say": "Nine ninety-nine is ten. Always.", "show": "$9.99 is $10. Always.", "pause": 0.3},
+ {"scene": 8, "say": "So next time a price ends in nine, remember why", "show": "So next time a price ends in 9, remember why…", "pause": 0.05}
+]

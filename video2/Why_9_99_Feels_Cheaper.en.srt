@@ -1,0 +1,47 @@
+1
+00:00:00,250 --> 00:00:03,341
+This dress sold MORE at $39 than at $34.
+
+2
+00:00:03,561 --> 00:00:06,559
+Researchers at MIT and Chicago tested it.
+
+3
+00:00:06,629 --> 00:00:09,371
+Same dress. Higher price. More sales.
+
+4
+00:00:09,641 --> 00:00:13,278
+Why? Your brain reads prices from left to right, and it's lazy.
+
+5
+00:00:13,348 --> 00:00:15,649
+It sees the nine first, and stops.
+
+6
+00:00:15,869 --> 00:00:19,030
+So $9.99 feels like $9. Not $10.
+
+7
+00:00:19,300 --> 00:00:22,228
+Psychologists call it the left-digit effect.
+
+8
+00:00:22,448 --> 00:00:25,226
+That's why almost nothing costs a round number.
+
+9
+00:00:25,246 --> 00:00:28,673
+$4.99. $19.99. $99.99.
+
+10
+00:00:28,943 --> 00:00:31,361
+The fix? Round every price up in your head.
+
+11
+00:00:31,381 --> 00:00:34,100
+$9.99 is $10. Always.
+
+12
+00:00:34,320 --> 00:00:37,736
+So next time a price ends in 9, remember why…
