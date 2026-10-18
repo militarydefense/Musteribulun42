@@ -25,7 +25,7 @@ audio = [np.zeros(int(lead * sr), dtype=np.int16)]
 t = lead
 timings = []
 for line in script:
-    samples, sr = k.create(line["say"], voice=voice, speed=speed, lang="en-us")
+    samples, sr = k.create(line["say"], voice=voice, speed=speed, lang="en-gb" if voice.startswith("b") else "en-us")
     pcm = (np.clip(samples, -1, 1) * 32767).astype(np.int16)
     # trim leading/trailing near-silence so captions hit the actual speech
     nz = np.where(np.abs(pcm) > 400)[0]

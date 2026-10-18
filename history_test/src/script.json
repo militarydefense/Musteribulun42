@@ -1,0 +1,12 @@
+[
+ {"scene": 1, "say": "In 1932, Australia declared war, on birds.", "show": "In 1932, Australia declared war… on BIRDS.", "pause": 0.35},
+ {"scene": 2, "say": "About twenty thousand emus were destroying wheat farms.", "show": "About 20,000 emus were destroying wheat farms.", "pause": 0.15},
+ {"scene": 2, "say": "So the army sent in soldiers, with two machine guns.", "pause": 0.3},
+ {"scene": 3, "say": "Easy win, right? Wrong.", "pause": 0.15},
+ {"scene": 3, "say": "The emus split into tiny groups, and sprinted off at thirty miles an hour.", "show": "The emus split into tiny groups, and sprinted off at 30 mph.", "pause": 0.3},
+ {"scene": 4, "say": "So they mounted a gun on a truck.", "pause": 0.1},
+ {"scene": 4, "say": "The ride was so bumpy, the gunner couldn't fire a single shot.", "pause": 0.3},
+ {"scene": 5, "say": "After weeks of fighting, and nearly ten thousand bullets, the army packed up and went home.", "show": "After weeks of fighting, and nearly 10,000 bullets, the army packed up and went home.", "pause": 0.3},
+ {"scene": 6, "say": "The emus? Still eating wheat.", "pause": 0.3},
+ {"scene": 7, "say": "History calls it, the Great Emu War.", "show": "History calls it… the Great Emu War.", "pause": 0.05}
+]
