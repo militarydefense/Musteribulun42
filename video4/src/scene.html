@@ -456,7 +456,8 @@ const SCENES = {
     bgLight(t, '255,211,107');
     lightPill('ONE YEAR', 250, C.red, prog(lt, .05, .3));
     // day counter
-    const day = Math.max(1, Math.round(365 * easeInOut(prog(lt, .2, 2.4))));
+    const l3 = T.lines[3].start, tTotal = wordAt('$1825', l3);
+    const day = Math.max(1, Math.round(365 * easeInOut(prog(t, l3, tTotal - l3))));
     withT(W / 2, 560, pop(lt, .1, .35), 0, () => {
       rr(-190, -150, 380, 300, 34); ctx.fillStyle = '#fff'; ctx.fill(); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.stroke();
       rr(-190, -150, 380, 80, 30); ctx.fillStyle = C.red; ctx.fill(); ctx.fillRect(-190, -100, 380, 30);
@@ -464,20 +465,21 @@ const SCENES = {
     });
     // equation types itself in
     const parts = [['$5', INK], ['×', C.red], ['365', INK], ['=', C.red], ['$1,825', '#1E9E5A']];
-    const st = [.3, .7, 1.0, 1.9, 2.2];
+    // each piece pops on the word that says it
+    const st = [wordAt('$5', l3), wordAt('day', l3), wordAt('day', l3) + .2, wordAt('is', l3), tTotal];
     ctx.font = `900 96px ${FONT}`;
     const ws = parts.map(p => ctx.measureText(p[0]).width + 28);
     let x = W / 2 - ws.reduce((a, b) => a + b) / 2;
     parts.forEach(([s, col], i) => {
-      const k = pop(lt, st[i], .3);
+      const k = pop(t, st[i], .3);
       if (k > 0) withT(x + ws[i] / 2, 900, k, 0, () => inkText(s, 0, 0, 96, col));
       x += ws[i];
     });
-    if (lt > 2.4) withT(W / 2, 1040, pop(lt, 2.4, .3), 0, () => inkText('PER YEAR', 0, 0, 56, '#1E9E5A'));
+    if (t > wordAt('year', l3)) withT(W / 2, 1040, pop(t, wordAt('year', l3), .3), 0, () => inkText('PER YEAR', 0, 0, 56, '#1E9E5A'));
   },
   4(t, lt, d, L) {
     bgLight(t);
-    const y = lt < L[1] ? 10 * easeInOut(prog(lt, .2, 3.2)) : 10 + 10 * easeInOut(prog(lt, L[1] - .1, 1.1));
+    const y = lt < L[1] ? 10 * easeInOut(prog(lt, .2, 3.2)) : 10 + 10 * easeInOut(prog(lt, L[1] - .1, .75));
     yearBadge(y, pop(lt, 0, .35));
     // Max: pile of empty cups grows with the years
     const cups = Math.floor(y * 1.4);
