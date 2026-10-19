@@ -1,0 +1,9 @@
+[
+ {"scene": 1, "say": "Costco has sold a hot dog and a soda for a dollar fifty since 1985. On purpose.", "show": "Costco has sold a hot dog and a soda for $1.50 since 1985. On purpose.", "pause": 0.25},
+ {"scene": 2, "say": "When the CEO said they were losing money, the founder replied: if you raise the hot dog, I will kill you.", "show": "When the CEO said they were losing money, the founder replied: \"If you raise the hot dog, I will kill you.\"", "pause": 0.3},
+ {"scene": 3, "say": "Because the hot dog isn't the product. You are.", "pause": 0.3},
+ {"scene": 4, "say": "A cheap hot dog makes the whole store feel cheap, so you keep renewing your membership.", "pause": 0.2},
+ {"scene": 5, "say": "And memberships bring in most of Costco's profit.", "pause": 0.25},
+ {"scene": 6, "say": "It's called a loss leader.", "pause": 0.25},
+ {"scene": 7, "say": "So next time something feels too cheap, ask what it's really selling.", "pause": 0.05}
+]

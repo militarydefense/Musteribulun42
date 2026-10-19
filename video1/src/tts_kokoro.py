@@ -4,6 +4,7 @@ Usage: tts_kokoro.py <kokoro.onnx> <voices.bin> <outdir> <script.json> [voice] [
 script.json is a list of {"scene", "say", "show"?, "pause"}.
 """
 import json
+import os
 import sys
 import wave
 from pathlib import Path
@@ -19,7 +20,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 script = json.load(open(script_path))
 
 k = Kokoro(model, voices)
-lead, gap = 0.25, 0.12
+lead, gap = float(os.environ.get("LEAD", 0.25)), 0.12  # LEAD=0 starts speech at 0.0 s
 sr = 24000
 audio = [np.zeros(int(lead * sr), dtype=np.int16)]
 t = lead
