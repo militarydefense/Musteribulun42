@@ -52,7 +52,7 @@ function bigMoney(v, y, size, k = 1) {
 
 function hookTitle(t, k8) {
   if (k8 <= 0) return;
-  bigMoney(8000000 * easeOut(clamp(k8)), 300, 140, 1);
+  bigMoney(8000000 * easeOut(clamp(k8)), 225, 140, 1);
 }
 
 function gasPump(s) {
@@ -105,16 +105,23 @@ function check(ok, k) {
 
 const SCENES = {
   1(t, lt, d, L) {
-    background(t, C.gold);
-    janitor(W / 2, 960, 1.6, t, { sweep: true });
-    // dust puffs from the broom: motion from frame 0
-    for (let i = 0; i < 5; i++) { const k = ((t * 1.4 + i / 5) % 1); ctx.globalAlpha = (1 - k) * .45; ctx.fillStyle = '#C9CFDB'; ctx.beginPath(); ctx.arc(W / 2 + 160 + k * 120, 1210 - k * 40, 18 + k * 30, 0, 7); ctx.fill(); }
-    ctx.globalAlpha = 1;
+    // with OVERLAY set, the AI hook clip is the picture underneath: draw only text + numbers
+    if (!window.OVERLAY) {
+      background(t, C.gold);
+      janitor(W / 2, 960, 1.6, t, { sweep: true });
+      // dust puffs from the broom: motion from frame 0
+      for (let i = 0; i < 5; i++) { const k = ((t * 1.4 + i / 5) % 1); ctx.globalAlpha = (1 - k) * .45; ctx.fillStyle = '#C9CFDB'; ctx.beginPath(); ctx.arc(W / 2 + 160 + k * 120, 1210 - k * 40, 18 + k * 30, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 1;
+    } else {
+      // darken the top so the number reads over the footage
+      const g = ctx.createLinearGradient(0, 0, 0, 700); g.addColorStop(0, 'rgba(5,10,24,.75)'); g.addColorStop(1, 'rgba(5,10,24,0)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, 700);
+    }
     const e = wordAt('$8');
     hookTitle(t, prog(t, e - .1, .7));
-    if (t > e + .6) { glowCircle(W / 2, 300, 400, C.gold, .25); }
+    if (t > e + .6) { glowCircle(W / 2, 225, 400, C.gold, .25); }
     const nk = pop(t, wordAt('nobody'), .3);
-    if (nk > 0) withT(W / 2, 470, nk, .04, () => text('NOBODY KNEW 🤫', 0, 0, 72, '#fff', { stroke: C.ink, strokeW: 10 }));
+    if (nk > 0) withT(W / 2, 365, nk, .04, () => text('NOBODY KNEW 🤫', 0, 0, 72, '#fff', { stroke: C.ink, strokeW: 10 }));
   },
   2(t, lt, d, L) {
     background(t);
@@ -198,6 +205,11 @@ const SCENES = {
     });
     // rebuild frame 0: janitor sweeping, no number yet
     const k = easeOut(prog(lt, d - .5, .45));
-    if (k > 0) { ctx.save(); ctx.globalAlpha = k; janitor(W / 2, 960, 1.6, t, { sweep: true }); ctx.restore(); }
+    const img = document.getElementById('hook0');
+    if (k > 0) {
+      ctx.save(); ctx.globalAlpha = k;
+      if (img && img.naturalWidth) ctx.drawImage(img, 0, 0, W, H); else janitor(W / 2, 960, 1.6, t, { sweep: true });
+      ctx.restore();
+    }
   },
 };

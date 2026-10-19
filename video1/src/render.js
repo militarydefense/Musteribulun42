@@ -1,4 +1,5 @@
 // Usage: node render.js <timings.json> <out> [--stills t1,t2,...]
+// OVERLAY=<seconds> writes transparent PNG frames instead of a video (see below).
 // SCENE=<path> selects the scene page (default: scene.html next to this file); timings.outro overrides OUTRO.
 // Renders scene.html frame by frame in headless Chromium and pipes JPEG frames into ffmpeg.
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
@@ -16,6 +17,20 @@ const FPS = 30, OUTRO = 3.4;
   await page.addInitScript(t => { window.T = t; }, T);
   await page.goto('file://' + path.resolve(process.env.SCENE || path.join(__dirname, 'scene.html')));
   await page.evaluate(() => Promise.all(['900', '800', '700'].map(w => document.fonts.load(`${w} 80px Inter`))).then(() => document.fonts.load('80px "Noto Color Emoji"', '🎰')));
+  // wait for any <img> the scene uses (e.g. the AI hook frame used at the loop end)
+  await page.evaluate(() => Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }))));
+  // OVERLAY=<seconds>: render only the first N seconds as transparent PNGs (text/caption layer over an AI clip)
+  if (process.env.OVERLAY) {
+    fs.mkdirSync(out, { recursive: true });
+    await page.evaluate(() => { window.OVERLAY = true; });
+    const n = Math.round(parseFloat(process.env.OVERLAY) * FPS);
+    for (let i = 0; i < n; i++) {
+      const data = await page.evaluate(t => { render(t); return document.getElementById('c').toDataURL('image/png').split(',')[1]; }, i / FPS);
+      fs.writeFileSync(path.join(out, `o_${String(i).padStart(4, '0')}.png`), Buffer.from(data, 'base64'));
+    }
+    await browser.close();
+    return;
+  }
   const grab = (t, type, q) => page.evaluate(([t, type, q]) => { render(t); return document.getElementById('c').toDataURL(type, q).split(',')[1]; }, [t, type, q]);
 
   if (flag === '--stills') {
