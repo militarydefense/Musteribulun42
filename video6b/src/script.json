@@ -1,0 +1,10 @@
+[
+ {"scene": 1, "say": "This janitor died with eight million dollars. Nobody knew.", "show": "This janitor died with $8 million. Nobody knew.", "pause": 0.25},
+ {"scene": 2, "say": "Ronald Read pumped gas and cleaned floors in Vermont for decades.", "pause": 0.25},
+ {"scene": 3, "say": "He drove a used car, and held his coat together with safety pins.", "pause": 0.25},
+ {"scene": 4, "say": "But every spare dollar went into stocks he understood. And he never sold.", "pause": 0.25},
+ {"scene": 5, "say": "After he died, his safe deposit box was packed with stock certificates.", "pause": 0.25},
+ {"scene": 6, "say": "He left four point eight million to the hospital, and one point two million to the library.", "show": "He left $4.8 million to the hospital, and $1.2 million to the library.", "pause": 0.25},
+ {"scene": 7, "say": "No genius. No luck. Just time.", "pause": 0.3},
+ {"scene": 8, "say": "So... what's your excuse?", "show": "So… what's your excuse?", "pause": 0.05}
+]
