@@ -132,3 +132,24 @@ It's called the "pain of paying": cash hurts, cards don't, and companies design 
 **Never:** buy views/subs, sub-for-sub groups, reupload other creators' clips, or delete and re-upload a Short that underperformed (Shorts often get a second wave days later).
 
 **Milestones:** Week 1: 7 Shorts, learn the baseline. Week 2–3: double down on the 2 best-performing topics as a series. Week 4: first long-form video. Day 90: review progress toward 1,000 subs.
+
+---
+
+## Learnings from Videos 1–4 (Oct 19, 2026)
+
+| Video | Views (~16 h) | Viewed vs swiped | Avg view duration |
+|---|---|---|---|
+| 1 Credit card (54 s, Piper, dark) | 37 | 28.6% | 0:25 |
+| 2 $9.99 (38 s, Piper, dark, full first frame) | 73 | 32.3% | 0:26 (68%), retention starts ~130% → loop works |
+| 4 $5 a day (36 s, Kokoro af_heart, light, story) | 90 | 20.6% | 0:16 (44%) |
+
+- Reach grows each upload and ~98% comes from the Shorts feed.
+- Viewers who stay mostly finish (Video 2: 68% avg, ~45–50% to the end, rewatches). **The bottleneck is the first impression in the feed, not the middle.**
+- Voice, palette, format and a static title-card opener did not move the viewed rate (all 20–32%).
+- Video 2 drop-offs happen in explanation lines ("researchers tested it", "your brain reads left to right").
+
+**Rules from Day 5 on:**
+1. Motion and voice start at 0.0 s: no static title card and no silent lead-in. The title appears after ~1 s.
+2. Lead with the payoff ("A $39 dress outsold a $34 one"), then at most one short "why" line.
+3. Keep the loop ending.
+4. Post daily; judge the format after 10–15 uploads, not 4.
