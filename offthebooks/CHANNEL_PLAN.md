@@ -8,7 +8,9 @@
 | Alan | Değer |
 |---|---|
 | Kanal adı | **Off The Books** |
-| Handle | **@OffTheBooks** (yedekler: @OffTheBooksTV, @OffTheBooksSeries, @OffTheBooksStory) — boş olup olmadığı kontrol edilecek |
+| Instagram | **@offthebooks.tv** (açıldı) |
+| YouTube handle | **@offthebooks.tv** ya da **@offthebookstv**: Instagram'la aynı olmalı, boş olup olmadığı kontrol edilecek |
+| Profil fotoğrafı | `brand/avatar.png` |
 | Dil | İngilizce |
 | Kategori | Entertainment (eğitim bilgisi var ama format dizi) |
 | Yayın | Her gün **19:00 ET = 02:00 TR** (YouTube'da zamanlanmış yükleme) |
