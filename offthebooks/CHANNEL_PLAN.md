@@ -9,7 +9,7 @@
 |---|---|
 | Kanal adı | **Off The Books** |
 | Instagram | **@offthebooks.tv** (açıldı) |
-| YouTube handle | **@offthebooks.tv** ya da **@offthebookstv**: Instagram'la aynı olmalı, boş olup olmadığı kontrol edilecek |
+| YouTube handle | **@offthebooksdaily** (açıldı, ayrıntılar `YOUTUBE.md`) |
 | Profil fotoğrafı | `brand/avatar.png` |
 | Dil | İngilizce |
 | Kategori | Entertainment (eğitim bilgisi var ama format dizi) |
