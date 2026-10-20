@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:06,230
+She invested $24,000. He invested $72,000. She retired richer.
+
+2
+00:00:06,330 --> 00:00:11,950
+Emma saves $200 a month from age 25 to 35. Then stops. Forever.
+
+3
+00:00:12,050 --> 00:00:18,230
+Jake starts at 35. $200 a month, for 30 years.
+
+4
+00:00:18,330 --> 00:00:19,670
+Same 8% return.
+
+5
+00:00:19,720 --> 00:00:22,660
+At 65, Jake has $294,000.
+
+6
+00:00:22,760 --> 00:00:26,040
+Emma? $378,000.
+
+7
+00:00:26,140 --> 00:00:28,370
+Her money just had ten more years to grow.
+
+8
+00:00:28,470 --> 00:00:30,390
+So… which one are you?

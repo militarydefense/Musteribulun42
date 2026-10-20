@@ -153,3 +153,14 @@ It's called the "pain of paying": cash hurts, cards don't, and companies design 
 2. Lead with the payoff ("A $39 dress outsold a $34 one"), then at most one short "why" line.
 3. Keep the loop ending.
 4. Post daily; judge the format after 10–15 uploads, not 4.
+
+## Learnings from Videos 5–6 (Oct 20, 2026)
+
+| Video | Views | Viewed vs swiped | Avg view duration |
+|---|---|---|---|
+| 5 Penny vs $1M (29 s, ElevenLabs, code animation) | 240 (~13 h) | 35.9% | 0:23 (~79%) |
+| 6 Janitor, full Seedance (32 s, AI video, "AI use: Yes") | 1 (~8 h) | n/a | n/a |
+
+- Video 5 is the channel's best: shocking number, payoff first, ~30 s, loop ending.
+- Video 6 was never pushed into the feed (1 impression), possibly because of the AI-content flag or because it went up 5.5 h after Video 5. It is not deleted.
+- **Standard from Day 7 on: the Day 5 format.** Code-drawn animation + ElevenLabs voice, one surprising number or comparison stated in the first line, ~30 s, loop ending, thumbnail as the last 0.2 s, AI-content flag = No. No Seedance.

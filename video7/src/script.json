@@ -1,0 +1,10 @@
+[
+ {"scene": 1, "say": "She invested twenty-four thousand. He invested seventy-two thousand. She retired richer.", "show": "She invested $24,000. He invested $72,000. She retired richer.", "pause": 0.3},
+ {"scene": 2, "say": "Emma saves two hundred a month from age twenty-five to thirty-five. Then stops. Forever.", "show": "Emma saves $200 a month from age 25 to 35. Then stops. Forever.", "pause": 0.3},
+ {"scene": 3, "say": "Jake starts at thirty-five. Two hundred a month, for thirty years.", "show": "Jake starts at 35. $200 a month, for 30 years.", "pause": 0.3},
+ {"scene": 4, "say": "Same eight percent return.", "show": "Same 8% return.", "pause": 0.25},
+ {"scene": 5, "say": "At sixty-five, Jake has two hundred ninety-four thousand.", "show": "At 65, Jake has $294,000.", "pause": 0.3},
+ {"scene": 6, "say": "Emma? Three hundred seventy-eight thousand.", "show": "Emma? $378,000.", "pause": 0.3},
+ {"scene": 7, "say": "Her money just had ten more years to grow.", "pause": 0.3},
+ {"scene": 8, "say": "So... which one are you?", "show": "So… which one are you?", "pause": 0.05}
+]

@@ -1,10 +1,12 @@
 """Turn one narration file (e.g. ElevenLabs) into voice.wav + timings.json by splitting it at its longest pauses.
 
 Usage: tts_split.py <narration audio> <outdir> <script.json>
-The script's lines must be read in order in the audio; the len(lines)-1 longest silences become line breaks.
+The script's lines must be read in order in the audio; the len(lines)-1 longest silences become line breaks,
+or set CUTS="t1,t2,..." (seconds in the source) to pick the pauses by hand.
 Speech starts at 0.0 s and pauses are re-timed to each line's "pause" value.
 """
 import json
+import os
 import subprocess
 import sys
 import wave
@@ -38,7 +40,10 @@ while i < end:
         i = j
     i += 1
 need = len(script) - 1
-cuts = sorted(sorted(gaps, reverse=True)[:need], key=lambda g: g[1])
+if os.environ.get("CUTS"):  # optional hand-picked line breaks (seconds in the source): nearest pause wins
+    cuts = [min(gaps, key=lambda g: abs((g[1] + g[2]) / 200 - float(c))) for c in os.environ["CUTS"].split(",")]
+else:
+    cuts = sorted(sorted(gaps, reverse=True)[:need], key=lambda g: g[1])
 if len(cuts) != need:
     sys.exit(f"found {len(cuts)} pauses, need {need}")
 bounds = [start] + [c for g in cuts for c in (g[1], g[2])] + [end]
