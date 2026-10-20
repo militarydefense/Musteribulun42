@@ -61,11 +61,11 @@ Kurallar:
 | **Altyazı** | Karaoke: konuşulan kelime beyaz, gelecek kelimeler gri, ekran ortasının biraz altında |
 
 ### Maskot: "Lucky"
-Rakibin şapkalı-hoodie'li karakterinden net biçimde ayrışmalı.
-- Yuvarlak, sade yüz; nokta gözler, ifade kaşlarla verilir
-- **Ofis çalışanı**: kıvrılmış kollu açık mavi gömlek, gevşek lacivert kravat, boynunda **şirket kimlik kartı** (lanyard)
-- Hep aynı kıyafet = yapay zekâ üretiminde tutarlılık
-- Karakter sayfası pozları: korku, şok, sinsi gülümseme, ter damlası, yorgunluk, sevinç, yürürken (arkadan), masada oturan
+Rakibin karakter tipinde, kıyafetleri siyah. Referans: `ep01/assets/lucky_sheet.png` (her sahne bu sayfayla üretilir).
+- Bembeyaz, pürüzsüz, yuvarlak kafa; saç, kulak ve burun yok; nokta gözler; tüm duyguyu taşıyan kalın siyah kaşlar
+- **Siyah şapka, önünde küçük altın $ arması**
+- **Bol siyah hoodie, altın ip uçları**, siyah dar kot, beyaz spor ayakkabı
+- Ayırt edici imza: altın $ ve altın ipler (kanalın vurgu rengi)
 
 ### Görsel katmanlar (rakipten öğrenildiği gibi dönüşümlü)
 1. **Sinematik illüstrasyon:** yapay zekâ ile üretilen sahne ve yavaş kamera hareketi (zoom/pan)
