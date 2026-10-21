@@ -174,9 +174,10 @@ const saveCard = {
   },
 };
 const ctaCard = {
-  noPunch: true,
-  draw(t, lt) {
-    navyBg(800);
+  img: true, vig: .3, noPunch: true,
+  draw(t, lt, dur) {
+    drawImg('p6', camAt([.5, .5, 1.05], [.55, .45, 1.15], easeInOut(clamp(lt / dur))), {});
+    ctx.fillStyle = 'rgba(8,11,22,.72)'; ctx.fillRect(0, 0, W, H);
     mono('NOBODY CAN KNOW', W / 2, 470, 30, C.grey, { spacing: 10 });
     text('PART 3', W / 2, 600, 140, C.white);
     withT(W / 2, 750, pop(lt, .1, .4), 0, () => text('TOMORROW', 0, 0, 140, C.gold, { shadow: 'rgba(245,197,24,.45)', shadowBlur: 40 }));
@@ -208,7 +209,7 @@ const SHOTS = {
       after: t => { overlayTag(t, S('i1') + .1, 'PROBLEM 3 · THE CLOCK', 'Still unclaimed.'); miniWindow(t, at('i1', 'depending'));
         stamp('MISS IT = $0', W / 2, 880, 100, C.red, pop(t, at('i1', 'nothing'), .3), -.07); } }),
   rule: beats([['p16', .5, .5, 1.0], ['p16', .5, .6, 1.3], ['p15', .5, .45, 1.0]],
-    { cuts: () => [at('rule', 'lawyer'), at('rule', 'not')], after: t => overlayTag(t, S('rule') + .05, 'RULE 2', 'Get a lawyer.', 'Before you claim.') }),
+    { cuts: () => [at('rule', 'claim'), at('rule', 'real')], after: t => overlayTag(t, S('rule') + .05, 'RULE 2', 'Get a lawyer.', 'Before you claim.') }),
   car: beats([['p2', .5, .5, 1.0], ['p2', .45, .36, 1.6], ['p2b', .5, .45, 1.1], ['p7', .5, .5, 1.05], ['p17', .5, .5, 1.05]],
     { cuts: () => [at('car', 'from'), at('car', 'she'), at('car', 'trust'), at('car', 'keep')] }),
   share: beats([['p2b', .45, .4, 1.35]], { vig: .8, after: t => sharePrompt(t, S('share') + .1) }),
@@ -247,7 +248,7 @@ function SFX() {
   add('glitch', S('rewind'), .7); add('paper', S('rewind') + 1.4, .6); add('click', S('rewind') + 2.6, .4); add('paper', S('rewind') + 4.1, .5);
   add('paper', S('i1') + .1, .5); for (let i = 0; i < 6; i++) add('tick', at('i1', 'depending') + i * .25, .4); add('glitch', at('i1', 'turns'), .5);
   add('thump', at('i1', 'nothing'), .9);
-  add('knock', at('rule', 'rule'), .8); add('paper', at('rule', 'lawyer'), .6); add('cloth', at('rule', 'not'), .5);
+  add('knock', at('rule', 'rule'), .8); add('paper', at('rule', 'lawyer'), .6); add('cloth', at('rule', 'real'), .5); add('click', at('rule', 'cousin') + .45, .5);
   add('door', S('car') + .05, .5); add('click', S('car') + 1.0, .4); add('paper', at('car', 'trust'), .5); add('paper', at('car', 'keep'), .45);
   add('click', S('share') + .1, .6);
   add('drone', S('night'), .7); add('step', S('night') + 1.2, .5); add('step', S('night') + 1.75, .45);

@@ -21,6 +21,10 @@
   "say": "That's rule two: before you claim anything, you get a lawyer, a real one, not your cousin."
  },
  {
+  "shot": "rule",
+  "card": 0.6
+ },
+ {
   "shot": "car",
   "say": "So on your lunch break you call one from the car, and she tells you that in some states, a trust can claim the prize for you and keep your name off the news."
  },

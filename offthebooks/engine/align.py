@@ -198,6 +198,8 @@ for li, it in enumerate(items):
             q = next((spans[k][0] for k in range(wi + 1, len(spans)) if spans[k]), s1)
             n_gap = sum(1 for k in range(wi, len(spans)) if spans[k] is None and all(spans[j] is None for j in range(wi, k + 1)))
             spans[wi] = (p, p + max(.08, (q - p) / max(1, n_gap)))
+    # a word matched to the wrong whisper token can land outside this line's audio: keep it inside
+    spans = [(min(max(a, c0), c1), min(max(b, c0 + .05), c1)) for a, b in spans]
     shown = it.get("show", it["say"]).split()
     if len(shown) == len(say):
         sw = spans
