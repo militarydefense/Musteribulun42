@@ -4,7 +4,7 @@
 |---|---|---|
 | `Part2_Instagram.mp4` | Instagram Reels | Sonunda kapak karesi **yok**. Kapağı ayrıca yükle. |
 | `Part2_Cover_Instagram.png` | Instagram → Kapağı düzenle → **Film rulosundan ekle** | 1080×1920. Profil ızgarasında 3:4 kırpılır, yazılar o alanın içinde. |
-| `Part2_YouTube.mp4` | YouTube Shorts | Son 0,2 sn kapak karesi; Shorts kapağı yalnızca videodaki karelerden seçilebildiği için. Kapak seçerken kaydırıcıyı en sona çek. |
+| `Part2_YouTube.mp4` | YouTube Shorts | Açılışı farklı: ilk cümle öncülü anlatıyor ("You won fifty million dollars, nobody can know…"), Part 1’i izlememiş izleyici için. Son 0,2 sn kapak karesi; Shorts kapağı yalnızca videodaki karelerden seçilebildiği için. Kapak seçerken kaydırıcıyı en sona çek. |
 | `Part2_Story_LiveVote.mp4` | Instagram hikâye | Part 2'den ~8 saat sonra. Altına Part 2'ye link çıkartması ekle. |
 
 **Yayın:** 22 Ekim 02:00 TR (21 Ekim 19:00 ET), Instagram ve YouTube.
