@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: JBM; src: url(file:///home/user/Musteribulun42/offthebooks/engine/fonts/jbm-500.woff2); font-weight: 500; }
+@font-face { font-family: JBM; src: url(file:///home/user/Musteribulun42/offthebooks/engine/fonts/jbm-700.woff2); font-weight: 700; }
+html, body { margin: 0; background: #000 } canvas { display: block }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Off The Books — frame renderer. render(t) draws the frame at t seconds.
+// window.T = timings.json (lines with word times, shot spans). The episode file defines SHOTS, HUD and SFX.
+const W = 1080, H = 1920;
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const C = {
+  navy: '#0E1424', navy2: '#18213A', gold: '#F5C518', gold2: '#FFE07A', paper: '#F3EEDF', rule: '#A9C2A4',
+  margin: '#D9604F', ink: '#1C1B19', ink2: '#5B5850', red: '#E5484D', white: '#FFFFFF', grey: '#9AA3B2',
+};
+const SANS = 'Inter, sans-serif', MONO = 'JBM, monospace';
+
+// ---------- helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, s, d) => clamp((t - s) / d);
+const easeOut = k => 1 - Math.pow(1 - k, 3);
+const easeInOut = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+const easeBack = k => { const a = 1.70158, b = a + 1; return 1 + b * Math.pow(k - 1, 3) + a * Math.pow(k - 1, 2); };
+const pop = (t, s, d = .35) => { const k = prog(t, s, d); return k <= 0 ? 0 : easeBack(k); };
+const usd = v => '$' + Math.round(v).toLocaleString('en-US');
+function rnd(seed) { const x = Math.sin(seed * 12.9898) * 43758.5453; return x - Math.floor(x); }
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function withT(x, y, s, rot, fn) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.scale(s, s); fn(); ctx.restore(); }
+function text(str, x, y, size, color, o = {}) {
+  ctx.save();
+  ctx.font = `${o.weight || 900} ${size}px ${o.font || SANS}`;
+  ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'middle';
+  if (o.spacing) ctx.letterSpacing = o.spacing + 'px';
+  if (o.alpha !== undefined) ctx.globalAlpha = o.alpha;
+  if (o.shadow) { ctx.shadowColor = o.shadow; ctx.shadowBlur = o.shadowBlur || 24; ctx.shadowOffsetY = o.shadowY || 4; }
+  if (o.stroke) { ctx.lineJoin = 'round'; ctx.lineWidth = o.strokeW || size * .16; ctx.strokeStyle = o.stroke; ctx.strokeText(str, x, y); }
+  ctx.fillStyle = color; ctx.fillText(str, x, y);
+  const w = ctx.measureText(str).width;
+  ctx.restore();
+  return w;
+}
+function mono(str, x, y, size, color, o = {}) { return text(str, x, y, size, color, { font: MONO, weight: o.weight || 500, spacing: o.spacing ?? size * .12, ...o }); }
+
+// ---------- timing ----------
+const norm = w => w.toLowerCase().replace(/[^a-z0-9]/g, '');
+let SHOT_LIST = null;
+function shotList() {
+  if (!SHOT_LIST) SHOT_LIST = Object.entries(T.shots).map(([k, v]) => ({ id: k, s: v[0], e: v[1] })).sort((a, b) => a.s - b.s);
+  return SHOT_LIST;
+}
+// start time of the nth occurrence of a word inside a shot (search across all lines when shot is null)
+function at(shot, word, nth = 0) {
+  const key = norm(String(word));
+  for (const l of T.lines) {
+    if (shot && l.shot !== shot) continue;
+    for (const w of l.words) if (norm(w.w) === key && nth-- === 0) return w.s;
+  }
+  throw new Error(`word "${word}" not found in shot ${shot}`);
+}
+const S = id => T.shots[id][0];
+const E = id => T.shots[id][1];
+
+// ---------- images ----------
+const IMGS = {};
+function loadImages(list) {
+  for (const n of list) { const im = new Image(); im.src = `img/${n}.jpg`; IMGS[n] = im; document.body.appendChild(Object.assign(im, { style: 'display:none' })); }
+}
+// draw an image to cover the frame. cam = [cx, cy, zoom] (cx, cy in 0..1 of the image)
+function drawImg(name, cam, o = {}) {
+  const im = IMGS[name];
+  const [cx, cy, z] = cam;
+  const s = Math.max(W / im.width, H / im.height) * z;
+  const dw = im.width * s, dh = im.height * s;
+  let x = W / 2 - cx * dw, y = H / 2 - cy * dh;
+  x = clamp(x, W - dw, 0); y = clamp(y, H - dh, 0);
+  ctx.save();
+  if (o.filter) ctx.filter = o.filter;
+  ctx.drawImage(im, x + (o.dx || 0), y + (o.dy || 0), dw, dh);
+  ctx.restore();
+}
+const camAt = (a, b, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
+function vignette(a = .55) {
+  const g = ctx.createRadialGradient(W / 2, H * .45, H * .25, W / 2, H * .5, H * .78);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(4,6,14,${a})`);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // bottom fade so captions and the Shorts UI read well
+  const b = ctx.createLinearGradient(0, H * .62, 0, H);
+  b.addColorStop(0, 'rgba(4,6,14,0)'); b.addColorStop(1, 'rgba(4,6,14,.55)');
+  ctx.fillStyle = b; ctx.fillRect(0, H * .62, W, H * .38);
+}
+// film grain, cached tiles
+const GRAIN = [];
+function grain(t, a = .06) {
+  if (!GRAIN.length) for (let k = 0; k < 4; k++) {
+    const g = document.createElement('canvas'); g.width = 256; g.height = 256;
+    const gx = g.getContext('2d'), d = gx.createImageData(256, 256);
+    for (let i = 0; i < d.data.length; i += 4) { const v = rnd(i + k * 7919) * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+    gx.putImageData(d, 0, 0); GRAIN.push(ctx.createPattern(g, 'repeat'));
+  }
+  ctx.save(); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'overlay';
+  ctx.fillStyle = GRAIN[Math.floor(t * 24) % 4]; ctx.fillRect(0, 0, W, H); ctx.restore();
+}
+
+// ---------- ledger paper (info screens) ----------
+function ledger(header) {
+  ctx.fillStyle = C.paper; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = C.rule; ctx.lineWidth = 2; ctx.globalAlpha = .55;
+  for (let y = 236; y < H; y += 68) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  ctx.globalAlpha = .7; ctx.strokeStyle = C.margin; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(110, 0); ctx.lineTo(110, H); ctx.stroke(); ctx.beginPath(); ctx.moveTo(118, 0); ctx.lineTo(118, H); ctx.stroke();
+  ctx.globalAlpha = 1;
+  // paper tone variation
+  const g = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, H * .75);
+  g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(120,100,60,.18)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  if (header) mono(header, W / 2, 330, 30, C.ink2, { spacing: 6 });
+}
+// rubber stamp: k = pop progress (0..1+)
+function stamp(str, x, y, size, color, k, rot = -.07) {
+  if (k <= 0) return;
+  const s = lerp(1.8, 1, clamp(k)) * (k > 1 ? 1 : 1);
+  withT(x, y, s, rot, () => {
+    ctx.globalAlpha = clamp(k * 2);
+    ctx.font = `900 ${size}px ${SANS}`;
+    const w = ctx.measureText(str).width + size * .8, h = size * 1.35;
+    rr(-w / 2, -h / 2, w, h, size * .16); ctx.lineWidth = size * .09; ctx.strokeStyle = color; ctx.stroke();
+    text(str, 0, size * .04, size, color);
+  });
+}
+// count from a to b over [s, s+d]
+const count = (t, s, d, a, b, ease = easeInOut) => lerp(a, b, ease(prog(t, s, d)));
+
+// ---------- HUD ----------
+function hudBox(x, w, label, value, o = {}) {
+  const y = 150, h = 112;
+  ctx.save();
+  if (o.flash) { ctx.shadowColor = o.flashColor || C.gold; ctx.shadowBlur = 40 * o.flash; }
+  rr(x, y, w, h, 16); ctx.fillStyle = 'rgba(8,11,22,.78)'; ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = 2; ctx.strokeStyle = o.flash ? `rgba(245,197,24,${.4 + .6 * o.flash})` : 'rgba(255,255,255,.12)'; ctx.stroke();
+  mono(label, x + 22, y + 32, 21, C.grey, { align: 'left', spacing: 3 });
+  text(value, x + 22, y + 76, 44, o.color || C.white, { align: 'left', weight: 800 });
+  if (o.bar !== undefined) {
+    rr(x + 22, y + h - 14, w - 44, 6, 3); ctx.fillStyle = 'rgba(255,255,255,.15)'; ctx.fill();
+    if (o.bar > 0) { rr(x + 22, y + h - 14, (w - 44) * o.bar, 6, 3); ctx.fillStyle = C.gold; ctx.fill(); }
+  }
+  ctx.restore();
+}
+function drawHud(h, k) {
+  if (!h || k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k; ctx.translate(0, (1 - k) * -30);
+  hudBox(40, 400, 'CASH', usd(h.cash), { flash: h.cashFlash, flashColor: C.red, color: h.cashFlash ? '#FF8A8A' : C.white });
+  hudBox(456, 250, 'SPENT', usd(h.spent));
+  hudBox(722, 318, 'EXPOSED', Math.round(h.exposed) + '%', { color: h.exposed > 0 ? C.gold : C.white, bar: h.exposed / 100, flash: h.expFlash });
+  if (h.label) {
+    ctx.font = `700 24px ${MONO}`;
+    const w = ctx.measureText(h.label).width + 40;
+    rr(40, 280, w + h.label.length * 2.4, 46, 8); ctx.fillStyle = C.gold; ctx.fill();
+    mono(h.label, 60, 304, 24, C.navy, { align: 'left', weight: 700, spacing: 2.4 });
+  }
+  ctx.restore();
+}
+
+// ---------- captions (karaoke) ----------
+let CHUNKS = null;
+function buildChunks() {
+  CHUNKS = [];
+  for (const line of T.lines) {
+    if (line.card || NO_CAPTION.has(line.shot)) continue;
+    let cur = [];
+    const flush = () => { if (cur.length) CHUNKS.push({ words: cur }); cur = []; };
+    for (const w of line.words) { cur.push(w); if (/[.,?!:…]$/.test(w.w) || cur.length >= 3) flush(); }
+    flush();
+  }
+  for (let i = 0; i < CHUNKS.length; i++) {
+    const c = CHUNKS[i], nx = CHUNKS[i + 1];
+    c.s = c.words[0].s - .05;
+    const last = c.words[c.words.length - 1].e;
+    c.e = nx ? Math.min(nx.words[0].s - .05, last + .45) : last + .6;
+  }
+}
+const isNum = s => /[$%0-9]/.test(s);
+function captions(t) {
+  if (!CHUNKS) buildChunks();
+  const c = CHUNKS.find(c => t >= c.s && t < c.e);
+  if (!c) return;
+  const y = 1290;
+  let size = 76;
+  ctx.save();
+  ctx.font = `900 ${size}px ${SANS}`;
+  const sp = size * .28;
+  const ws = c.words.map(w => w.w);
+  let total = ws.reduce((a, w) => a + ctx.measureText(w).width, 0) + sp * (ws.length - 1);
+  if (total > 940) { size *= 940 / total; ctx.font = `900 ${size}px ${SANS}`; total = 940; }
+  const k = easeOut(prog(t, c.s, .12));
+  let x = W / 2 - total / 2;
+  c.words.forEach((w, i) => {
+    const str = ws[i], ww = ctx.measureText(str).width;
+    const said = t >= w.s;
+    const col = said ? (isNum(str) ? C.gold : C.white) : 'rgba(205,210,220,.55)';
+    text(str, x + ww / 2, y + (1 - k) * 14, size, col, { shadow: 'rgba(0,0,0,.85)', shadowBlur: 18, shadowY: 4, alpha: k });
+    x += ww + sp;
+  });
+  ctx.restore();
+}
+
+// Story: Part 2 live vote (post ~8 h after Part 2).
+// Shared pieces for 1080x1920 Instagram story clips (no narration, no HUD; music is added in the app).
+// Keep text between y=300 and y=1560: the story header and the reply bar cover the rest.
+const NO_CAPTION = new Set(Object.keys(T.shots));
+function HUD() { return null; }
+function SFX() { return []; }
+
+function navyBg(glowY = 900) {
+  ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createRadialGradient(W / 2, glowY, 0, W / 2, glowY, 900);
+  g.addColorStop(0, 'rgba(245,197,24,.16)'); g.addColorStop(1, 'rgba(245,197,24,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+}
+// darken the lower part of a still so story text reads
+function shade() {
+  const g = ctx.createLinearGradient(0, H * .35, 0, H);
+  g.addColorStop(0, 'rgba(6,8,18,0)'); g.addColorStop(.45, 'rgba(6,8,18,.82)'); g.addColorStop(1, 'rgba(6,8,18,.95)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const t = ctx.createLinearGradient(0, 0, 0, 720);
+  t.addColorStop(0, 'rgba(6,8,18,.9)'); t.addColorStop(.6, 'rgba(6,8,18,.6)'); t.addColorStop(1, 'rgba(6,8,18,0)');
+  ctx.fillStyle = t; ctx.fillRect(0, 0, W, 720);
+}
+// header block: small mono tag + two-tone headline
+function header(tag, a, b, k = 1) {
+  mono(tag, 70, 330, 26, C.gold, { align: 'left', weight: 700, spacing: 5, alpha: k });
+  text(a, 70, 410, 92, C.white, { align: 'left', alpha: k });
+  if (b) text(b, 70, 505, 92, C.gold, { align: 'left', alpha: k });
+}
+// two-sided vote bar; pct = left share 0..1, animated from 50/50 between t0 and t0+d
+function voteBar(t, t0, d, L, R, pct, y = 1130, showPct = true) {
+  const p = lerp(.5, pct, easeInOut(prog(t, t0, d)));
+  const x0 = 70, x1 = W - 70, xm = lerp(x0, x1, p);
+  const lp = Math.round(p * 100), rp = 100 - lp;
+  text(showPct ? `${L} ${lp}%` : L, x0, y - 50, 62, p >= .5 ? C.gold : C.white, { align: 'left' });
+  text(showPct ? `${rp}% ${R}` : R, x1, y - 50, 62, p < .5 ? C.gold : C.white, { align: 'right' });
+  rr(x0, y, x1 - x0, 22, 11); ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fill();
+  rr(p >= .5 ? x0 : xm, y, p >= .5 ? xm - x0 : x1 - xm, 22, 11); ctx.fillStyle = C.gold; ctx.fill();
+}
+function lineIn(str, y, t, t0, col = C.white, size = 58, w = 800) {
+  const k = easeOut(prog(t, t0, .3));
+  if (k > 0) text(str, 70, y + (1 - k) * 20, size, col, { align: 'left', alpha: k, weight: w });
+}
+function confetti(t, t0) {
+  const lt = t - t0;
+  if (lt < 0 || lt > 3) return;
+  const cols = [C.gold, '#FFFFFF', '#E5484D', '#7C5CFF', '#2FBF71'];
+  for (let i = 0; i < 90; i++) {
+    const x = rnd(i) * W + Math.sin(lt * 3 + i) * 40, y = -40 + (rnd(i + 99) * .6 + .5) * lt * 900 + rnd(i + 7) * 300 - 300;
+    if (y > H) continue;
+    withT(x, y, 1, lt * 6 + i, () => { ctx.fillStyle = cols[i % 5]; ctx.fillRect(-9, -5, 18, 10); });
+  }
+}
+// "tap for a reminder" zone where the user drops the countdown / link sticker
+function stickerZone(t, t0, label) {
+  const k = easeOut(prog(t, t0, .3));
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k * (.6 + .4 * Math.sin(t * 4));
+  mono(label, W / 2, 1300, 34, C.gold, { weight: 700, spacing: 5 });
+  ctx.restore();
+}
+const still = (name, a, b, after) => ({
+  img: true, vig: .2,
+  draw(t, lt, dur) { drawImg(name, camAt(a, b, easeInOut(clamp(lt / dur))), {}); shade(); if (after) after(t, lt, dur); },
+});
+
+loadImages(['p6', 'p5']);
+const SHOTS = {
+  v1: still('p6', [.5, .45, 1.12], [.5, .5, 1.0], t => {
+    header('PART 2 · LIVE VOTE', 'Pay him,', 'or deny it?', easeOut(prog(t, 0, .3)));
+    const k1 = easeOut(prog(t, 1.4, .3)), k2 = easeOut(prog(t, 3.0, .3));
+    text('PAY', 70, 1020, 64, C.gold, { align: 'left', alpha: k1 });
+    text('He stays quiet. For now.', 70, 1090, 50, C.white, { align: 'left', alpha: k1, weight: 700 });
+    text('DENY', 70, 1220, 64, C.gold, { align: 'left', alpha: k2 });
+    text('He still has the tape.', 70, 1290, 50, C.white, { align: 'left', alpha: k2, weight: 700 });
+  }),
+  v2: still('p5', [.5, .4, 1.15], [.5, .4, 1.0], t => {
+    lineIn('He wants half.', 1060, t, S('v2') + .2, C.white, 76, 900);
+    const k = pop(t, S('v2') + .9, .35);
+    if (k > 0) withT(70 + 440, 1180, k, -.03, () => text('$6,930,000', 0, 0, 104, C.gold));
+  }),
+  v3: {
+    noPunch: true,
+    draw(t, lt) {
+      navyBg(820);
+      withT(W / 2, 640, pop(lt, 0, .4), 0, () => text('STILL OPEN.', 0, 0, 120, C.white));
+      text('You can flip it.', W / 2, 780, 70, C.gold, { alpha: easeOut(prog(lt, .4, .3)) });
+      text('Comment PAY or DENY', W / 2, 960, 60, C.white, { alpha: easeOut(prog(lt, .8, .3)), weight: 800 });
+      text('on Part 2 👇', W / 2, 1040, 60, C.white, { alpha: easeOut(prog(lt, .8, .3)), weight: 800 });
+      stickerZone(t, S('v3') + 1.2, 'TAP TO WATCH PART 2 ↓');
+    },
+  },
+};
+
+
+// ---------- main ----------
+function shotAt(t) {
+  const L = shotList();
+  let cur = L[0];
+  for (const s of L) if (t >= s.s) cur = s;
+  return cur;
+}
+window.render = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1; ctx.filter = 'none';
+  ctx.clearRect(0, 0, W, H);
+  const sh = shotAt(t);
+  const L = shotList(), i = L.indexOf(sh);
+  const end = i + 1 < L.length ? L[i + 1].s : T.total;
+  const lt = t - sh.s, dur = end - sh.s;
+  const def = SHOTS[sh.id];
+  // entry punch-in
+  const pk = easeOut(prog(lt, 0, .3));
+  ctx.save();
+  const z = def.noPunch ? 1 : lerp(1.035, 1, pk);
+  ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-W / 2, -H / 2);
+  def.draw(t, lt, dur);
+  ctx.restore();
+  if (def.img) { vignette(def.vig ?? .5); grain(t, .07); } else grain(t, .045);
+  const h = HUD(t, sh.id);
+  if (h) drawHud(h, h.k ?? 1);
+  if (!NO_CAPTION.has(sh.id)) captions(t);
+  if (window.OVERLAY_EXTRA) window.OVERLAY_EXTRA(t, sh.id);
+};
+window.events = () => SFX();
+</script>
+</body>
+</html>

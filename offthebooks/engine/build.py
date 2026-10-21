@@ -15,7 +15,10 @@ out = ep / "build"
 (out / "img").mkdir(parents=True, exist_ok=True)
 kit = (engine / "kit.html").read_text()
 kit = kit.replace("url(FONTS/", f"url({(engine / 'fonts').as_uri()}/")
-(out / "scene.html").write_text(kit.replace("/*EPISODE*/", (ep / "shots.js").read_text()))
+shots = (ep / "shots.js").read_text()
+if "/*COMMON*/" in shots:  # story clips share helpers in ../common/story.js
+    shots = shots.replace("/*COMMON*/", (ep.parent / "common" / "story.js").read_text())
+(out / "scene.html").write_text(kit.replace("/*EPISODE*/", shots))
 for png in sorted((ep / "assets").glob("*.png")):
     if png.stem.startswith(("lucky", "thumbnail")):
         continue
