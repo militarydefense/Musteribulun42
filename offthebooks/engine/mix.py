@@ -5,6 +5,7 @@ Reads voice.wav, timings.json and events.json (written by render.js), writes mix
 Music: a dark D-minor pulse that ducks under the voice and drops out for "silence" cues.
 """
 import json
+import subprocess
 import sys
 import wave
 
@@ -148,12 +149,41 @@ SYN = {"whoosh": whoosh, "hit": hit, "boom": boom, "tick": tick, "stamp": stamp,
        "scratch": scratch, "static": static, "pin": pin, "beep": beep, "riser": riser, "riser_short": lambda: riser(1.2),
        "type": typekey, "thud": thud, "drawer": drawer, "drone": drone, "swoosh_up": lambda: riser(.5) * 1.2}
 
+# recorded CC0 foley (engine/sfx/<name>_<n>.wav): a random take, slightly re-pitched, every time it is used
+import glob, os
+LIB = {}
+for f in glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sfx", "*.wav")):
+    LIB.setdefault(os.path.basename(f).rsplit("_", 1)[0], []).append(f)
+last_take = {}
+
+
+def from_lib(name):
+    takes = sorted(LIB[name])
+    k = int(rng.integers(len(takes)))
+    if len(takes) > 1 and k == last_take.get(name):  # never the same take twice in a row
+        k = (k + 1) % len(takes)
+    last_take[name] = k
+    with wave.open(takes[k]) as f:
+        x = np.frombuffer(f.readframes(f.getnframes()), np.int16) / 32768
+        sr = f.getframerate()
+    rate = sr / SR * rng.uniform(.92, 1.08)
+    return np.interp(np.arange(0, len(x), rate), np.arange(len(x)), x) / (np.abs(x).max() + 1e-9) * .8
+
+
+def soft_whoosh():  # quieter, randomized length and colour so cuts never sound identical
+    d = rng.uniform(.3, .55); t = tt(d); x = noise(len(t))
+    dark, bright = smooth(x, int(rng.integers(14, 34))), hp(smooth(x, 3), 10)
+    k = np.sin(np.pi * t / d)
+    return (dark * (1 - k) * 2 + bright * k * rng.uniform(.4, 1.0)) * k ** 2 * .6
+
+
+SYN["whoosh"] = soft_whoosh
 sfx = np.zeros(N)
 mutes = []
 for e in EV:
     if e["name"] == "silence":
         mutes.append((e["t"], e["t"] + e["gain"])); continue
-    x = SYN[e["name"]]() * e["gain"]
+    x = (from_lib(e["name"]) if e["name"] in LIB else SYN[e["name"]]()) * e["gain"]
     s = int(e["t"] * SR)
     if s < 0: x = x[-s:]; s = 0
     m = min(len(x), N - s)
@@ -190,6 +220,16 @@ for k in range(int(total / (beat / 2))):  # hats + soft kick
         m = min(int(.25 * SR), N - s); kt = np.arange(m) / SR
         music[s:s + m] += np.sin(2 * np.pi * (48 + 70 * np.exp(-kt * 30)) * kt) * np.exp(-kt * 10) * .3
 music /= np.abs(music).max() + 1e-9
+# a recorded bed (assets/music.mp3 next to the build dir, or engine/music/bed.mp3) replaces the synth
+for bed in (os.path.join(build, "..", "assets", "music.mp3"), os.path.join(os.path.dirname(os.path.abspath(__file__)), "music", "bed.mp3")):
+    if os.path.exists(bed):
+        raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", bed, "-ac", "1", "-ar", str(SR), "-f", "s16le", "-"],
+                             capture_output=True, check=True).stdout
+        b = np.frombuffer(raw, np.int16) / 32768
+        b = np.tile(b, N // len(b) + 1)[:N]
+        music = b / (np.abs(b).max() + 1e-9)
+        print("music bed:", os.path.normpath(bed))
+        break
 
 # music comes in after the hook's first line and drops out for silences
 gain = np.ones(N)
