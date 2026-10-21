@@ -148,7 +148,7 @@ Mevcut Brain vs Wallet altyapısı (`video7/src`: `scene.html`, `scenes.js`, `sc
 
 ## 11. Üretim bütçesi (21 Ekim 2026 kararı)
 - 1 aylık deneme, her gün bir bölüm, kalite düşürülmeden: Lucky'li sahneler 2K, MiniMax anlatıcı (`English_Deep-tonedMan`) + gerektiğinde ikinci karakter sesi.
-- Gerçekleşen maliyet: Part 1 = 74 kredi, Part 2 = 48 kredi. Hedef ortalama ~45–50 kredi/bölüm (ayda ~1.400–1.500).
+- Gerçekleşen maliyet: Part 1 = 74 kredi, Part 2 = 48 kredi, Part 3 = 110 kredi (17 yeni görsel + 5 ses parçası). Hedef ortalama ~45–50 kredi/bölüm (ayda ~1.400–1.500).
 - Kredi azalınca kullanıcı ekleme yapacak; her bölüm öncesi bakiye kontrol edilip kullanıcıya bildirilir.
 
 ## 12. Bölüm kapağı şablonu

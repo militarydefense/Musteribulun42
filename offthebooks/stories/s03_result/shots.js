@@ -1,0 +1,31 @@
+// Story: Part 2 vote result + Part 3 countdown.
+/*COMMON*/
+loadImages(['q1', 'q2', 'q11']);
+const SHOTS = {
+  r1: still('q1', [.5, .45, 1.12], [.5, .5, 1.0], t => {
+    header('PART 2 · VOTE CLOSED', 'You voted', 'DENY.', easeOut(prog(t, 0, .3)));
+    voteBar(t, .5, 1.1, 'PAY', 'DENY', .35, 1130, false);
+    confetti(t, 1.6);
+  }),
+  r2: still('q2', [.5, .45, 1.0], [.5, .35, 1.15], t => {
+    header('DAY 3', '"What ticket?"', '', 1);
+    lineIn('He smiled.', 1060, t, S('r2') + .3);
+    lineIn('He picked up', 1140, t, S('r2') + .9);
+    lineIn('the phone.', 1220, t, S('r2') + 1.3, C.gold);
+  }),
+  r3: still('q11', [.5, .45, 1.2], [.5, .45, 1.0], t => {
+    lineIn('And the next', 1500, t, S('r3') + .2, C.white, 72);
+    lineIn('morning…', 1590, t, S('r3') + 1.0, C.gold, 72, 900);
+  }),
+  r4: {
+    noPunch: true,
+    draw(t, lt) {
+      navyBg(820);
+      mono('NOBODY CAN KNOW', W / 2, 560, 30, C.grey, { spacing: 10, alpha: easeOut(prog(lt, 0, .3)) });
+      text('PART 3', W / 2, 700, 150, C.white, { alpha: easeOut(prog(lt, .05, .3)) });
+      withT(W / 2, 860, pop(lt, .3, .4), 0, () => text('TONIGHT', 0, 0, 150, C.gold, { shadow: 'rgba(245,197,24,.45)', shadowBlur: 40 }));
+      text('WHAT TICKET?', W / 2, 1000, 56, C.white, { alpha: easeOut(prog(lt, .6, .3)), weight: 800 });
+      stickerZone(t, S('r4') + .9, 'SET A REMINDER ↓');
+    },
+  },
+};

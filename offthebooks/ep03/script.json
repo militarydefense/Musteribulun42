@@ -1,0 +1,23 @@
+[
+ {"shot": "hook", "say": "You won fifty million dollars, nobody can know, and last night your boss leaned in and said he wants half.",
+  "show": "You won $50 million, nobody can know, and last night your boss leaned in and said he wants half."},
+ {"shot": "vote", "say": "You voted deny, so you look him dead in the eye and say, what ticket?"},
+ {"shot": "boss1", "say": "Fine. Then I'll just call the lottery."},
+ {"shot": "walk", "say": "He walks away smiling, and your heart is pounding, but here's what he doesn't know."},
+ {"shot": "fact1", "say": "The lottery can't tell him who has the ticket, because until it's claimed, they only know where it was sold."},
+ {"shot": "fact2", "say": "And an unsigned ticket belongs to whoever is holding it."},
+ {"shot": "danger", "say": "So the real danger isn't his phone call, it's your wallet, sitting in your jacket, on the back of your chair."},
+ {"shot": "rule", "say": "That's rule three: sign the back of your ticket, the second you get home."},
+ {"shot": "rule", "card": 0.5},
+ {"shot": "home", "say": "So you do, and you take a photo of both sides, just in case."},
+ {"shot": "share", "say": "If you know someone who keeps their tickets in the glovebox, send them this."},
+ {"shot": "morning", "say": "Next morning, there's a yellow note stuck to your screen."},
+ {"shot": "note", "say": "Half by Friday, or everybody finds out."},
+ {"shot": "mistake", "say": "But that note is his big mistake, because asking for money to keep a secret is called extortion, and it's a crime in every state."},
+ {"shot": "record", "say": "And in most states, you're allowed to record any conversation you're part of."},
+ {"shot": "save", "say": "Save this, you never know when you'll need it."},
+ {"shot": "save", "card": 1.0},
+ {"shot": "choice", "say": "So, do you secretly record him, or walk that note straight to HR?"},
+ {"shot": "cta", "say": "Comment record or report, and follow, because Friday is coming."},
+ {"shot": "cta", "card": 1.4}
+]
