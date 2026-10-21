@@ -150,3 +150,12 @@ Mevcut Brain vs Wallet altyapısı (`video7/src`: `scene.html`, `scenes.js`, `sc
 - 1 aylık deneme, her gün bir bölüm, kalite düşürülmeden: Lucky'li sahneler 2K, MiniMax anlatıcı (`English_Deep-tonedMan`) + gerektiğinde ikinci karakter sesi.
 - Gerçekleşen maliyet: Part 1 = 74 kredi, Part 2 = 48 kredi. Hedef ortalama ~45–50 kredi/bölüm (ayda ~1.400–1.500).
 - Kredi azalınca kullanıcı ekleme yapacak; her bölüm öncesi bakiye kontrol edilip kullanıcıya bildirilir.
+
+## 12. Bölüm kapağı şablonu
+Her bölümün kapağı `engine/cover.py` ile üretilir ve videonun son karesine eklenir (Reels/Shorts kapağı olarak seçilir):
+`NOBODY CAN KNOW` · **PART + dev renkli numara** (her bölümde farklı renk, döngüsel) · bölüm adı · o bölümün en güçlü sahnesi.
+Yazılar profil ızgarasının kırptığı 1080×1440 alanın içinde kalır. Part 1 profile sabitlenir.
+```
+python3 -I ../engine/cover.py assets/<sahne>.png <N> "BAŞLIK SATIR 1|SATIR 2" assets/cover.png [odak 0..1]
+bash ../engine/finalize.sh build assets/cover.png build/full.mp4
+```
