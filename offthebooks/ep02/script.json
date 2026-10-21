@@ -1,0 +1,19 @@
+[
+ {"shot": "cold", "say": "I know about the ticket."},
+ {"shot": "vote", "say": "Four words. From your boss. And you voted to stay."},
+ {"shot": "rewind", "say": "Rewind. Staying was smart. Quitting the day after a win is the fastest way to get caught."},
+ {"shot": "i1", "say": "Problem three. You still haven't claimed it."},
+ {"shot": "i1", "say": "Depending on the state, you get ninety days to a year. Miss it, and it's gone.", "show": "Depending on the state, you get 90 days to a year. Miss it, and it's gone."},
+ {"shot": "rule", "say": "Rule two. Before you claim, get a lawyer. Not a cousin. A lawyer."},
+ {"shot": "car", "say": "So on your lunch break, you call one. In some states, a trust can claim the prize, and keep your name off the news."},
+ {"shot": "share", "say": "Send this to the friend who'd be on a yacht by Friday."},
+ {"shot": "night", "say": "Then, at nine p.m., the office goes quiet.", "show": "Then, at 9 p.m., the office goes quiet."},
+ {"shot": "desk", "say": "Your boss sits on your desk. Leans in. And says it."},
+ {"shot": "boss", "say": "I know about the ticket."},
+ {"shot": "cam", "say": "He saw you on the gas station camera. And he wants half."},
+ {"shot": "save", "say": "Save this list. You'll need it someday."},
+ {"shot": "save", "card": 1.6},
+ {"shot": "choice", "say": "So... do you pay him? Or deny everything?"},
+ {"shot": "cta", "say": "Comment pay or deny. And follow, so you see what he does next."},
+ {"shot": "cta", "card": 1.4}
+]
