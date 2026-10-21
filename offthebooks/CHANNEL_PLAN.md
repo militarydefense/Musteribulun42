@@ -159,3 +159,13 @@ Yazılar profil ızgarasının kırptığı 1080×1440 alanın içinde kalır. P
 python3 -I ../engine/cover.py assets/<sahne>.png <N> "BAŞLIK SATIR 1|SATIR 2" assets/cover.png [odak 0..1]
 bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 ```
+
+## 13. Bölüm yazım kuralları (Part 1–2 verilerinden)
+1. **İlk cümle öncülü anlatır** (izleyicilerin ~%100'ü takipçi değil): "You won fifty million dollars, nobody can know, and …" + bugünün tehdidi, ~3–6 sn.
+2. Oy sonucu kısa bir bilgi olarak geçer ("And you're the one who voted to stay."), açılışın kendisi olmaz. Bölüm başında geri sarma yok.
+3. Akan, sohbet eden cümleler; anlatıcı `English_Insightful_Speaker`, hız 1.0. Karakter replikleri ayrı sesle.
+4. Her cümle yeni bir illüstrasyon ya da ifade varyasyonu getirir; kesmeler kelimelere bağlıdır (`beats(..., {cuts})`). Hiçbir kare ~2,5 sn'den uzun kalmaz.
+5. Bilgi sahnenin üstüne etiket olarak yazılır (`overlayTag`). Düz kart yalnızca kaydetme listesi ve son çağrı; son çağrı da sahnenin üstünde.
+6. Paylaşım, kaydetme, yorum ve takip çağrıları hikâyenin içinde, birer kez.
+7. Ses: kayıt foley (`engine/sfx`), whoosh sadece bölüm geçişlerinde, müzik konuşmanın ~8 dB altında.
+8. Teslim: `releases/partNN/` (Instagram kesimi kapak karesiz + ayrı kapak, YouTube kesimi kapak kareli, hikâyeler, README).
