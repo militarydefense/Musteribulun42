@@ -145,3 +145,8 @@ Mevcut Brain vs Wallet altyapısı (`video7/src`: `scene.html`, `scenes.js`, `sc
 6. Render ve `UPLOAD.md` (başlık, açıklama, etiketler, pinned comment)
 
 **Yükleme notu:** Yapay zekâ ile üretilen görseller gerçekçi değil, çizgi illüstrasyon. YouTube'un "altered/synthetic content" beyanı gerçek görünen içerik için zorunlu. Yine de her yüklemede kontrol edilecek.
+
+## 11. Üretim bütçesi (21 Ekim 2026 kararı)
+- 1 aylık deneme, her gün bir bölüm, kalite düşürülmeden: Lucky'li sahneler 2K, MiniMax anlatıcı (`English_Deep-tonedMan`) + gerektiğinde ikinci karakter sesi.
+- Gerçekleşen maliyet: Part 1 = 74 kredi, Part 2 = 48 kredi. Hedef ortalama ~45–50 kredi/bölüm (ayda ~1.400–1.500).
+- Kredi azalınca kullanıcı ekleme yapacak; her bölüm öncesi bakiye kontrol edilip kullanıcıya bildirilir.
