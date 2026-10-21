@@ -240,9 +240,19 @@ for a, b in mutes:
     r = int(.4 * SR); gain[sb:sb + r] *= np.linspace(0, 1, min(r, N - sb))
 voice = load_voice()
 venv = smooth(np.abs(voice), int(.12 * SR))
-duck = 1 - .55 * np.clip(venv / (np.percentile(venv, 90) + 1e-9), 0, 1)
+duck = 1 - .4 * np.clip(venv / (np.percentile(venv, 90) + 1e-9), 0, 1)
+
+
+def level(x):  # mean short-term rms (dB) of the active parts
+    r = np.sqrt(np.convolve(x ** 2, np.ones(SR // 10) / (SR // 10), mode="same"))[::SR // 10]
+    return 20 * np.log10(np.mean(r[r > 1e-4]) + 1e-9)
+
+
+# music sits MUSIC_DB below the voice before ducking (about 10 dB below it under speech)
+MUSIC_DB = 8.0
+music *= 10 ** ((level(voice) - MUSIC_DB - level(music[:len(voice)])) / 20)
 duck = smooth(duck, int(.08 * SR))
-mix = voice * 1.0 + music * gain * duck * .22 + sfx * .28
+mix = voice * 1.0 + music * gain * duck + sfx * .28
 mix = np.tanh(mix * 1.1) * .95
 st = np.stack([mix, mix], 1)
 with wave.open(f"{build}/mix.wav", "wb") as f:
