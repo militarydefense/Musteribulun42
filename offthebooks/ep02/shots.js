@@ -1,8 +1,8 @@
 // Off The Books — Part 2 "Overtime" (STAY).
 // Cold open on the twist, rewind, then build back to it. Share, save and follow prompts are built into the story.
 
-loadImages(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 's12']);
-const NO_CAPTION = new Set(['cold', 'boss', 'i1', 'rule', 'save', 'cta']);
+loadImages(['p1', 'p2', 'p2b', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p11b', 'p12', 'p13', 'p14', 'p15', 'p16', 'p17', 's12']);
+const NO_CAPTION = new Set(['cold', 'boss', 'save', 'cta']);
 
 const still = (name, a, b, o = {}) => ({
   img: true, vig: o.vig,
@@ -73,6 +73,33 @@ function rewindFx(t, lt) {
   ctx.save(); ctx.globalAlpha = a;
   for (let i = 0; i < 9; i++) { const y = (rnd(i + Math.floor(t * 20)) * H); ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(0, y, W, 6 + rnd(i) * 14); }
   text('◀◀ REWIND', W / 2, 520, 72, C.white, { stroke: '#000', strokeW: 10, font: MONO, weight: 700 });
+  ctx.restore();
+}
+
+
+// info told on top of a scene: dark band behind a mono tag and one or two lines
+function overlayTag(t, t0, tag, l1, l2) {
+  const k = easeOut(prog(t, t0, .3));
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  const g = ctx.createLinearGradient(0, 330, 0, 760);
+  g.addColorStop(0, 'rgba(6,8,18,.85)'); g.addColorStop(1, 'rgba(6,8,18,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 330, W, 430);
+  mono(tag, 70, 400, 28, C.gold, { align: 'left', weight: 700, spacing: 5 });
+  text(l1, 70 + (1 - k) * -30, 480, 84, C.white, { align: 'left' });
+  if (l2) text(l2, 70 + (1 - k) * -30, 570, 84, C.gold, { align: 'left' });
+  ctx.restore();
+}
+// compact claim-window bar drawn over a scene
+function miniWindow(t, t0) {
+  const k = easeOut(prog(t, t0, .3));
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  rr(60, 1060, W - 120, 170, 24); ctx.fillStyle = 'rgba(6,8,18,.8)'; ctx.fill();
+  const x0 = 120, x1 = W - 120, y = 1150, grow = easeOut(prog(t, t0, 1.2));
+  rr(x0, y - 12, x1 - x0, 24, 12); ctx.fillStyle = 'rgba(255,255,255,.2)'; ctx.fill();
+  rr(x0, y - 12, (x1 - x0) * grow, 24, 12); ctx.fillStyle = C.gold; ctx.fill();
+  [['WIN', 0], ['90 DAYS', .25], ['1 YEAR', 1]].forEach(([str, f]) => mono(str, lerp(x0, x1, f), y - 50, 26, C.white, { weight: 700, spacing: 2, align: f === 0 ? 'left' : f === 1 ? 'right' : 'center' }));
   ctx.restore();
 }
 
@@ -173,23 +200,31 @@ const ctaCard = {
 
 const SHOTS = {
   cold: beats([['p1', .5, .42, 1.15], ['p8', .5, .45, 1.05]], { after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, 0) }),
-  vote: beats([['p10', .5, .45, 1.05], ['p1', .5, .55, 1.0]], { after: t => votedStamp(t, at('vote', 'voted') - .1, 'STAY') }),
-  rewind: beats([['p11', .5, .5, 1.0], ['p11', .45, .38, 1.6], ['s12', .5, .45, 1.1], ['p11', .62, .55, 1.35]], { after: (t, lt) => rewindFx(t, lt) }),
-  i1: info1,
-  rule: ruleCard,
-  car: beats([['p2', .5, .5, 1.0], ['p2', .45, .36, 1.6], ['p7', .5, .5, 1.05], ['p2', .55, .6, 1.25]]),
-  share: beats([['p2', .45, .4, 1.35]], { vig: .8, after: t => sharePrompt(t, S('share') + .1) }),
-  night: beats([['p3', .5, .55, 1.2], ['p9', .5, .5, 1.0], ['p9', .6, .42, 1.45]]),
-  desk: beats([['p3', .5, .62, 1.5], ['p4', .5, .5, 1.0], ['p4', .42, .3, 1.6], ['p10', .5, .45, 1.1]], { after: t => pill('WHAT WOULD YOU DO? 👇', 1520, t, at('desk', 'leans'), { bob: true }) }),
+  vote: beats([['p10', .5, .45, 1.05], ['p1', .5, .55, 1.0]], { cuts: () => [at('vote', 'and')], after: t => votedStamp(t, at('vote', 'voted') - .1, 'STAY') }),
+  rewind: beats([['p11', .5, .5, 1.0], ['p11', .45, .38, 1.6], ['p11b', .5, .45, 1.15], ['s12', .5, .45, 1.1]],
+    { cuts: () => [at('rewind', 'when'), at('rewind', 'because'), at('rewind', 'fastest')], after: (t, lt) => rewindFx(t, lt) }),
+  i1: beats([['p12', .5, .5, 1.0], ['p13', .5, .45, 1.1], ['p12', .5, .38, 1.5], ['p14', .5, .5, 1.05]],
+    { cuts: () => [at('i1', 'depending'), at('i1', 'before'), at('i1', 'turns')],
+      after: t => { overlayTag(t, S('i1') + .1, 'PROBLEM 3 · THE CLOCK', 'Still unclaimed.'); miniWindow(t, at('i1', 'depending'));
+        stamp('MISS IT = $0', W / 2, 880, 100, C.red, pop(t, at('i1', 'nothing'), .3), -.07); } }),
+  rule: beats([['p16', .5, .5, 1.0], ['p16', .5, .6, 1.3], ['p15', .5, .45, 1.0]],
+    { cuts: () => [at('rule', 'lawyer'), at('rule', 'not')], after: t => overlayTag(t, S('rule') + .05, 'RULE 2', 'Get a lawyer.', 'Before you claim.') }),
+  car: beats([['p2', .5, .5, 1.0], ['p2', .45, .36, 1.6], ['p2b', .5, .45, 1.1], ['p7', .5, .5, 1.05], ['p17', .5, .5, 1.05]],
+    { cuts: () => [at('car', 'from'), at('car', 'she'), at('car', 'trust'), at('car', 'keep')] }),
+  share: beats([['p2b', .45, .4, 1.35]], { vig: .8, after: t => sharePrompt(t, S('share') + .1) }),
+  night: beats([['p3', .5, .55, 1.2], ['p9', .5, .5, 1.0], ['p9', .6, .42, 1.45]], { cuts: () => [at('night', 'and'), at('night', 'last')] }),
+  desk: beats([['p3', .5, .62, 1.5], ['p4', .5, .5, 1.0], ['p4', .42, .3, 1.6], ['p10', .5, .45, 1.1]],
+    { cuts: () => [at('desk', 'sits'), at('desk', 'leans'), at('desk', 'says')], after: t => pill('WHAT WOULD YOU DO? 👇', 1520, t, at('desk', 'leans'), { bob: true }) }),
   boss: beats([['p8', .5, .45, 1.2]], { shake: t => clamp(1 - (t - S('boss')) * 2), after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, S('boss')) }),
-  cam: beats([['p5', .5, .4, 1.0], ['p5', .5, .33, 1.55], ['p8', .5, .5, 1.25]], { after: t => pill('HE WANTS $6.9M', 1520, t, at('cam', 'half'), { bg: C.red, fg: C.white }) }),
+  cam: beats([['p5', .5, .4, 1.0], ['p5', .5, .33, 1.55], ['p8', .5, .5, 1.25]],
+    { cuts: () => [at('cam', 'camera'), at('cam', 'half')], after: t => pill('HE WANTS $6.9M', 1520, t, at('cam', 'half'), { bg: C.red, fg: C.white }) }),
   save: saveCard,
-  choice: beats([['p6', .5, .5, 1.0], ['p10', .5, .45, 1.2], ['p8', .5, .45, 1.1]]),
+  choice: beats([['p6', .5, .5, 1.0], ['p10', .5, .45, 1.2], ['p8', .5, .45, 1.1]], { cuts: () => [at('choice', 'him'), at('choice', 'deny')] }),
   cta: ctaCard,
 };
 
 // ---- HUD ----
-const HUD_OFF = new Set(['i1', 'rule', 'save', 'cta']);
+const HUD_OFF = new Set(['save', 'cta']);
 function HUD(t, id) {
   if (HUD_OFF.has(id)) return null;
   const e1 = at('boss', 'ticket'), e2 = at('cam', 'half');
@@ -210,10 +245,10 @@ function SFX() {
   add('boom', 0, 1); add('thump', 0.02, .8);
   add('thump', at('vote', 'voted') - .1, .9);
   add('glitch', S('rewind'), .7); add('paper', S('rewind') + 1.4, .6); add('click', S('rewind') + 2.6, .4); add('paper', S('rewind') + 4.1, .5);
-  for (let i = 0; i < 6; i++) add('tick', at('i1', 'depending') + i * .25, .45);
+  add('paper', S('i1') + .1, .5); for (let i = 0; i < 6; i++) add('tick', at('i1', 'depending') + i * .25, .4); add('glitch', at('i1', 'turns'), .5);
   add('thump', at('i1', 'nothing'), .9);
-  add('knock', at('rule', 'rule'), .8); add('paper', at('rule', 'lawyer'), .6);
-  add('door', S('car') + .05, .5); add('click', S('car') + 1.0, .4); add('paper', S('car') + 5.0, .4);
+  add('knock', at('rule', 'rule'), .8); add('paper', at('rule', 'lawyer'), .6); add('cloth', at('rule', 'not'), .5);
+  add('door', S('car') + .05, .5); add('click', S('car') + 1.0, .4); add('paper', at('car', 'trust'), .5); add('paper', at('car', 'keep'), .45);
   add('click', S('share') + .1, .6);
   add('drone', S('night'), .7); add('step', S('night') + 1.2, .5); add('step', S('night') + 1.75, .45);
   add('step', S('desk') + .2, .55); add('step', S('desk') + .75, .5); add('cloth', at('desk', 'sits'), .6); add('riser_short', at('desk', 'leans'), .7);

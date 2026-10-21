@@ -97,11 +97,15 @@ function beats(frames, o = {}) {
   return {
     img: true, vig: o.vig,
     draw(t, lt, dur) {
-      const n = frames.length, seg = dur / n;
-      const i = Math.min(n - 1, Math.floor(lt / seg)), k = clamp((lt - i * seg) / seg);
+      // o.cuts(): absolute start times of frames 2..n (e.g. word times); otherwise split the shot evenly
+      const n = frames.length, t0 = t - lt;
+      const starts = o.cuts ? [0, ...o.cuts().map(c => c - t0)] : frames.map((_, j) => j * dur / n);
+      let i = 0;
+      while (i + 1 < n && lt >= starts[i + 1]) i++;
+      const seg = (i + 1 < n ? starts[i + 1] : dur) - starts[i], k = clamp((lt - starts[i]) / seg);
       const [name, cx, cy, z] = frames[i];
       const dir = i % 2 ? -1 : 1;
-      const pop = lerp(1.035, 1, easeOut(clamp((lt - i * seg) / .15)));
+      const pop = lerp(1.035, 1, easeOut(clamp((lt - starts[i]) / .15)));
       let dx = 0, dy = 0;
       if (o.shake) { const s = o.shake(t); dx = Math.sin(t * 71) * 16 * s; dy = Math.cos(t * 53) * 12 * s; }
       drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + .045 * k)], { dx, dy });
