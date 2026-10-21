@@ -30,7 +30,7 @@ OUT = Path(out)
 OUT.mkdir(parents=True, exist_ok=True)
 items = json.load(open(script_path))
 SR = 44100
-PAUSE, SHOT_PAUSE = .12, .3
+PAUSE, SHOT_PAUSE = .08, .16
 
 ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
 TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
@@ -120,11 +120,25 @@ def quietest(a, b):
 
 spoken = [li for li, it in enumerate(items) if "say" in it]
 known = {li: [t for (l, _, _), t in zip(said, times) if l == li and t] for li in spoken}
-for li in spoken:
-    if not known[li]:
-        sys.exit(f"line {li} ({items[li]['say']!r}) matched no words; check the script against the audio")
-first = {li: min(t[0] for t in known[li]) for li in spoken}
-last = {li: max(t[1] for t in known[li]) for li in spoken}
+first = {li: min(t[0] for t in known[li]) for li in spoken if known[li]}
+last = {li: max(t[1] for t in known[li]) for li in spoken if known[li]}
+# whisper sometimes skips a short line (often the very first one): take the voiced audio between its neighbours
+hop_ = SR // 100
+_rms = np.sqrt(np.convolve(pcm.astype(np.float32) ** 2, np.ones(hop_) / hop_, mode="same"))[::hop_]
+_level = max(300.0, np.percentile(_rms, 95) * .06)
+for k, li in enumerate(spoken):
+    if known[li]:
+        continue
+    lo = last[spoken[k - 1]] if k else 0.0
+    hi = next((first[l] for l in spoken[k + 1:] if l in first), len(pcm) / SR)
+    v = np.where(_rms[int(lo * 100):int(hi * 100)] > _level)[0]
+    if not len(v):
+        sys.exit(f"line {li} ({items[li]['say']!r}) has no audio between {lo:.2f} and {hi:.2f}")
+    # the line ends at the last long silence before the next line
+    first[li] = lo + v[0] / 100
+    gaps = np.where(np.diff(v) > 15)[0]
+    last[li] = lo + (v[gaps[-1]] if len(gaps) else v[-1]) / 100
+    print(f"line {li} not heard by whisper; using voiced audio {first[li]:.2f}-{last[li]:.2f}")
 # cut points: between the last heard word of a line and the first heard word of the next
 cuts = {}
 for a, b in zip(spoken, spoken[1:]):

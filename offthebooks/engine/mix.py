@@ -227,7 +227,7 @@ for bed in (os.path.join(build, "..", "assets", "music.mp3"), os.path.join(os.pa
                              capture_output=True, check=True).stdout
         b = np.frombuffer(raw, np.int16) / 32768
         b = np.tile(b, N // len(b) + 1)[:N]
-        music = b / (np.abs(b).max() + 1e-9)
+        music = b / (np.abs(b).max() + 1e-9) * .7  # a full mix sits louder than the synth bed
         print("music bed:", os.path.normpath(bed))
         break
 

@@ -1,7 +1,7 @@
 // Off The Books — Part 2 "Overtime" (STAY).
 // Cold open on the twist, rewind, then build back to it. Share, save and follow prompts are built into the story.
 
-loadImages(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 's12']);
+loadImages(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 's12']);
 const NO_CAPTION = new Set(['cold', 'boss', 'i1', 'rule', 'save', 'cta']);
 
 const still = (name, a, b, o = {}) => ({
@@ -106,7 +106,7 @@ const info1 = {
       ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.sin(a) * 100, -Math.cos(a) * 100); ctx.stroke();
       ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.sin(a / 12) * 65, -Math.cos(a / 12) * 65); ctx.stroke();
     });
-    stamp('MISS IT = $0', W / 2, 1400, 100, C.red, pop(t, at('i1', 'miss'), .3), -.07);
+    stamp('MISS IT = $0', W / 2, 1400, 100, C.red, pop(t, at('i1', 'nothing'), .3), -.07);
     mono('Mega Millions: 90 days to 1 year, set by the state where the ticket was sold', W / 2, 1610, 21, C.ink2, { spacing: .5 });
   },
 };
@@ -172,19 +172,19 @@ const ctaCard = {
 };
 
 const SHOTS = {
-  cold: still('p1', [.5, .42, 1.18], [.5, .4, 1.05], { after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, 0) }),
-  vote: still('p1', [.5, .4, 1.05], [.5, .55, 1.0], { after: t => votedStamp(t, at('vote', 'voted') - .1, 'STAY') }),
-  rewind: still('s12', [.5, .45, 1.15], [.55, .5, 1.0], { after: (t, lt) => rewindFx(t, lt) }),
+  cold: beats([['p1', .5, .42, 1.15], ['p8', .5, .45, 1.05]], { after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, 0) }),
+  vote: beats([['p10', .5, .45, 1.05], ['p1', .5, .55, 1.0]], { after: t => votedStamp(t, at('vote', 'voted') - .1, 'STAY') }),
+  rewind: beats([['p11', .5, .5, 1.0], ['p11', .45, .38, 1.6], ['s12', .5, .45, 1.1], ['p11', .62, .55, 1.35]], { after: (t, lt) => rewindFx(t, lt) }),
   i1: info1,
   rule: ruleCard,
-  car: still('p2', [.5, .5, 1.0], [.45, .42, 1.18]),
-  share: still('p2', [.45, .42, 1.18], [.5, .45, 1.28], { vig: .8, after: t => sharePrompt(t, S('share') + .1) }),
-  night: still('p3', [.5, .55, 1.25], [.5, .5, 1.0]),
-  desk: still('p4', [.5, .5, 1.0], [.5, .4, 1.2], { after: t => pill('WHAT WOULD YOU DO? 👇', 1520, t, at('desk', 'leans'), { bob: true }) }),
-  boss: still('p1', [.5, .35, 1.35], [.5, .35, 1.2], { shake: t => clamp(1 - (t - S('boss')) * 2), after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, S('boss')) }),
-  cam: still('p5', [.5, .4, 1.2], [.5, .4, 1.0], { after: t => pill('HE WANTS 50%', 1520, t, at('cam', 'half'), { bg: C.red, fg: C.white }) }),
+  car: beats([['p2', .5, .5, 1.0], ['p2', .45, .36, 1.6], ['p7', .5, .5, 1.05], ['p2', .55, .6, 1.25]]),
+  share: beats([['p2', .45, .4, 1.35]], { vig: .8, after: t => sharePrompt(t, S('share') + .1) }),
+  night: beats([['p3', .5, .55, 1.2], ['p9', .5, .5, 1.0], ['p9', .6, .42, 1.45]]),
+  desk: beats([['p3', .5, .62, 1.5], ['p4', .5, .5, 1.0], ['p4', .42, .3, 1.6], ['p10', .5, .45, 1.1]], { after: t => pill('WHAT WOULD YOU DO? 👇', 1520, t, at('desk', 'leans'), { bob: true }) }),
+  boss: beats([['p8', .5, .45, 1.2]], { shake: t => clamp(1 - (t - S('boss')) * 2), after: t => slam([['I KNOW ABOUT', C.white], ['THE TICKET.', C.gold]], t, S('boss')) }),
+  cam: beats([['p5', .5, .4, 1.0], ['p5', .5, .33, 1.55], ['p8', .5, .5, 1.25]], { after: t => pill('HE WANTS $6.9M', 1520, t, at('cam', 'half'), { bg: C.red, fg: C.white }) }),
   save: saveCard,
-  choice: still('p6', [.5, .5, 1.0], [.55, .45, 1.15]),
+  choice: beats([['p6', .5, .5, 1.0], ['p10', .5, .45, 1.2], ['p8', .5, .45, 1.1]]),
   cta: ctaCard,
 };
 
@@ -202,29 +202,25 @@ function HUD(t, id) {
 }
 
 // ---- sound cues ----
+// recorded foley (engine/sfx) for actions, cinematic hits only on the big beats, whoosh only on act changes
 function SFX() {
   const ev = [];
   const add = (name, t, gain = 1) => ev.push({ name, t: +t.toFixed(3), gain });
-  for (const s of shotList()) if (s.s > 0) add('whoosh', s.s - .12, .8);
-  add('boom', 0, 1.1);
-  add('hit', 0.02, .9);
-  add('stamp', at('vote', 'voted') - .1, 1);
-  add('swoosh_up', S('rewind') - .05, .9);
-  add('static', S('rewind'), .5);
-  for (let i = 0; i < 6; i++) add('tick', at('i1', 'depending') + i * .25, .5);
-  add('stamp', at('i1', 'miss'), 1);
-  add('stamp', at('rule', 'rule'), .8);
-  add('beep', S('share') + .1, .5);
-  add('drone', S('night'), .8);
-  add('riser_short', at('desk', 'leans'), .8);
-  add('boom', S('boss'), 1.1);
-  add('stamp', at('boss', 'ticket'), .9);
-  add('static', S('cam'), .4);
-  add('cash_drop', at('cam', 'half'), 1);
-  for (let i = 0; i < 6; i++) add('type', S('save') + .35 + i * .28, .7);
-  add('riser', S('choice'), .9);
-  add('hit', at('choice', 'deny'), 1);
-  add('boom', S('cta'), .8);
-  add('pin', at('cta', 'follow') - .1, 1);
+  for (const id of ['vote', 'i1', 'rule', 'night', 'save', 'cta']) add('whoosh', S(id) - .12, .6);
+  add('boom', 0, 1); add('thump', 0.02, .8);
+  add('thump', at('vote', 'voted') - .1, .9);
+  add('glitch', S('rewind'), .7); add('paper', S('rewind') + 1.4, .6); add('click', S('rewind') + 2.6, .4); add('paper', S('rewind') + 4.1, .5);
+  for (let i = 0; i < 6; i++) add('tick', at('i1', 'depending') + i * .25, .45);
+  add('thump', at('i1', 'nothing'), .9);
+  add('knock', at('rule', 'rule'), .8); add('paper', at('rule', 'lawyer'), .6);
+  add('door', S('car') + .05, .5); add('click', S('car') + 1.0, .4); add('paper', S('car') + 5.0, .4);
+  add('click', S('share') + .1, .6);
+  add('drone', S('night'), .7); add('step', S('night') + 1.2, .5); add('step', S('night') + 1.75, .45);
+  add('step', S('desk') + .2, .55); add('step', S('desk') + .75, .5); add('cloth', at('desk', 'sits'), .6); add('riser_short', at('desk', 'leans'), .7);
+  add('boom', S('boss'), 1); add('thump', at('boss', 'ticket'), .8);
+  add('glitch', S('cam'), .5); add('click', S('cam') + .4, .4); add('coins', at('cam', 'half'), .9);
+  for (let i = 0; i < 6; i++) add('paper', S('save') + .35 + i * .28, .45);
+  add('riser', S('choice'), .8); add('thump', at('choice', 'deny'), 1);
+  add('thump', S('cta'), .7); add('click', at('cta', 'follow') - .1, .8);
   return ev.sort((a, b) => a.t - b.t);
 }

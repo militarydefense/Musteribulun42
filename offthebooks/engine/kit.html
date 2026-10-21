@@ -91,6 +91,24 @@ function drawImg(name, cam, o = {}) {
   ctx.restore();
 }
 const camAt = (a, b, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
+// a shot made of quick framings: frames = [[img, cx, cy, zoom], ...] split evenly over the shot.
+// Every framing is a hard cut with a slow push-in, so no picture holds for more than ~2 s.
+function beats(frames, o = {}) {
+  return {
+    img: true, vig: o.vig,
+    draw(t, lt, dur) {
+      const n = frames.length, seg = dur / n;
+      const i = Math.min(n - 1, Math.floor(lt / seg)), k = clamp((lt - i * seg) / seg);
+      const [name, cx, cy, z] = frames[i];
+      const dir = i % 2 ? -1 : 1;
+      const pop = lerp(1.035, 1, easeOut(clamp((lt - i * seg) / .15)));
+      let dx = 0, dy = 0;
+      if (o.shake) { const s = o.shake(t); dx = Math.sin(t * 71) * 16 * s; dy = Math.cos(t * 53) * 12 * s; }
+      drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + .045 * k)], { dx, dy });
+      if (o.after) o.after(t, lt, dur);
+    },
+  };
+}
 function vignette(a = .55) {
   const g = ctx.createRadialGradient(W / 2, H * .45, H * .25, W / 2, H * .5, H * .78);
   g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(4,6,14,${a})`);
