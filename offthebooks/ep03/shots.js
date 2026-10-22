@@ -2,7 +2,7 @@
 // Premise in the first line, the vote as one short beat, a new picture on almost every phrase.
 // Facts sit on top of the scenes; share, save, comment and follow each come once, inside the story.
 
-loadImages(['s4', 'p1', 'p5', 'p6', 'p7', 'p8', 'p10', 'p17', 'q1', 'q1b', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16']);
+loadImages(['s4', 'p1', 'p2', 'p5', 'p6', 'p7', 'p8', 'p10', 'p17', 'q1', 'q1b', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16']);
 const NO_CAPTION = new Set(['note', 'save', 'cta']);
 
 // ---- overlays ----
@@ -81,6 +81,56 @@ function recBadge(t, t0) {
   });
 }
 
+// character name tag pinned next to someone in the picture (like a case-file label)
+function nameTag(t, t0, t1, x, y, role, name) {
+  const k = easeOut(prog(t, t0, .25)) * clamp((t1 - t) / .15);
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  ctx.font = `800 40px ${SANS}`;
+  const w = Math.max(ctx.measureText(name).width, 160) + 60;
+  rr(x, y, w, 104, 12); ctx.fillStyle = 'rgba(8,11,22,.85)'; ctx.fill();
+  ctx.fillStyle = C.gold; ctx.fillRect(x, y, 8, 104);
+  mono(role, x + 30, y + 30, 22, C.gold, { align: 'left', weight: 700, spacing: 4 });
+  text(name, x + 30, y + 72, 40, C.white, { align: 'left', weight: 800 });
+  ctx.restore();
+}
+// red demand tag under the CASH box
+function demandTag(t, t0, t1, str) {
+  const k = pop(t, t0, .3) * clamp((t1 - t) / .15);
+  if (k <= 0) return;
+  withT(60 + 180, 372, k, 0, () => { rr(-180, -36, 360, 72, 10); ctx.fillStyle = C.red; ctx.fill(); text(str, 0, 3, 40, C.white); });
+}
+// a real viewer comment, shown like an Instagram comment (username blurred)
+function commentCard(t, t0, label, body, y = 1000) {
+  const k = easeOut(prog(t, t0, .3));
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  const x = 60, w = W - 120, h = 250;
+  rr(x, y + (1 - k) * 30, w, h, 26); ctx.fillStyle = 'rgba(250,250,252,.96)'; ctx.fill();
+  const yy = y + (1 - k) * 30;
+  mono(label, x + 40, yy + 46, 22, C.ink2, { align: 'left', weight: 700, spacing: 4 });
+  ctx.fillStyle = '#C9CDD6'; ctx.beginPath(); ctx.arc(x + 75, yy + 125, 34, 0, 7); ctx.fill();
+  rr(x + 130, yy + 92, 260, 26, 13); ctx.fillStyle = '#D5D8DF'; ctx.fill();
+  text(body, x + 130, yy + 165, 44, C.ink, { align: 'left', weight: 700 });
+  // heart, filling in
+  const hk = easeOut(prog(t, t0 + .6, .3));
+  withT(x + w - 60, yy + 130, 1 + .25 * Math.sin(Math.PI * hk), 0, () => text('♥', 0, 0, 52, hk > .5 ? C.red : '#B5B9C2'));
+  ctx.restore();
+}
+// big gauge reading in the middle of the frame when EXPOSED jumps
+function bigGauge(t, t0, t1, label, from, to, y = 1480) {
+  const k = easeOut(prog(t, t0, .25)) * clamp((t1 - t) / .2);
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  rr(60, y - 120, W - 120, 220, 24); ctx.fillStyle = 'rgba(8,11,22,.88)'; ctx.fill();
+  mono(label, 110, y - 70, 26, C.grey, { align: 'left', weight: 700, spacing: 6 });
+  const v = count(t, t0, .6, from, to);
+  text(`${Math.round(v)}%`, 110, y + 20, 120, C.red, { align: 'left' });
+  rr(470, y + 5, W - 580, 26, 13); ctx.fillStyle = 'rgba(255,255,255,.15)'; ctx.fill();
+  rr(470, y + 5, (W - 580) * v / 100, 26, 13); ctx.fillStyle = C.red; ctx.fill();
+  ctx.restore();
+}
+
 // ---- cards ----
 const saveCard = {
   noPunch: true,
@@ -136,12 +186,20 @@ const SHOTS = {
     { cuts: () => [at('hook', 'nobody'), at('hook', 'last'), at('hook', 'said')],
       after: t => { slam([['YOU WON', C.white], ['$50,000,000', C.gold]], t, 0, 760, at('hook', 'nobody'));
         stamp('NOBODY CAN KNOW', W / 2, 820, 92, C.red, pop(t, at('hook', 'nobody'), .3) * clamp((at('hook', 'last') - t) / .15), -.06);
+        nameTag(t, at('hook', 'last') + .1, S('vote'), 600, 560, 'THE BOSS', 'MR. GRANT');
+        demandTag(t, at('hook', 'half') - .05, at('vote', 'top'), '−$6,930,000?');
         pill('HE WANTS HALF', 1520, t, at('hook', 'half') - .1, { bg: C.red, fg: C.white }); } }),
-  vote: beats([['q1', .5, .45, 1.0], ['p6', .5, .5, 1.05], ['q1', .5, .4, 1.4]],
-    { cuts: () => [at('vote', 'look'), at('vote', 'what')],
-      after: t => { votedStamp(t, S('vote') + .05, 'DENY', at('vote', 'look'));
-        slam([['WHAT', C.white], ['TICKET?', C.gold]], t, at('vote', 'what'), 1180); } }),
-  boss1: beats([['q2', .5, .45, 1.0], ['q2', .55, .25, 1.6]], { cuts: () => [at('boss1', 'call')] }),
+  vote: beats([['q1', .5, .45, 1.0], ['q1', .5, .5, 1.2]],
+    { cuts: () => [at('vote', 'top')],
+      after: t => { votedStamp(t, S('vote') + .05, 'DENY');
+        commentCard(t, at('vote', 'top') - .05, 'YOUR TOP COMMENT · PART 2', '"deny deny deny pls pin"', 890);
+        demandTag(t, at('hook', 'half') - .05, at('vote', 'top'), '−$6,930,000?');
+        stamp('DENY ×3', W / 2, 1500, 80, C.red, pop(t, at('vote', 'three'), .3), -.06); } }),
+  deny: beats([['p6', .5, .5, 1.05], ['q1', .5, .4, 1.4]],
+    { cuts: () => [at('deny', 'what')],
+      after: t => slam([['WHAT', C.white], ['TICKET?', C.gold]], t, at('deny', 'what'), 1180) }),
+  boss1: beats([['q2', .5, .45, 1.0], ['q2', .55, .25, 1.6]], { cuts: () => [at('boss1', 'call')],
+    after: t => nameTag(t, S('boss1') + .05, at('boss1', 'call'), 60, 1380, 'THE BOSS', 'MR. GRANT') }),
   walk: beats([['q3', .5, .5, 1.0], ['q1b', .5, .42, 1.25], ['q3', .6, .2, 1.9]],
     { cuts: () => [at('walk', 'heart'), at('walk', 'heres')] }),
   fact1: beats([['q4', .5, .5, 1.0], ['p5', .5, .4, 1.1], ['q4', .72, .55, 1.8]],
@@ -159,7 +217,8 @@ const SHOTS = {
       after: t => pill('📸 FRONT + BACK', 1520, t, at('home', 'both') - .1) }),
   share: beats([['q9', .5, .55, 1.0], ['q9', .4, .6, 1.5]], { vig: .7, cuts: () => [at('share', 'send')], after: t => sharePrompt(t, S('share') + .1) }),
   morning: beats([['q10', .5, .5, 1.0], ['q10', .62, .42, 2.0]], { cuts: () => [at('morning', 'yellow')] }),
-  note: beats([['q11', .5, .45, 1.0], ['q11', .5, .45, 1.25]], { cuts: () => [at('note', 'or')], shake: t => clamp(1 - Math.abs(t - at('note', 'everybody')) * 3) }),
+  note: beats([['q11', .5, .45, 1.0], ['q11', .5, .45, 1.25]], { cuts: () => [at('note', 'or')], shake: t => clamp(1 - Math.abs(t - at('note', 'everybody')) * 3),
+    after: t => bigGauge(t, at('note', 'everybody'), E('note') + .1, 'EXPOSED', 60, 84) }),
   mistake: beats([['q12', .5, .45, 1.0], ['q12', .5, .35, 1.4], ['q16', .5, .5, 1.05], ['q13', .5, .5, 1.0], ['q13', .45, .55, 1.4]],
     { cuts: () => [at('mistake', 'mistake'), at('mistake', 'asking'), at('mistake', 'extortion'), at('mistake', 'crime')],
       after: t => { overlayTag(t, at('mistake', 'extortion') - .05, 'HIS MISTAKE', 'Pay me or I talk', '= extortion.');
@@ -171,6 +230,11 @@ const SHOTS = {
     { cuts: () => [at('choice', 'secretly'), at('choice', 'walk'), at('choice', 'hr')],
       after: t => pill('RECORD or REPORT? 👇', 1520, t, at('choice', 'secretly'), { bob: true }) }),
   cta: ctaCard,
+  // open loop after the vote: a third option, paid off in Part 4 (the trust from Part 2)
+  third: beats([['q1', .5, .45, 1.15], ['q16', .5, .45, 1.1], ['p7', .5, .5, 1.05], ['q8', .55, .45, 1.3], ['p2', .5, .45, 1.1]],
+    { vig: .6, cuts: () => [at('third', 'nobodys'), at('third', 'fast'), at('third', 'risky'), at('third', 'lawyer')],
+      after: t => { slam([['OPTION 3', C.gold]], t, S('third') + .05, 760, at('third', 'nobodys'));
+        pill('NOBODY VOTED FOR IT 👀', 1520, t, at('third', 'nobodys'), { bob: true }); } }),
 };
 
 // ---- HUD ----
@@ -183,7 +247,7 @@ function HUD(t, id) {
   if (t >= e2) exposed = count(t, e2, .5, 60, 84);
   if (t >= e3) exposed = count(t, e3, .6, 84, 71);
   const expFlash = [e1, e2, e3].some(e => t > e && t < e + .8) ? 1 : 0;
-  const label = ['hook', 'vote'].includes(id) ? 'PART 3 · WHAT TICKET?' : 'DAY 3';
+  const label = ['hook', 'vote', 'deny'].includes(id) ? 'PART 3 · WHAT TICKET?' : 'DAY 3';
   return { cash: 13.86e6, spent: 0, exposed, label, cashFlash: 0, expFlash };
 }
 
@@ -195,7 +259,9 @@ function SFX() {
   for (const id of ['walk', 'morning', 'mistake', 'save', 'cta']) add('whoosh', S(id) - .12, .55);
   add('coins', 0.02, .8); add('hit', .05, .7); add('stamp', at('hook', 'nobody'), .7);
   add('step', at('hook', 'last'), .5); add('thump', at('hook', 'half') - .05, .9);
-  add('thump', S('vote') + .05, .8); add('cloth', at('vote', 'look'), .5); add('boom', at('vote', 'what') - .05, .9);
+  add('thump', S('vote') + .05, .8); add('pin', at('vote', 'top'), .6); add('click', at('vote', 'top') + .6, .4); add('stamp', at('vote', 'three'), .7);
+  add('cloth', at('deny', 'look'), .5); add('boom', at('deny', 'what') - .05, .9);
+  add('paper', at('hook', 'last') + .1, .35); add('cash_drop', at('hook', 'half'), .45);
   add('beep', S('boss1') + .25, .35); add('click', at('boss1', 'call'), .5);
   add('step', S('walk') + .3, .5); add('step', S('walk') + .85, .45); add('step', S('walk') + 1.4, .4);
   for (let i = 0; i < 4; i++) add('thud', at('walk', 'heart') + i * .42, .55);
@@ -213,5 +279,8 @@ function SFX() {
   for (let i = 0; i < 6; i++) add('paper', S('save') + .35 + i * .28, .45);
   add('riser', S('choice'), .8); add('thump', at('choice', 'walk'), .7); add('knock', at('choice', 'hr'), .7);
   add('thump', S('cta'), .7); add('click', at('cta', 'follow') - .1, .8);
+  add('whoosh', S('third') - .12, .5); add('hit', S('third') + .05, .6); add('drone', at('third', 'nobodys'), .45);
+  add('tick', at('third', 'fast'), .5); add('thump', at('third', 'risky'), .6); add('riser_short', at('third', 'lawyer') - .3, .6);
+  add('beep', at('note', 'everybody') + .1, .4);
   return ev.sort((a, b) => a.t - b.t);
 }

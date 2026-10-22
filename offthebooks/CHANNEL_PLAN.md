@@ -169,3 +169,15 @@ bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 6. Paylaşım, kaydetme, yorum ve takip çağrıları hikâyenin içinde, birer kez.
 7. Ses: kayıt foley (`engine/sfx`), whoosh sadece bölüm geçişlerinde, müzik konuşmanın ~8 dB altında.
 8. Teslim: `releases/partNN/` (Instagram kesimi kapak karesiz + ayrı kapak, YouTube kesimi kapak kareli, hikâyeler, README).
+
+## 14. Rakibin Part 3'ünden dersler (22 Ekim)
+1. **İzleyiciyi hikâyeye yaz:** oy sonucu gerçek yüzdeyle, en iyi yorum ekranda Instagram yorum kartı olarak (kullanıcı adı bulanık). Rakip, yorumdaki bir cümleyi ("50k is an inch, he'll take a mile") kötü karakterin repliğine çevirdi.
+2. **Karakterlere isim etiketi** (COUSIN DRE). Bizde: THE BOSS · MR. GRANT.
+3. **Gösterge yalnızca yükselir** (SUSPICION 58→64→72→76→81) ve büyük sıçramalar ekranın ortasında büyük sayıyla gösterilir.
+4. **Gerçek bilgi = olayın sebebi:** 10.000$ üstü nakit alımı alıcının adını bildirir → kuzen yakalanır → iz sana gelir. Bilgi süs değil, hikâyeyi ilerletir.
+5. **Kural kırılır, ceza gelir** (RULE 2 + BROKEN damgası). Sadece "kurala uydun" bölümleri gerilimi düşürür.
+6. **Grafik çeşitliliği:** 3'lü kolaj, yükselen sayaç ($400 → $43,303), dedektif panosu, CCTV + işaret kutusu, kırmızı daire. Hepsi kredisiz canvas çizimi.
+7. **Kısa, kesik cümleler** gerilim anlarında ("Three cars back. The whole drive. 2am. Headlights.").
+8. **İkinci tehdit katmanı** sonda ("Dre followed you. And someone followed Dre.").
+9. **Oylamadan sonra açık uç:** "There's a third way out… it's been in your pocket this whole episode." Videoyu sonuna kadar izletir, tekrar izletir, yorumda tahmin yaptırır.
+10. Rakip paylaş/kaydet çağrısı **yapmıyor**; etkileşim izleyiciyi hikâyeye katmaktan geliyor. Bizde çağrılar birer kez ve kısa kalsın.

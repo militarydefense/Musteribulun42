@@ -4,7 +4,7 @@
 
 | Dosya | Nerede | Not |
 |---|---|---|
-| `Part3_Instagram.mp4` | Instagram Reels | 76,8 sn. Sonunda kapak karesi **yok**, kapağı ayrıca yükle. |
+| `Part3_Instagram.mp4` | Instagram Reels | 85,6 sn. Sonunda kapak karesi **yok**, kapağı ayrıca yükle. |
 | `Part3_Cover_Instagram.png` | Instagram → Kapağı düzenle → **Film rulosundan ekle** | 1080×1920, pembe "3". Yazılar profil ızgarasının 3:4 alanında. |
 | `Part3_YouTube.mp4` | YouTube Shorts | Son 0,2 sn kapak karesi. Kapak seçerken kaydırıcıyı en sona çek. |
 | `Part3_Story_Result_Countdown.mp4` | Instagram hikâye | Part 3'ten **önce** at (öğlen civarı). "SET A REMINDER" yazısının altına **geri sayım çıkartması** koy. |
@@ -71,6 +71,13 @@ RECORD or REPORT? 👇 YouTube and Instagram votes both count. Part 4 drops tomo
 
 ## Hikâye (Türkçe özet)
 Patronun "biletin yarısını istiyorum" dedi, sen oyla **inkâr ettin**: "Ne bileti?" Patron "O zaman piyangoyu ararım" deyip gülerek gidiyor. Ama piyango, talep edilmemiş biletin kimde olduğunu bilmez; sadece nereden satıldığını bilir. Asıl tehlike şu: imzasız bilet, onu elinde tutanındır, ve senin cüzdanın sandalyendeki ceketinde duruyor. **Kural 3:** eve varır varmaz biletin arkasını imzala. İmzalıyorsun ve iki yüzünün fotoğrafını çekiyorsun. Ertesi sabah ekranında sarı bir not var: "Cuma'ya kadar yarısı, yoksa herkes öğrenir." Ama bu onun büyük hatası, çünkü "para ver yoksa söylerim" şantajdır ve her eyalette suçtur. Çoğu eyalette içinde olduğun bir konuşmayı kaydetmen de yasal. Seçim: **onu gizlice kaydetmek mi (RECORD), notu doğrudan İK'ya götürmek mi (REPORT)?**
+
+## Rakibin Part 3'ünden sonra eklenenler (22 Ekim)
+- Patrona isim etiketi: **THE BOSS · MR. GRANT** (rakipteki "COUSIN DRE" gibi).
+- Açılışta CASH kutusunun altında kırmızı **−$6,930,000?** (tehdit sayıyla görünüyor).
+- Gerçek izleyici yorumu kartı: "YOUR TOP COMMENT · PART 2: deny deny deny pls pin" (kullanıcı adı bulanık) ve **DENY ×3** damgası.
+- Not sahnesinde büyük **EXPOSED 60→84%** göstergesi.
+- Oylamadan sonra açık uç: "But there's a third way out. Nobody's voted for it yet. It's fast. It's risky. And your lawyer already told you how." Part 4'te karşılığı: Part 2'deki tröst ile Cuma'dan önce ödülü talep etmek.
 
 ## Teknik
 - Ses: anlatıcı `English_Insightful_Speaker`, patron `English_BossyLeader`. Hizalama kontrolü temiz ("voice check: ok").
