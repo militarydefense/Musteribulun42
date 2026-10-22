@@ -246,9 +246,12 @@ function HUD(t, id) {
   if (t >= e1) exposed = count(t, e1, .5, 68, 60);
   if (t >= e2) exposed = count(t, e2, .5, 60, 84);
   if (t >= e3) exposed = count(t, e3, .6, 84, 71);
-  const expFlash = [e1, e2, e3].some(e => t > e && t < e + .8) ? 1 : 0;
+  let expFlash = [e1, e2, e3].some(e => t > e && t < e + .8) ? 1 : 0;
+  // "he wants half": CASH and EXPOSED blink red three times
+  const th = at('hook', 'half') - .05, blink = t > th && t < th + 1.5 ? Math.max(0, Math.sin((t - th) * Math.PI * 4)) : 0;
+  if (blink) expFlash = blink;
   const label = ['hook', 'vote', 'deny'].includes(id) ? 'PART 3 · WHAT TICKET?' : 'DAY 3';
-  return { cash: 13.86e6, spent: 0, exposed, label, cashFlash: 0, expFlash };
+  return { cash: 13.86e6, spent: 0, exposed, label, cashFlash: blink, expFlash, expRed: blink > 0 };
 }
 
 // ---- sound cues ----
@@ -261,7 +264,7 @@ function SFX() {
   add('step', at('hook', 'last'), .5); add('thump', at('hook', 'half') - .05, .9);
   add('thump', S('vote') + .05, .8); add('pin', at('vote', 'top'), .6); add('click', at('vote', 'top') + .6, .4); add('stamp', at('vote', 'three'), .7);
   add('cloth', at('deny', 'look'), .5); add('boom', at('deny', 'what') - .05, .9);
-  add('paper', at('hook', 'last') + .1, .35); add('cash_drop', at('hook', 'half'), .45);
+  add('paper', at('hook', 'last') + .1, .35); add('cash_drop', at('hook', 'half'), .45); for (let i = 0; i < 3; i++) add('beep', at('hook', 'half') - .05 + i * .5, .25);
   add('beep', S('boss1') + .25, .35); add('click', at('boss1', 'call'), .5);
   add('step', S('walk') + .3, .5); add('step', S('walk') + .85, .45); add('step', S('walk') + 1.4, .4);
   for (let i = 0; i < 4; i++) add('thud', at('walk', 'heart') + i * .42, .55);

@@ -171,7 +171,8 @@ function hudBox(x, w, label, value, o = {}) {
   if (o.flash) { ctx.shadowColor = o.flashColor || C.gold; ctx.shadowBlur = 40 * o.flash; }
   rr(x, y, w, h, 16); ctx.fillStyle = 'rgba(8,11,22,.78)'; ctx.fill();
   ctx.shadowBlur = 0;
-  ctx.lineWidth = 2; ctx.strokeStyle = o.flash ? `rgba(245,197,24,${.4 + .6 * o.flash})` : 'rgba(255,255,255,.12)'; ctx.stroke();
+  const fc = o.flashColor === C.red ? '229,72,77' : '245,197,24';
+  ctx.lineWidth = o.flash ? 2 + 3 * o.flash : 2; ctx.strokeStyle = o.flash ? `rgba(${fc},${.4 + .6 * o.flash})` : 'rgba(255,255,255,.12)'; ctx.stroke();
   mono(label, x + 22, y + 32, 21, C.grey, { align: 'left', spacing: 3 });
   text(value, x + 22, y + 76, 44, o.color || C.white, { align: 'left', weight: 800 });
   if (o.bar !== undefined) {
@@ -185,7 +186,7 @@ function drawHud(h, k) {
   ctx.save(); ctx.globalAlpha = k; ctx.translate(0, (1 - k) * -30);
   hudBox(40, 400, 'CASH', usd(h.cash), { flash: h.cashFlash, flashColor: C.red, color: h.cashFlash ? '#FF8A8A' : C.white });
   hudBox(456, 250, 'SPENT', usd(h.spent));
-  hudBox(722, 318, 'EXPOSED', Math.round(h.exposed) + '%', { color: h.exposed > 0 ? C.gold : C.white, bar: h.exposed / 100, flash: h.expFlash });
+  hudBox(722, 318, 'EXPOSED', Math.round(h.exposed) + '%', { color: h.expRed && h.expFlash > .3 ? C.red : h.exposed > 0 ? C.gold : C.white, bar: h.exposed / 100, flash: h.expFlash, flashColor: h.expRed ? C.red : C.gold });
   if (h.label) {
     ctx.font = `700 24px ${MONO}`;
     const w = ctx.measureText(h.label).width + 40;
