@@ -167,7 +167,7 @@ bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 4. Her cümle yeni bir illüstrasyon ya da ifade varyasyonu getirir; kesmeler kelimelere bağlıdır (`beats(..., {cuts})`). Hiçbir kare ~2,5 sn'den uzun kalmaz.
 5. Bilgi sahnenin üstüne etiket olarak yazılır (`overlayTag`). Düz kart yalnızca kaydetme listesi ve son çağrı; son çağrı da sahnenin üstünde.
 6. Paylaşım, kaydetme, yorum ve takip çağrıları hikâyenin içinde, birer kez.
-7. Ses: kayıt foley (`engine/sfx`), whoosh sadece bölüm geçişlerinde, müzik konuşmanın ~8 dB altında.
+7. Ses: kayıt foley (`engine/sfx`), **whoosh hiç kullanılmaz** (kullanıcı kararı, 22 Ekim; riser'da da gürültü süpürmesi yok), müzik konuşmanın ~8 dB altında.
 8. Teslim: `releases/partNN/` (Instagram kesimi kapak karesiz + ayrı kapak, YouTube kesimi kapak kareli, hikâyeler, README).
 
 ## 14. Rakibin Part 3'ünden dersler (22 Ekim)

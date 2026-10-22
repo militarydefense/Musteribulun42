@@ -123,8 +123,7 @@ def beep():
 def riser(d=1.6):
     t = tt(d); k = t / d
     tone = np.sin(2 * np.pi * np.cumsum(120 + 1100 * k ** 2) / SR) * k ** 2 * .35
-    air = smooth(noise(len(t)), 3) * k ** 3 * .5
-    return tone + air
+    return tone  # tone only: a noise sweep on top sounds like a whoosh
 
 
 def typekey():

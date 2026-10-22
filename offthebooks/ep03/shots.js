@@ -252,11 +252,11 @@ function HUD(t, id) {
 }
 
 // ---- sound cues ----
-// recorded foley for actions, cinematic hits only on the big beats, whoosh only on act changes
+// recorded foley for actions, cinematic hits only on the big beats, no whooshes (they sound cheap)
 function SFX() {
   const ev = [];
   const add = (name, t, gain = 1) => ev.push({ name, t: +t.toFixed(3), gain });
-  for (const id of ['walk', 'morning', 'mistake', 'save', 'cta']) add('whoosh', S(id) - .12, .55);
+  add('step', S('morning') + .1, .4);
   add('coins', 0.02, .8); add('hit', .05, .7); add('stamp', at('hook', 'nobody'), .7);
   add('step', at('hook', 'last'), .5); add('thump', at('hook', 'half') - .05, .9);
   add('thump', S('vote') + .05, .8); add('pin', at('vote', 'top'), .6); add('click', at('vote', 'top') + .6, .4); add('stamp', at('vote', 'three'), .7);
@@ -279,7 +279,7 @@ function SFX() {
   for (let i = 0; i < 6; i++) add('paper', S('save') + .35 + i * .28, .45);
   add('riser', S('choice'), .8); add('thump', at('choice', 'walk'), .7); add('knock', at('choice', 'hr'), .7);
   add('thump', S('cta'), .7); add('click', at('cta', 'follow') - .1, .8);
-  add('whoosh', S('third') - .12, .5); add('hit', S('third') + .05, .6); add('drone', at('third', 'nobodys'), .45);
+  add('hit', S('third') + .05, .6); add('drone', at('third', 'nobodys'), .45);
   add('tick', at('third', 'fast'), .5); add('thump', at('third', 'risky'), .6); add('riser_short', at('third', 'lawyer') - .3, .6);
   add('beep', at('note', 'everybody') + .1, .4);
   return ev.sort((a, b) => a.t - b.t);
