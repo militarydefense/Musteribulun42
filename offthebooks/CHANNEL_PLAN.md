@@ -211,3 +211,20 @@ bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 - [ ] Ayrı kapak (yazılar 3:4 alanda, yüzü kapatmıyor)
 - [ ] Sonuç/geri sayım ve canlı oylama story'leri
 - [ ] README: açıklama, başlık, etiketler, sabit yorum (her biri ayrı kod bloğunda)
+
+## 16. Part 3 ilk 2 saat verisi (Instagram, 22 Ekim 23:37)
+| | Part 2 (12 sa) | Part 3 (2 sa) |
+|---|---|---|
+| Görüntüleme / izleyen | 244 / 209 | 372 / 240 |
+| Görüntüleme ÷ izleyen (tekrar izleme) | 1,17 | **1,55** |
+| Ortalama izleme | 21 sn / 70 sn (%30) | 27 sn / 85 sn (%32) |
+| Geçme oranı | %32,2 | **%28,8** |
+| 10. saniyede kalan | ~%40 | **~%50–55** |
+| Orta bölüm platosu | ~%30 | **~%40** |
+| Beğeni oranı | %0,9 | %1,6 |
+| Takip / profil ziyareti | 0 / — | 1 / 16 |
+| Paylaşım / kaydetme | 0 / 0 | 0 / 0 |
+
+Sonuç: açılış düzeltmesi işe yaradı (§15 listesi korunur). Yeni kayıp noktaları:
+1. **~63. sn, kaydetme kartı:** düz kart "video bitiyor" sinyali veriyor, plato burada kırılıyor; kaydetme yine 0. → Düz kaydetme kartı kaldırılır; liste gerekiyorsa sahnenin üstünde, ortada ve kısa.
+2. **~72–75. sn, son çağrı kartı:** izleyici %5'e düşüyor, sondaki açık ucu neredeyse kimse görmüyor. → Son çağrı sahnenin üstünde ve kısa (rakip gibi), açık uç oylama sorusundan hemen sonra; sessiz kapanış kartı yok.
