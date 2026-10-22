@@ -181,3 +181,33 @@ bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 8. **İkinci tehdit katmanı** sonda ("Dre followed you. And someone followed Dre.").
 9. **Oylamadan sonra açık uç:** "There's a third way out… it's been in your pocket this whole episode." Videoyu sonuna kadar izletir, tekrar izletir, yorumda tahmin yaptırır.
 10. Rakip paylaş/kaydet çağrısı **yapmıyor**; etkileşim izleyiciyi hikâyeye katmaktan geliyor. Bizde çağrılar birer kez ve kısa kalsın.
+
+## 15. Yayın öncesi kontrol listesi (Part 3 verisiyle doğrulanınca kalıcı standart)
+Ölçüt: Part 3 Instagram'da 10. saniyede kalan izleyici **≥ %55** (Part 2: ~%40). Tutarsa her bölüm bu listeden geçmeden teslim edilmez.
+
+**İlk 10 saniye**
+- [ ] İlk cümle öncülü söylüyor (milyonlar + kimse bilmemeli + bugünün tehdidi), ≤ 6 sn
+- [ ] Ekranda ilk karede büyük öncül yazısı (YOU WON $50,000,000)
+- [ ] Oy sonucu kısa damga; gerçek bir izleyici yorumu kartı (kullanıcı adı bulanık)
+- [ ] Geri sarma yok; 10. saniyeden önce bir ters köşe/espri
+- [ ] Tehdit sayıyla görünür (kırmızı etiket + HUD kırmızı yanıp sönme)
+
+**Hikâye**
+- [ ] Göstergeler yalnızca yükselir
+- [ ] Gerçek bilgi olayın sebebidir (süs değil), kaynakla kontrol edildi, gerekiyorsa "most states"
+- [ ] Bir kural çiğnenir ve cezası gelir
+- [ ] Karakterlerin isim etiketi var
+- [ ] Gerilim anlarında kısa, kesik cümleler
+- [ ] Sonda ikinci tehdit katmanı + oylamadan sonra açık uç
+
+**Görsel ve ses**
+- [ ] Hiçbir kare ~2,5 sn'den uzun değil; en az 3 grafik türü (etiket, sayaç, kolaj, pano, işaret)
+- [ ] Anlatıcı English_Insightful_Speaker, karakterler ayrı ses
+- [ ] Whoosh yok; foley + müzik konuşmanın 8 dB altında; -14 LUFS
+- [ ] Seslendirme kontrolü "voice check: ok"
+
+**Teslim**
+- [ ] Instagram ve YouTube aynı video (YouTube'da son karede kapak)
+- [ ] Ayrı kapak (yazılar 3:4 alanda, yüzü kapatmıyor)
+- [ ] Sonuç/geri sayım ve canlı oylama story'leri
+- [ ] README: açıklama, başlık, etiketler, sabit yorum (her biri ayrı kod bloğunda)
