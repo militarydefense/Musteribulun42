@@ -232,14 +232,15 @@ for bed in (os.path.join(build, "..", "assets", "music.mp3"), os.path.join(os.pa
 
 # music comes in after the hook's first line and drops out for silences
 gain = np.ones(N)
-gain *= np.clip((t_all - 1.2) / 1.5, .25, 1)
+gain *= np.clip(.7 + t_all / 3, .7, 1)  # music is there from the first frame
 for a, b in mutes:
     sa, sb = int(a * SR), int(b * SR)
     gain[sa:sb] = 0
     r = int(.4 * SR); gain[sb:sb + r] *= np.linspace(0, 1, min(r, N - sb))
+DUCK = float(os.environ.get('DUCK', .25))
 voice = load_voice()
 venv = smooth(np.abs(voice), int(.12 * SR))
-duck = 1 - .4 * np.clip(venv / (np.percentile(venv, 90) + 1e-9), 0, 1)
+duck = 1 - DUCK * np.clip(venv / (np.percentile(venv, 90) + 1e-9), 0, 1)
 
 
 def level(x):  # mean short-term rms (dB) of the active parts
@@ -247,8 +248,9 @@ def level(x):  # mean short-term rms (dB) of the active parts
     return 20 * np.log10(np.mean(r[r > 1e-4]) + 1e-9)
 
 
-# music sits MUSIC_DB below the voice before ducking (about 10 dB below it under speech)
-MUSIC_DB = 8.0
+# music sits MUSIC_DB below the voice before ducking (about 5 dB below it under speech); 23 Oct: raised from 8 dB
+# after measuring both competitors (their background sits ~8-11 dB under the voice, ours was ~17)
+MUSIC_DB = float(os.environ.get('MUSIC_DB', 2.5))
 music *= 10 ** ((level(voice) - MUSIC_DB - level(music[:len(voice)])) / 20)
 duck = smooth(duck, int(.08 * SR))
 mix = voice * 1.0 + music * gain * duck + sfx * .28
