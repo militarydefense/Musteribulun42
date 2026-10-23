@@ -1,21 +1,88 @@
 [
- {"shot": "hook", "say": "You won fifty million dollars, nobody can know, and your boss wants half of it by Friday.",
-  "show": "You won $50 million, nobody can know, and your boss wants half of it by Friday."},
- {"shot": "vote", "say": "The vote came in tied, so your top comment broke it: record him."},
- {"shot": "pocket", "say": "One of you said, jacket pocket. So that's where the phone goes, and it's already recording."},
- {"shot": "door", "say": "Nine a.m., you knock on his door, and he doesn't even look up.", "show": "9 a.m., you knock on his door, and he doesn't even look up."},
- {"shot": "bossA", "say": "Half. By Friday. Or everyone in this building finds out."},
- {"shot": "tape", "say": "That's it. That's extortion, and it's on tape."},
- {"shot": "bossB", "say": "Oh, and nice signature, by the way."},
- {"shot": "slip", "say": "You signed that ticket alone, in your kitchen, at midnight. Nobody saw it."},
- {"shot": "how", "say": "Except your phone did. Both photos went straight to your cloud, the same account you're still logged into, on your work computer."},
- {"shot": "rule", "say": "Rule four: never log into anything personal on a work computer. You broke it."},
- {"shot": "fact", "say": "In the U.S., your employer can usually see everything on a company computer."},
- {"shot": "calm", "say": "The good news? A photo can't claim the prize. The lottery wants the original ticket."},
- {"shot": "hr", "say": "Some of you said take it straight to HR. Hold that thought."},
- {"shot": "upload", "say": "Because your phone just buzzed. Your recording finished uploading, to the same cloud he can see."},
- {"shot": "choice", "say": "So, do you lock him out right now, or leave the door open and feed him a fake?"},
- {"shot": "cta", "say": "Comment lock or bait, and follow, because Friday is two days away."},
- {"shot": "third", "say": "And one more thing. Play the recording back. Someone else is in that room, and they just said your name."},
- {"shot": "black", "card": 1.2}
+ {
+  "shot": "cold",
+  "say": "Oh, and nice signature, by the way."
+ },
+ {
+  "shot": "hook",
+  "say": "You won fifty million dollars, nobody can know, and your boss just told you he's seen your signature.",
+  "show": "You won $50 million, nobody can know, and your boss just told you he's seen your signature."
+ },
+ {
+  "shot": "title",
+  "say": "Here's how."
+ },
+ {
+  "shot": "title",
+  "card": 0.35
+ },
+ {
+  "shot": "vote",
+  "say": "Your comments picked it: record him."
+ },
+ {
+  "shot": "pocket",
+  "say": "One of you said, jacket pocket. So that's where the phone goes, and it's already recording."
+ },
+ {
+  "shot": "door",
+  "say": "Nine a.m., you knock on his door, and he doesn't even look up.",
+  "show": "9 a.m., you knock on his door, and he doesn't even look up."
+ },
+ {
+  "shot": "bossA",
+  "say": "Half. By Friday. Or everyone in this building finds out."
+ },
+ {
+  "shot": "tape",
+  "say": "That's it. That's extortion, and it's on tape."
+ },
+ {
+  "shot": "bossB",
+  "say": "Oh, and nice signature, by the way."
+ },
+ {
+  "shot": "slip",
+  "say": "You signed that ticket alone, in your kitchen, at midnight. Nobody saw it."
+ },
+ {
+  "shot": "how",
+  "say": "Except your phone did. Both photos went straight to your cloud, the same account you're still logged into, on your work computer."
+ },
+ {
+  "shot": "rule",
+  "say": "Rule four: never log into anything personal on a work computer. You broke it."
+ },
+ {
+  "shot": "fact",
+  "say": "In the U.S., your employer can usually see everything on a company computer."
+ },
+ {
+  "shot": "calm",
+  "say": "The good news? A photo can't claim the prize. The lottery wants the original ticket."
+ },
+ {
+  "shot": "hr",
+  "say": "Some of you said take it straight to HR. Hold that thought."
+ },
+ {
+  "shot": "upload",
+  "say": "Because your phone just buzzed. Your recording finished uploading, to the same cloud he can see."
+ },
+ {
+  "shot": "choice",
+  "say": "So, do you lock him out right now, or leave the door open and feed him a fake?"
+ },
+ {
+  "shot": "cta",
+  "say": "Comment lock or bait, and follow, because Friday is two days away."
+ },
+ {
+  "shot": "third",
+  "say": "And one more thing. Play the recording back. Someone else is in that room, and they just said your name."
+ },
+ {
+  "shot": "black",
+  "card": 1.2
+ }
 ]

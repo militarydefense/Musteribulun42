@@ -5,29 +5,41 @@
 /*UI*/
 
 loadImages(['r1', 'r3', 'r4', 'r6', 'r7', 'r8', 'r11', 's4', 'p5', 'p7', 'p8', 'p10', 'q1', 'q2', 'q6', 'q7', 'q8', 'q11', 'q12', 'q14', 'q15', 'q16']);
-const NO_CAPTION = new Set(['black']);
+const NO_CAPTION = new Set(['black', 'title']);
 const CAPTION_MODE = 'word';
 const KEY_WORDS = new Set(['HALF', 'FRIDAY', 'RECORD', 'RECORDING', 'TAPE', 'EXTORTION', 'SIGNATURE', 'ALONE', 'NOBODY', 'CLOUD', 'BROKE', 'ORIGINAL', 'LOCK', 'BAIT', 'NAME', 'EVERYONE']);
 
 const CHOICES = [['LOCK', 'Change the password. He knows you know.'], ['BAIT', 'Leave it open. Feed him a fake photo.']];
 
 const SHOTS = {
-  // 0–5 s: counter moves on frame one, premise in the first sentence, threat with a number
-  hook: beats([['r1', .5, .42, 1.0], ['p8', .5, .45, 1.1], ['q16', .5, .45, 1.05]],
-    { cuts: () => [at('hook', 'nobody'), at('hook', 'boss')],
+  // 0-1.8 s: cold open on the strongest line of the episode, on tape
+  cold: beats([['p8', .5, .45, 1.05], ['p8', .5, .36, 1.45]], { push: .3, cuts: () => [at('cold', 'signature')],
+    after: t => { waveStrip(t, 0, E('cold') + .05, 1180); recBadge(t, 0, W / 2, 1340, 47); } }),
+  // premise + today's threat in one sentence; a giant money counter like the competitor's opening
+  hook: beats([['r1', .5, .42, 1.0], ['q11', .5, .45, 1.05], ['r4', .5, .42, 1.05], ['q7', .55, .6, 1.5]],
+    { cuts: () => [at('hook', 'nobody'), at('hook', 'boss'), at('hook', 'seen')],
       after: t => {
-        infoBox(t, 0, at('hook', 'nobody'), 150, 'YOU JUST WON', t => usd(count(t, .05, .95, 0, 50e6, easeOut)), { size: 80 });
-        stamp('NOBODY CAN KNOW', W / 2, 820, 92, C.red, pop(t, at('hook', 'nobody'), .3) * clamp((at('hook', 'boss') - t) / .15), -.06);
-        nameTag(t, at('hook', 'boss') + .1, S('vote'), 70, 330, 'YOUR BOSS', 'MR. GRANT', 'WANTS HALF. DEADLINE: FRIDAY');
-        pill('HALF = $6,930,000', 1240, t, at('hook', 'half') - .05, { bg: C.red, fg: C.white });
+        bigCounter(t, S('hook'), at('hook', 'nobody'), 'YOU JUST WON', t => usd(count(t, S('hook') + .05, .95, 0, 50e6, easeOut)));
+        nameTag(t, at('hook', 'boss') + .05, E('hook'), 70, 330, 'YOUR BOSS', 'MR. GRANT', 'WANTS HALF BY FRIDAY');
+        stamp('HE SAW IT', W / 2, 1220, 120, C.red, pop(t, at('hook', 'signature') - .05, .3), -.07);
       } }),
-  // the vote as a race, broken by the top comment
-  vote: beats([['q1', .5, .45, 1.15], ['p10', .5, .45, 1.1], ['q12', .5, .42, 1.05]],
-    { cuts: () => [at('vote', 'top'), at('vote', 'record')],
+  // recap flashes, then PART 4 slams on black (the competitor's "PART II" card)
+  title: { noPunch: true, draw(t, lt, dur) {
+    if (lt < .36) { const f = ['q6', 'q8', 'q14'][Math.min(2, Math.floor(lt / .12))]; drawImg(f, [.5, .5, 1.15], {}); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H); return; }
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+    const k = pop(lt, .36, .3), green = '#58D68D';
+    withT(W / 2, 860, k * lerp(1.25, 1, easeOut(prog(lt, .36, .4))), 0, () => {
+      text('PART', 0, -40, 150, green, { shadow: 'rgba(88,214,141,.5)', shadowBlur: 40 });
+      text('4', 0, 140, 210, green, { shadow: 'rgba(88,214,141,.5)', shadowBlur: 50 });
+    });
+    mono('ON TAPE', W / 2, 1120, 34, C.white, { weight: 700, spacing: 12, alpha: easeOut(prog(lt, .6, .3)) });
+  } },
+  // the vote as a race, the top comment decides
+  vote: beats([['q1', .5, .45, 1.15], ['q12', .5, .42, 1.05]],
+    { cuts: () => [at('vote', 'record')],
       after: t => {
-        voteRace(t, S('vote'), [['RECORD', .5, '3 VOTES'], ['BOTH', .5, '3 VOTES']], 'TIED', at('vote', 'tied'), at('vote', 'top'));
-        commentCard(t, at('vote', 'top') - .05, 'TOP COMMENT · PART 3', '"Record him"', 360, E('vote') + .1, 4);
-        stamp('RECORD WINS', W / 2, 760, 96, C.gold, pop(t, at('vote', 'record'), .3), -.06);
+        voteRace(t, S('vote'), [['RECORD', .5, '3 VOTES'], ['BOTH', .5, '3 VOTES']], 'RECORD WON', at('vote', 'record'), E('vote') + .1);
+        commentCard(t, at('vote', 'picked') - .05, 'TOP COMMENT · ❤ 4', '"Record him"', 760, E('vote') + .1, 4);
       } }),
   pocket: beats([['q6', .5, .5, 1.05], ['q14', .5, .5, 1.0], ['q14', .55, .62, 1.5]],
     { cuts: () => [at('pocket', 'so'), at('pocket', 'recording')],
@@ -79,7 +91,7 @@ const SHOTS = {
     { cuts: () => [at('hr', 'hold')],
       after: t => commentCard(t, S('hr') + .05, 'YOUR COMMENTS · PART 3', '"record and then report"', 360, E('hr') + .1) }),
   // the second threat
-  upload: beats([['r8', .5, .62, 1.25], ['r8', .5, .55, 1.6], ['r8', .5, .42, 1.1]],
+  upload: beats([['q14', .5, .5, 1.0], ['r8', .5, .42, 1.1], ['r7', .5, .4, 1.15]],
     { push: .15, cuts: () => [at('upload', 'recording'), at('upload', 'same')],
       after: t => {
         notif(t, at('upload', 'buzzed') - .1, E('upload') + .1, 330, 'CLOUD · NOW', 'Upload complete', 'Recording_0902.m4a', {});
@@ -113,6 +125,7 @@ window.OVERLAY_EXTRA = (t, id) => {
   // deadline is always on screen once the day starts (Wed 9:02 -> Fri 17:00); turns red after the second threat
   if (!HUD_OFF.has(id) && t >= S('door')) deadlineChip(t, S('door') + .2, 2 * 86400 + 7 * 3600 + 58 * 60, 'FRIDAY 5PM', t > at('upload', 'same'));
   if (t > at('pocket', 'recording') && t < E('tape')) recBadge(t, at('pocket', 'recording'), W / 2, 1340);
+  negFlash(t, at('cold', 'signature'));
   negFlash(t, at('bossB', 'signature'));
   negFlash(t, at('upload', 'same'));
   negFlash(t, at('third', 'name'), .2);
@@ -120,7 +133,7 @@ window.OVERLAY_EXTRA = (t, id) => {
 };
 
 // ---- HUD: EXPOSED only goes up ----
-const HUD_OFF = new Set(['hook', 'choice', 'cta', 'third', 'black']);
+const HUD_OFF = new Set(['cold', 'hook', 'title', 'choice', 'cta', 'third', 'black']);
 function HUD(t, id) {
   if (HUD_OFF.has(id)) return null;
   const e1 = at('bossB', 'signature'), e2 = at('how', 'work'), e3 = at('upload', 'see');
@@ -137,12 +150,14 @@ function HUD(t, id) {
 function SFX() {
   const ev = [];
   const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
-  // hook: counter fills digitally, name tag types out
-  add('money_count', .05, .8, .95);  // like the competitor's money counter: ratchet clicks, then a ding add('stamp', at('hook', 'nobody'), .7);
-  add('typewriter', at('hook', 'boss') + .1, .45, .9); add('thump', at('hook', 'half') - .05, .9);
-  // vote race bars fill
-  add('click', S('vote'), .5); add('fill', S('vote') + .2, .5, 1.1); add('thump', at('vote', 'tied'), .7);
-  add('pin', at('vote', 'top'), .6); add('stamp', at('vote', 'record'), .9);
+  // cold open: record beep, low drone, hit on "signature"
+  add('rec_beep', 0, .7); add('drone', 0, .5, 2.2); add('silence', at('cold', 'signature') - .05, .5); add('boom', at('cold', 'signature'), .85);
+  // money counter (ratchet + ding), name tag types, HE SAW IT stamp
+  add('money_count', S('hook') + .05, .85, .95); add('typewriter', at('hook', 'boss') + .05, .45, .9); add('stamp', at('hook', 'signature') - .05, .9);
+  // recap flashes + riser into the PART 4 slam with a sub boom
+  add('riser_short', S('title') - 1.0, .55); add('glitch', S('title'), .5); add('boom', S('title') + .36, 1);
+  // vote race bars fill digitally, the top comment pops, RECORD WON
+  add('fill', S('vote') + .2, .55, 1.1); add('pin', at('vote', 'picked'), .6); add('stamp', at('vote', 'record'), .9);
   // the phone starts recording
   add('pin', S('pocket') + .05, .5); add('cloth', at('pocket', 'phone'), .6); add('rec_beep', at('pocket', 'recording') - .05, .8);
   // knock on his door; the time types out

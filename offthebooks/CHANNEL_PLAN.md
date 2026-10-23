@@ -295,3 +295,11 @@ Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `release
 - `deadlineChip`: HUD etiketinin yanında gerçek zamanlı geri sayım ("⏱ FRIDAY 5PM · 2D 07:58:00"), ikinci tehditten sonra kırmızı.
 - `typedList`: numaralı daktilo listesi; `segText` ile anahtar kelimeler renkli (altın = önemli, kırmızı = tehlike). `infoBox` değeri de renkli parça listesi alabilir.
 - `beats(..., { push })`: tedirgin sahnelerde hızlanan yaklaşma (dolly-in) + kenarlardan kapanan karartma; derinlik hissi. Part 4: kapı .12, "Half…" .16, "signature" .20, mutfak .12, yükleme .15, ikinci ses .22.
+
+## 23. Açılış kuralı güncellemesi (23 Ekim, Part 4 yeniden kurgu)
+- §13.1'in uygulaması değişti: ilk cümle konuyu **ve bu bölümün yeni olayını** birlikte söyler. Konuyu sadece özetlemek (Part 1'in haberini tekrar vermek) çatışma vermez.
+- **Soğuk açılış:** bölümün en güçlü repliği (genelde karakter sesi) ilk 2–3 sn'de, kayıt/ekran arayüzüyle. Hemen ardından konu cümlesi. Aynı replik bölümün ortasında tekrar gelir (izleyici tanır).
+- Ardından "Here's how." (≤1 sn) + önceki bölümden 3 hızlı kare + bölüm numarası siyah ekranda (bölümün renginde) + derin vuruş. Uzun geri sarma yok.
+- Oy kısmı ≤2,5 sn; seslendirme "Your comments picked it: …" gibi kısa, "tied/vote came in" gibi iç ayrıntı yok.
+- Para sayacı ekranın ortasında dev (`bigCounter`) + `money_count` sesi. Damgalar yüzlerin üstüne gelmez.
+- Teslimden önce soru: **"Bu videoyu ilk kez görsem ilk 3 saniyede durur muydum?"** Cevap kısa ve dürüst olarak teslim notuna yazılır.

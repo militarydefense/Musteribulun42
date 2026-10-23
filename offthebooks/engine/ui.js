@@ -229,3 +229,15 @@ function deadlineChip(t, t0, secsLeft, label = 'FRIDAY 5:00 PM', hot = false) {
   mono(str, W - 40 - w / 2, 304, 22, hot ? C.white : C.gold, { weight: 700, spacing: 1.5 });
   ctx.restore();
 }
+
+// giant centred money counter (competitor-style opening)
+function bigCounter(t, t0, t1, tag, value) {
+  const k = fadeIn(t, t0, t1, .12);
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  rr(50, 560, W - 100, 250, 26); ctx.fillStyle = 'rgba(6,8,18,.86)'; ctx.fill();
+  ctx.lineWidth = 5; ctx.strokeStyle = C.gold; ctx.stroke();
+  mono(tag, W / 2, 615, 32, C.gold, { weight: 700, spacing: 8 });
+  text(value(t), W / 2, 725, 128, C.white, { shadow: 'rgba(245,197,24,.5)', shadowBlur: 30 });
+  ctx.restore();
+}

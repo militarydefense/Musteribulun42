@@ -2,13 +2,13 @@
 
 | Dosya | Nerede | Not |
 |---|---|---|
-| `Part4_Instagram.mp4` | Instagram Reels | 82,5 sn, kapak karesi yok. Kapağı ayrıca yükle. |
+| `Part4_Instagram.mp4` | Instagram Reels | 83,7 sn, kapak karesi yok. Kapağı ayrıca yükle. |
 | `Part4_Cover_Instagram.png` | Instagram → Kapağı düzenle → Film rulosundan ekle | Yeşil "4". |
 | `Part4_YouTube.mp4` | YouTube Shorts | Son 0,2 sn kapak karesi; kaydırıcıyı en sona çek. Part 3'ü bu videoya "İlgili video" olarak bağla. |
 | `Part4_Story_Result_Countdown.mp4` | Instagram story, yayından önce | Geri sayım çıkartması → Part 4 saati. |
 | `Part4_Story_LiveVote.mp4` | Instagram story, ~8 saat sonra | Link çıkartması → Part 4; istersen anket (LOCK / BAIT). |
 
-Videoda oy sonucu "3–3 TIED, top comment: Record him (4 likes)" olarak geçiyor. Oylama kapanırken bu değişirse yeniden düzenlenir.
+Videoda oy sonucu "3–3, top comment: Record him (4 likes) → RECORD WON" olarak geçiyor. Oylama kapanırken bu değişirse yeniden düzenlenir.
 
 ## Instagram açıklaması
 ```
@@ -70,6 +70,12 @@ LOCK or BAIT? 👇 And who's the second voice? YouTube and Instagram votes both 
 
 ## Hikâye (Türkçe özet)
 Oylama 3–3 berabere, en çok beğenilen yorum ("Record him") kararı veriyor. Telefon, izleyicinin fikriyle ceket cebine giriyor ve kayıt başlıyor. Sabah 9:02'de Grant'in kapısını çalıyorsun. Grant kayıtta "Half. By Friday. Or everyone in this building finds out." diyor: şantaj artık kayıtta. Sonra "Nice signature, by the way." diyor. Ama bileti mutfakta, gece yarısı, tek başına imzalamıştın. Çelişki kutusu: SEN TEK BAŞINA İMZALADIN / O İMZAYI GÖRDÜ. Sebep: iki fotoğraf otomatik buluta gitti, o hesap iş bilgisayarında hâlâ açık. **Kural 4 (kırıldı):** iş bilgisayarında kişisel hiçbir hesaba girme. İyi haber: fotoğrafla ödül alınamaz, orijinal bilet gerekir. "İK" diyenlere: "bu düşünceyi tut". Telefon titriyor: kayıt da aynı buluta yüklendi, güvenlik uyarısı "Office PC · Desk 14 · active now". Seçim: **LOCK** (şifreyi değiştir, o da anlar) mı **BAIT** (açık bırak, sahte fotoğraf yem) mı? Açık uç: kaydı dinliyorsun, odada ikinci bir ses var ve senin adını söylüyor.
+
+## Açılış (23 Ekim yeniden kurgu)
+0–2,9 sn: Grant'in kayıttaki repliğiyle soğuk açılış ("Oh, and nice signature, by the way."), REC + dalga formu, hızlanan yaklaşma, "signature"da negatif flaş.
+3–8,3 sn: "You won fifty million dollars, nobody can know, and your boss just told you he's seen your signature." Ekranın ortasında dev sayaç ($0 → $50,000,000, rakipteki para sayma sesi), sarı not, MR. GRANT etiketi, mutfakta imza + HE SAW IT damgası.
+8,4–9,3 sn: "Here's how." Önceki bölümlerden üç hızlı kare, ardından siyah ekranda yeşil PART 4 (yükselen ses + derin vuruş; rakibin PART II ekranı).
+9,3–11,4 sn: Oy yarışı + en iyi yorum kartı → RECORD WON.
 
 ## Uygulanan dersler
 - İlk karede sayaç ($0 → $50,000,000), öncül ilk cümlede, HUD açılışta gizli.
