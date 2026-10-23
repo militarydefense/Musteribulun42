@@ -228,3 +228,24 @@ bash ../engine/finalize.sh build assets/cover.png build/full.mp4
 Sonuç: açılış düzeltmesi işe yaradı (§15 listesi korunur). Yeni kayıp noktaları:
 1. **~63. sn, kaydetme kartı:** düz kart "video bitiyor" sinyali veriyor, plato burada kırılıyor; kaydetme yine 0. → Düz kaydetme kartı kaldırılır; liste gerekiyorsa sahnenin üstünde, ortada ve kısa.
 2. **~72–75. sn, son çağrı kartı:** izleyici %5'e düşüyor, sondaki açık ucu neredeyse kimse görmüyor. → Son çağrı sahnenin üstünde ve kısa (rakip gibi), açık uç oylama sorusundan hemen sonra; sessiz kapanış kartı yok.
+
+### 16b. Part 3, 11. saat (23 Ekim 08:04) ve kesinleşen kurallar
+| | Part 1 (12 sa) | Part 2 (12 sa) | **Part 3 (11 sa)** |
+|---|---|---|---|
+| Görüntüleme / izleyen | 1.459 / ~1.240 (4. saatte durdu) | 244 / 209 | **832 / 678 (hâlâ büyüyor)** |
+| Ortalama izleme | 31 / 84 sn | 21 / 70 sn | 30 / 85 sn |
+| Geçme oranı | %33,8 | %32,2 | %31,5 |
+| Beğeni / yorum | 24 / 11 | 2 / 3 | **20 / 9** (beğeni oranı %2,8) |
+| Kaydetme / yeniden paylaşım | 1 / 0 | 0 / 0 | **4 / 2** |
+| Profil ziyareti / takip | 62 / 0 | — / 0 | **41 / 4** |
+| Paylaşım (DM) | 0 | 0 | 0 |
+| Ülke | — | — | ABD %26,8, Hindistan %17, Yunanistan %4,3, İngiltere %4, Türkiye %3,7 |
+
+Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:10 oy/yorum kısmının sonu (~%22)**, **~1:05 SAVE THIS kartı (~%11)**; son çağrı kartında izleyici ~%5'e iniyor.
+
+**Kesinleşen kurallar (Part 4'ten itibaren):**
+1. Oy sonucu + izleyici yorumu açılışta en fazla ~2 sn; uzun yorum anı 20–30. saniyede.
+2. Düz kaydetme kartı yok; son çağrı sahnenin üstünde, kısa; açık uç oylama sorusundan hemen sonra, sessiz kapanış kartı yok.
+3. YouTube akışı için ilk kare: parlak, yakın plan yüz, tek iri satır, ilk 0,5 sn'de hareket (Part 2 YouTube akışında %46 kaldı).
+4. Zamanlanmış yayın denemesi: 02:00 TR (19:00 ET).
+5. Oylar ikiye bölününce "so you did both" ile iki tarafı da hikâyeye yaz.
