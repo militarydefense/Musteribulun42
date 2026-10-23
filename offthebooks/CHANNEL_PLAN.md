@@ -285,3 +285,8 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 - `fill`: gösterge/çubuk dolarken dijital tırmanan bip + onay sesi (sayaçlar, oy yarışı, EXPOSED sıçramaları)
 - `typewriter`: daktilo tuşları + satır sonu zili (daktilo efektli kutular, isim etiketleri)
 Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `releases/part04/New_SFX_Demo.m4a`.
+
+## 21. Kesme süreleri ve efekt ses ayarı (23 Ekim)
+- Her bölümde render sonrası kesme ölçümü yapılır (`ffmpeg select=gt(scene,0.18)`): aynı görsel art arda iki kare olursa tek sahne gibi algılanır, sayılmaz. Hedef: hiçbir sahne **2,8 sn'den uzun** değil, hiçbir normal kesme **0,6 sn'den kısa** değil (negatif flaş ve siyah kesme hariç; onlar bilerek kısa).
+- Aynı görselin iki kırpması arka arkaya gelmez; aynı görsel tekrar kullanılacaksa araya başka görsel girer.
+- Efektler `SFX_GAIN=.42` ile daha yüksek; efekt çalarken müzik ~6 dB kısılır, efekt bitince ~350 ms'de geri gelir.

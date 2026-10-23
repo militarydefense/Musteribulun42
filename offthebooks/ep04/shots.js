@@ -22,15 +22,15 @@ const SHOTS = {
         pill('HALF = $6,930,000', 1240, t, at('hook', 'half') - .05, { bg: C.red, fg: C.white });
       } }),
   // the vote as a race, broken by the top comment
-  vote: beats([['q1', .5, .45, 1.15], ['q12', .5, .42, 1.05]],
-    { cuts: () => [at('vote', 'record')],
+  vote: beats([['q1', .5, .45, 1.15], ['p10', .5, .45, 1.1], ['q12', .5, .42, 1.05]],
+    { cuts: () => [at('vote', 'top'), at('vote', 'record')],
       after: t => {
         voteRace(t, S('vote'), [['RECORD', .5, '3 VOTES'], ['BOTH', .5, '3 VOTES']], 'TIED', at('vote', 'tied'), at('vote', 'top'));
         commentCard(t, at('vote', 'top') - .05, 'TOP COMMENT · PART 3', '"Record him"', 360, E('vote') + .1, 4);
         stamp('RECORD WINS', W / 2, 760, 96, C.gold, pop(t, at('vote', 'record'), .3), -.06);
       } }),
-  pocket: beats([['q6', .5, .5, 1.05], ['q6', .58, .62, 1.6], ['q14', .5, .5, 1.0], ['q14', .55, .62, 1.5]],
-    { cuts: () => [at('pocket', 'so'), at('pocket', 'phone'), at('pocket', 'recording')],
+  pocket: beats([['q6', .5, .5, 1.05], ['q14', .5, .5, 1.0], ['q14', .55, .62, 1.5]],
+    { cuts: () => [at('pocket', 'so'), at('pocket', 'recording')],
       after: t => {
         commentCard(t, S('pocket') + .05, 'YOUR IDEA · PART 3', '"jacket pocket"', 360, at('pocket', 'phone'));
         waveStrip(t, at('pocket', 'recording'), E('pocket') + .1, 1180);
@@ -38,8 +38,8 @@ const SHOTS = {
   door: beats([['r3', .5, .5, 1.0], ['r3', .42, .55, 1.5], ['r3', .64, .42, 2.0]],
     { cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
       after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 330, 'WEDNESDAY', '9:02 A.M.', { type: true, w: 520 }) }),
-  bossA: beats([['r4', .5, .45, 1.0], ['r4', .5, .38, 1.35], ['r4', .45, .3, 1.7]],
-    { cuts: () => [at('bossA', 'by'), at('bossA', 'or')],
+  bossA: beats([['r4', .5, .45, 1.0], ['r4', .45, .3, 1.6]],
+    { cuts: () => [at('bossA', 'or')],
       after: t => waveStrip(t, S('bossA'), E('bossA'), 1180) }),
   tape: beats([['q12', .5, .45, 1.0], ['q12', .5, .38, 1.35]],
     { cuts: () => [at('tape', 'extortion')],
@@ -58,8 +58,8 @@ const SHOTS = {
         infoBox(t, at('how', 'both'), at('how', 'same'), 330, 'AUTO-BACKUP', '2 PHOTOS → CLOUD ✓', { type: true });
         infoBox(t, at('how', 'same') + .1, E('how') + .1, 330, 'SIGNED IN ON', 'OFFICE PC · DESK 14', { type: true, border: 'rgba(229,72,77,.9)', tagCol: C.red });
       } }),
-  rule: beats([['r7', .5, .32, 1.6], ['r6', .5, .45, 1.15]],
-    { cuts: () => [at('rule', 'you')],
+  rule: beats([['r6', .3, .42, 1.8], ['r7', .5, .45, 1.0], ['r7', .5, .32, 1.5]],
+    { cuts: () => [at('rule', 'personal'), at('rule', 'you')],
       after: t => {
         overlayTag(t, S('rule') + .05, 'RULE 4', 'Nothing personal', 'on a work computer.');
         stamp('BROKEN', W / 2, 1180, 130, C.red, pop(t, at('rule', 'broke'), .3), -.08);
@@ -67,8 +67,8 @@ const SHOTS = {
   fact: beats([['r6', .62, .6, 1.4], ['p10', .5, .45, 1.1]],
     { cuts: () => [at('fact', 'see')],
       after: t => overlayTag(t, S('fact') + .05, 'REAL RULE', 'Company computer?', 'Company can see it.', 'U.S. employers can usually monitor their own devices.') }),
-  calm: beats([['q7', .5, .55, 1.1], ['r1', .5, .5, 1.1]],
-    { cuts: () => [at('calm', 'lottery')],
+  calm: beats([['q7', .5, .55, 1.1], ['q8', .5, .5, 1.1], ['r1', .5, .5, 1.1]],
+    { cuts: () => [at('calm', 'photo'), at('calm', 'lottery')],
       after: t => {
         pill('📷 PHOTO ≠ PRIZE', 1240, t, at('calm', 'photo') - .05, { t1: at('calm', 'lottery') });
         infoBox(t, at('calm', 'original') - .1, E('calm') + .1, 330, 'TO CLAIM', 'ORIGINAL TICKET ONLY', { type: true });
@@ -84,9 +84,9 @@ const SHOTS = {
         notif(t, at('upload', 'same') - .05, E('upload') + .1, 540, 'SECURITY ALERT', 'Also signed in', 'Office PC · Desk 14 · active now', { icon: C.red, glyph: '!', red: true });
         bigGauge(t, at('upload', 'see') - .05, E('upload') + .1, 'EXPOSED', 86, 93);
       } }),
-  choice: beats([['r8', .5, .42, 1.2], ['r7', .5, .4, 1.3]],
-    { cuts: () => [at('choice', 'leave')], after: t => choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT') }),
-  cta: beats([['r7', .5, .36, 1.4], ['r8', .5, .4, 1.3]],
+  choice: beats([['r8', .5, .42, 1.2], ['r7', .5, .4, 1.3], ['r11', .5, .5, 1.05]],
+    { cuts: () => [at('choice', 'out'), at('choice', 'leave')], after: t => choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT') }),
+  cta: beats([['q16', .5, .45, 1.1], ['r4', .5, .4, 1.2]],
     { cuts: () => [at('cta', 'follow')],
       after: t => {
         choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT');
@@ -96,8 +96,8 @@ const SHOTS = {
         });
       } }),
   // open loop right after the vote
-  third: beats([['q14', .55, .6, 1.45], ['r11', .5, .5, 1.0], ['r11', .32, .42, 1.9]],
-    { vig: .7, cuts: () => [at('third', 'someone'), at('third', 'said')],
+  third: beats([['q14', .55, .6, 1.45], ['r8', .5, .55, 1.3], ['r11', .5, .5, 1.0], ['r11', .32, .42, 1.9]],
+    { vig: .7, cuts: () => [at('third', 'play'), at('third', 'someone'), at('third', 'said')],
       after: t => {
         infoBox(t, at('third', 'play') - .1, at('third', 'someone') + .2, 330, '▶ PLAYING', 'Recording_0902.m4a', { w: 700, size: 52 });
         waveStrip(t, at('third', 'play'), E('third'), 1180, C.gold);

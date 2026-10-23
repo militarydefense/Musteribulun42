@@ -346,7 +346,17 @@ def level(x):  # mean short-term rms (dB) of the active parts
 MUSIC_DB = float(os.environ.get('MUSIC_DB', 2.5))
 music *= 10 ** ((level(voice) - MUSIC_DB - level(music[:len(voice)])) / 20)
 duck = smooth(duck, int(.08 * SR))
-mix = voice * 1.0 + music * gain * duck + sfx * .28
+# sound effects: louder, and the music dips under them (about 6 dB) and comes back when they end
+SFX_GAIN = float(os.environ.get('SFX_GAIN', .42))
+senv = smooth(np.abs(sfx), int(.03 * SR))
+sduck_raw = np.clip(senv / (np.percentile(senv[senv > 1e-4], 90) if (senv > 1e-4).any() else 1), 0, 1)
+# fast attack, slow release (~350 ms) so the music does not pump
+rel = np.exp(-1 / (.35 * SR)); hold = np.empty_like(sduck_raw); acc = 0.0
+for i, v in enumerate(sduck_raw[::32]):
+    acc = v if v > acc else acc * rel ** 32
+    hold[i * 32:(i + 1) * 32] = acc
+sduck = 1 - .5 * hold[:N]
+mix = voice * 1.0 + music * gain * duck * sduck + sfx * SFX_GAIN
 mix = np.tanh(mix * 1.1) * .95
 st = np.stack([mix, mix], 1)
 with wave.open(f"{build}/mix.wav", "wb") as f:
