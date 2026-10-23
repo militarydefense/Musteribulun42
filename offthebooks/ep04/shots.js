@@ -7,17 +7,18 @@
 loadImages(['r1', 'r3', 'r4', 'r6', 'r7', 'r8', 'r11', 's4', 'p5', 'p7', 'p8', 'p10', 'q1', 'q2', 'q6', 'q7', 'q8', 'q11', 'q12', 'q14', 'q15', 'q16']);
 const NO_CAPTION = new Set(['black', 'title']);
 const CAPTION_MODE = 'word';
+const INNER = new Set(['inner']);
 const KEY_WORDS = new Set(['HALF', 'FRIDAY', 'RECORD', 'RECORDING', 'TAPE', 'EXTORTION', 'SIGNATURE', 'ALONE', 'NOBODY', 'CLOUD', 'BROKE', 'ORIGINAL', 'LOCK', 'BAIT', 'NAME', 'EVERYONE']);
 
 const CHOICES = [['LOCK', 'Change the password. He knows you know.'], ['BAIT', 'Leave it open. Feed him a fake photo.']];
 
 const SHOTS = {
   // 0-1.8 s: cold open on the strongest line of the episode, on tape
-  cold: beats([['p8', .5, .45, 1.05], ['p8', .5, .36, 1.45]], { push: .3, cuts: () => [at('cold', 'signature')],
+  cold: beats([['p8', .5, .45, 1.05], ['p8', .5, .36, 1.45]], { tint: ['#B0302A', .45], push: .3, cuts: () => [at('cold', 'signature')],
     after: t => { waveStrip(t, 0, E('cold') + .05, 1180); recBadge(t, 0, W / 2, 1340, 47); } }),
   // premise + today's threat in one sentence; a giant money counter like the competitor's opening
   hook: beats([['r1', .5, .42, 1.0], ['q11', .5, .45, 1.05], ['r4', .5, .42, 1.05], ['q7', .55, .6, 1.5]],
-    { cuts: () => [at('hook', 'nobody'), at('hook', 'boss'), at('hook', 'seen')],
+    { tint: ['#F5B640', .25], cuts: () => [at('hook', 'nobody'), at('hook', 'boss'), at('hook', 'seen')],
       after: t => {
         bigCounter(t, S('hook'), at('hook', 'nobody'), 'YOU JUST WON', t => usd(count(t, S('hook') + .05, .95, 0, 50e6, easeOut)));
         nameTag(t, at('hook', 'boss') + .05, E('hook'), 70, 330, 'YOUR BOSS', 'MR. GRANT', 'WANTS HALF BY FRIDAY');
@@ -36,36 +37,39 @@ const SHOTS = {
   } },
   // the vote as a race, the top comment decides
   vote: beats([['q1', .5, .45, 1.15], ['q12', .5, .42, 1.05]],
-    { cuts: () => [at('vote', 'record')],
+    { tint: ['#F5B640', .2], cuts: () => [at('vote', 'record')],
       after: t => {
         voteRace(t, S('vote'), [['RECORD', .5, '3 VOTES'], ['BOTH', .5, '3 VOTES']], 'RECORD WON', at('vote', 'record'), E('vote') + .1);
         commentCard(t, at('vote', 'picked') - .05, 'TOP COMMENT · ❤ 4', '"Record him"', 760, E('vote') + .1, 4);
       } }),
   pocket: beats([['q6', .5, .5, 1.05], ['q14', .52, .55, 1.15]],
-    { cuts: () => [at('pocket', 'so')],
+    { tint: ['#3A6FB0', .3], cuts: () => [at('pocket', 'so')],
       after: t => {
         commentCard(t, S('pocket') + .05, 'YOUR IDEA · PART 3', '"jacket pocket"', 360, at('pocket', 'phone'));
         waveStrip(t, at('pocket', 'recording'), E('pocket') + .1, 1180);
       } }),
   door: beats([['r3', .5, .5, 1.0], ['r3', .42, .55, 1.5], ['r3', .64, .42, 2.0]],
-    { push: .12, cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
+    { tint: ['#8FB6E0', .25], push: .12, cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
       after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 350, 'WEDNESDAY', [['9:02', C.gold], [' A.M.', C.white]], { type: true, w: 520 }) }),
+  // Lucky's inner voice: close on the pocket, cold light, slow push
+  inner: beats([['q14', .52, .58, 1.3], ['r3', .4, .62, 1.7]], { tint: ['#3A6FB0', .45], push: .2, cuts: () => [(S('inner') + E('inner')) / 2],
+    after: t => recBadge(t, at('pocket', 'recording'), W / 2, 1340) }),
   bossA: beats([['r4', .5, .45, 1.0], ['r4', .45, .3, 1.6]],
-    { push: .16, cuts: () => [at('bossA', 'or')],
+    { tint: ['#C2402F', .4], push: .16, cuts: () => [at('bossA', 'or')],
       after: t => waveStrip(t, S('bossA'), E('bossA'), 1180) }),
   tape: beats([['q12', .5, .45, 1.0], ['q12', .5, .38, 1.35]],
-    { cuts: () => [at('tape', 'extortion')],
+    { tint: ['#F5B640', .3], cuts: () => [at('tape', 'extortion')],
       after: t => {
         stamp('EXTORTION', W / 2, 760, 110, C.red, pop(t, at('tape', 'extortion'), .3), -.06);
         pill('✓ ON TAPE', 1240, t, at('tape', 'tape') - .1);
       } }),
-  bossB: beats([['p8', .5, .45, 1.05], ['p8', .5, .4, 1.45]], { push: .2, cuts: () => [at('bossB', 'signature')] }),
+  bossB: beats([['p8', .5, .45, 1.05], ['p8', .5, .4, 1.45]], { tint: ['#B0302A', .5], push: .2, cuts: () => [at('bossB', 'signature')] }),
   // the planted clue
   slip: beats([['q7', .5, .5, 1.0], ['q7', .55, .62, 1.6], ['r8', .5, .42, 1.1]],
-    { push: .12, cuts: () => [(S('slip') + at('slip', 'nobody')) / 2, at('slip', 'nobody')],
+    { tint: ['#C9A46A', .55], push: .12, cuts: () => [(S('slip') + at('slip', 'nobody')) / 2, at('slip', 'nobody')],
       after: t => contra(t, at('slip', 'nobody') - .05, E('slip') + .1, ['YOU SIGNED IT', 'ALONE'], ['HE SAW', 'THE SIGNATURE']) }),
   how: beats([['q8', .5, .5, 1.0], ['r6', .4, .44, 1.3], ['r7', .5, .42, 1.15]],
-    { cuts: () => [at('how', 'went'), at('how', 'logged')],
+    { tint: ['#2E5FA8', .45], cuts: () => [at('how', 'went'), at('how', 'logged')],
       after: t => {
         typedList(t, at('how', 'both') - .1, E('how') + .1, 350, 'HOW HE SAW IT', [
           [at('how', 'both'), [['1. You ', C.white], ['photographed', C.gold], [' the ticket', C.white]]],
@@ -73,35 +77,35 @@ const SHOTS = {
           [at('how', 'same') + .1, [['3. ', C.white], ['OFFICE PC', C.red], [': still signed in', C.white]]]]);
       } }),
   rule: beats([['r6', .3, .42, 1.8], ['r7', .5, .32, 1.5]],
-    { cuts: () => [(S('rule') + E('rule')) / 2],
+    { tint: ['#2E5FA8', .45], cuts: () => [(S('rule') + E('rule')) / 2],
       after: t => {
         overlayTag(t, S('rule') + .05, 'RULE 4', 'Nothing personal', 'on a work computer.');
         stamp('BROKEN', W / 2, 1180, 130, C.red, pop(t, at('rule', 'broke'), .3), -.08);
       } }),
   fact: beats([['r6', .62, .6, 1.4], ['p10', .5, .45, 1.1]],
-    { cuts: () => [at('fact', 'see')],
+    { tint: ['#2E5FA8', .35], cuts: () => [at('fact', 'see')],
       after: t => overlayTag(t, S('fact') + .05, 'REAL RULE', 'Company computer?', 'Company can see it.', 'U.S. employers can usually monitor their own devices.') }),
   calm: beats([['q7', .5, .55, 1.1], ['q8', .5, .5, 1.1], ['r1', .5, .5, 1.1]],
-    { cuts: () => [at('calm', 'photo'), at('calm', 'lottery')],
+    { tint: ['#F5B640', .35], cuts: () => [at('calm', 'photo'), at('calm', 'lottery')],
       after: t => {
         pill('📷 PHOTO ≠ PRIZE', 1240, t, at('calm', 'photo') - .05, { t1: at('calm', 'lottery') });
         infoBox(t, at('calm', 'original') - .1, E('calm') + .1, 350, 'TO CLAIM', [['ORIGINAL', C.gold], [' TICKET ONLY', C.white]], { type: true });
       } }),
   hr: beats([['q15', .5, .5, 1.0], ['q15', .62, .5, 1.5]],
-    { cuts: () => [at('hr', 'hold')],
+    { tint: ['#8FB6E0', .25], cuts: () => [at('hr', 'hold')],
       after: t => commentCard(t, S('hr') + .05, 'YOUR COMMENTS · PART 3', '"record and then report"', 360, E('hr') + .1) }),
   // the second threat
   upload: beats([['q14', .5, .5, 1.0], ['r8', .5, .42, 1.1], ['r7', .5, .4, 1.15]],
-    { push: .15, cuts: () => [at('upload', 'recording'), at('upload', 'same')],
+    { tint: ['#2E5FA8', .45], push: .15, cuts: () => [at('upload', 'recording'), at('upload', 'same')],
       after: t => {
         notif(t, at('upload', 'buzzed') - .1, E('upload') + .1, 330, 'CLOUD · NOW', 'Upload complete', 'Recording_0902.m4a', {});
         notif(t, at('upload', 'same') - .05, E('upload') + .1, 540, 'SECURITY ALERT', 'Also signed in', 'Office PC · Desk 14 · active now', { icon: C.red, glyph: '!', red: true });
         bigGauge(t, at('upload', 'see') - .05, E('upload') + .1, 'EXPOSED', 86, 93);
       } }),
   choice: beats([['r8', .5, .42, 1.2], ['r7', .5, .4, 1.3], ['r11', .5, .5, 1.05]],
-    { cuts: () => [at('choice', 'out'), at('choice', 'leave')], after: t => choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT') }),
+    { tint: ['#B0302A', .3], cuts: () => [at('choice', 'out'), at('choice', 'leave')], after: t => choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT') }),
   cta: beats([['q16', .5, .45, 1.1], ['r4', .5, .4, 1.2]],
-    { cuts: () => [at('cta', 'follow')],
+    { tint: ['#B0302A', .3], cuts: () => [at('cta', 'follow')],
       after: t => {
         choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LOCK OR BAIT');
         const f = pop(t, at('cta', 'follow') - .1, .4);
@@ -111,7 +115,7 @@ const SHOTS = {
       } }),
   // open loop right after the vote
   third: beats([['q14', .55, .6, 1.45], ['r8', .5, .55, 1.3], ['r11', .45, .46, 1.3]],
-    { vig: .7, push: .22, cuts: () => [at('third', 'play'), at('third', 'someone')],
+    { tint: ['#1E3F7A', .5], vig: .7, push: .22, cuts: () => [at('third', 'play'), at('third', 'someone')],
       after: t => {
         infoBox(t, at('third', 'play') - .1, at('third', 'someone') + .2, 330, '▶ PLAYING', 'Recording_0902.m4a', { w: 700, size: 52 });
         waveStrip(t, at('third', 'play'), E('third'), 1180, C.gold);
@@ -162,6 +166,7 @@ function SFX() {
   // knock on his door; the time types out
   add('step', S('door') + .1, .45); add('typewriter', S('door') + .15, .4, .45); add('knock3', at('door', 'knock') - .02, 1);
   add('keyboard', at('door', 'doesnt') - .2, .35, 1.2);
+  add('silence', S('inner') - .1, E('inner') - S('inner') + .2); add('thud', S('inner') + .1, .5); add('thud', S('inner') + .55, .45);
   add('drone', S('bossA'), .45); add('thump', at('bossA', 'half'), .6); add('thump', at('bossA', 'or'), .6);
   add('stamp', at('tape', 'extortion'), .9); add('rec_beep', at('tape', 'tape') - .1, .55);
   add('silence', at('bossB', 'signature') - .05, .9); add('boom', at('bossB', 'signature'), .9);

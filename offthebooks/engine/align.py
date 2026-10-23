@@ -183,7 +183,7 @@ for li, it in enumerate(items):
     c0, c1 = chunk[li]
     prev = items[li - 1] if li else None
     if prev is not None and "say" in prev:
-        gap = PAUSE if prev["shot"] == it["shot"] else SHOT_PAUSE
+        gap = it.get("pause", PAUSE if prev["shot"] == it["shot"] else SHOT_PAUSE)  # "pause": dramatic silence before a line
         audio.append(np.zeros(int(gap * SR), np.int16)); t += gap
     off = t - c0
     audio.append(pcm[int(c0 * SR): int(c1 * SR)])

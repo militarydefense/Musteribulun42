@@ -111,6 +111,10 @@ function beats(frames, o = {}) {
       // o.push: a slow accelerating dolly-in for tense moments, with the edges closing in (depth)
       const push = o.push ? o.push * Math.pow(k, 1.4) : .045 * k;
       drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + push)], { dx, dy });
+      if (o.tint) {  // per-scene colour mood: [css colour, strength]
+        ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = o.tint[1]; ctx.fillStyle = o.tint[0]; ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = 'color'; ctx.globalAlpha = o.tint[1] * .35; ctx.fillRect(0, 0, W, H); ctx.restore();
+      }
       if (o.push) {
         const g = ctx.createRadialGradient(W / 2, H * .45, H * (.42 - .14 * k), W / 2, H * .45, H * .8);
         g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(3,4,10,${.15 + .45 * k})`);
@@ -257,6 +261,7 @@ function wordCaption(t) {
   const w = WORDS.find(w => t >= w.s - .03 && t < w.until);
   if (!w) return;
   const str = w.w.replace(/[,.:;!?…"]+$/g, '').replace(/^"/, '').toUpperCase();
+  const inner = typeof INNER !== 'undefined' && T.lines.some(l => l.shot && INNER.has(l.shot) && l.words.includes(w));
   if (!str) return;
   let size = 84;
   ctx.save();
@@ -265,7 +270,7 @@ function wordCaption(t) {
   if (tw > 820) size *= 820 / tw;
   const k = easeOut(prog(t, w.s - .03, .09));
   const hot = isNum(str) || (typeof KEY_WORDS !== 'undefined' && KEY_WORDS.has(str.replace(/[^A-Z]/g, '')));
-  withT(W / 2, 1500, lerp(1.12, 1, k), 0, () => text(str, 0, 0, size, hot ? C.gold : C.white,
+  withT(W / 2, 1500, lerp(1.12, 1, k), 0, () => text(inner ? `(${str.toLowerCase()})` : str, 0, 0, size, inner ? '#A9C4EE' : hot ? C.gold : C.white,
     { stroke: '#05070F', strokeW: 12, shadow: 'rgba(0,0,0,.8)', shadowBlur: 24, shadowY: 6 }));
   ctx.restore();
 }

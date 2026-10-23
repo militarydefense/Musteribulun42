@@ -30,20 +30,29 @@
   "show": "9 a.m., you knock on his door, and he doesn't even look up."
  },
  {
+  "shot": "inner",
+  "say": "Don't look at the pocket. Don't look at the pocket.",
+  "pause": 0.5
+ },
+ {
   "shot": "bossA",
-  "say": "Half. By Friday. Or everyone in this building finds out."
+  "say": "Half. By Friday. Or everyone in this building finds out.",
+  "pause": 0.5
  },
  {
   "shot": "tape",
-  "say": "That's it. That's extortion, and it's on tape."
+  "say": "That's it. That's extortion, and it's on tape.",
+  "pause": 0.7
  },
  {
   "shot": "bossB",
-  "say": "Oh, and nice signature, by the way."
+  "say": "Oh, and nice signature, by the way.",
+  "pause": 1.0
  },
  {
   "shot": "slip",
-  "say": "You signed that ticket alone, in your kitchen, at midnight. Nobody saw it."
+  "say": "You signed that ticket alone, in your kitchen, at midnight. Nobody saw it.",
+  "pause": 0.6
  },
  {
   "shot": "how",
@@ -51,7 +60,8 @@
  },
  {
   "shot": "rule",
-  "say": "Rule four: never log into anything personal on a work computer. You broke it."
+  "say": "Rule four: never log into anything personal on a work computer. You broke it.",
+  "pause": 0.5
  },
  {
   "shot": "fact",
@@ -67,11 +77,13 @@
  },
  {
   "shot": "upload",
-  "say": "Because your phone just buzzed. Your recording finished uploading, to the same cloud he can see."
+  "say": "Because your phone just buzzed. Your recording finished uploading, to the same cloud he can see.",
+  "pause": 0.8
  },
  {
   "shot": "choice",
-  "say": "So, do you lock him out right now, or leave the door open and feed him a fake?"
+  "say": "So, do you lock him out right now, or leave the door open and feed him a fake?",
+  "pause": 0.6
  },
  {
   "shot": "cta",
@@ -79,7 +91,8 @@
  },
  {
   "shot": "third",
-  "say": "And one more thing. Play the recording back. Someone else is in that room, and they just said your name."
+  "say": "And one more thing. Play the recording back. Someone else is in that room, and they just said your name.",
+  "pause": 1.0
  },
  {
   "shot": "black",
