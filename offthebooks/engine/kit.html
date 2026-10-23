@@ -239,6 +239,30 @@ function captions(t) {
   ctx.restore();
 }
 
+// ---------- captions (one big word at a time) ----------
+let WORDS = null;
+function wordCaption(t) {
+  if (!WORDS) {
+    WORDS = [];
+    for (const l of T.lines) if (!l.card && !NO_CAPTION.has(l.shot)) for (const w of l.words) WORDS.push(w);
+    WORDS.forEach((w, i) => { const nx = WORDS[i + 1]; w.until = nx ? Math.min(nx.s, w.e + .35) : w.e + .5; });
+  }
+  const w = WORDS.find(w => t >= w.s - .03 && t < w.until);
+  if (!w) return;
+  const str = w.w.replace(/[,.:;!?…"]+$/g, '').replace(/^"/, '').toUpperCase();
+  if (!str) return;
+  let size = 112;
+  ctx.save();
+  ctx.font = `900 ${size}px ${SANS}`;
+  const tw = ctx.measureText(str).width;
+  if (tw > 900) size *= 900 / tw;
+  const k = easeOut(prog(t, w.s - .03, .09));
+  const hot = isNum(str) || (typeof KEY_WORDS !== 'undefined' && KEY_WORDS.has(str.replace(/[^A-Z]/g, '')));
+  withT(W / 2, 1500, lerp(1.18, 1, k), 0, () => text(str, 0, 0, size, hot ? C.gold : C.white,
+    { stroke: '#05070F', strokeW: 16, shadow: 'rgba(0,0,0,.8)', shadowBlur: 24, shadowY: 6 }));
+  ctx.restore();
+}
+
 /*EPISODE*/
 
 // ---------- main ----------
@@ -267,7 +291,7 @@ window.render = function (t) {
   if (def.img) { vignette(def.vig ?? .5); grain(t, .07); } else grain(t, .045);
   const h = HUD(t, sh.id);
   if (h) drawHud(h, h.k ?? 1);
-  if (!NO_CAPTION.has(sh.id)) captions(t);
+  if (!NO_CAPTION.has(sh.id)) (typeof CAPTION_MODE !== 'undefined' && CAPTION_MODE === 'word' ? wordCaption(t) : captions(t));
   if (window.OVERLAY_EXTRA) window.OVERLAY_EXTRA(t, sh.id);
 };
 window.events = () => SFX();

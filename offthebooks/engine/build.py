@@ -16,6 +16,8 @@ out = ep / "build"
 kit = (engine / "kit.html").read_text()
 kit = kit.replace("url(FONTS/", f"url({(engine / 'fonts').as_uri()}/")
 shots = (ep / "shots.js").read_text()
+if "/*UI*/" in shots:  # shared overlay widgets (Part 4+)
+    shots = shots.replace("/*UI*/", (engine / "ui.js").read_text())
 if "/*COMMON*/" in shots:  # story clips share helpers in ../common/story.js
     shots = shots.replace("/*COMMON*/", (ep.parent / "common" / "story.js").read_text())
 (out / "scene.html").write_text(kit.replace("/*EPISODE*/", shots))
