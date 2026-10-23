@@ -26,7 +26,7 @@ const SHOTS = {
     { tint: ['#F5B640', .25], cuts: () => [at('hook', 'nobody'), at('hook', 'boss'), at('hook', 'seen')],
       after: t => {
         bigCounter(t, S('hook'), at('hook', 'nobody'), 'YOU JUST WON', t => usd(count(t, S('hook') + .05, .95, 0, 50e6, easeOut)));
-        nameTag(t, at('hook', 'boss') + .05, E('hook'), 70, 330, 'YOUR BOSS', 'MR. GRANT', 'WANTS HALF BY FRIDAY');
+        nameTag(t, at('hook', 'boss') + .05, E('hook'), 70, 330, 'YOUR BOSS', 'MR. GRANT', 'WANTS HALF BY 5 PM TODAY');
         stamp('HE SAW IT', W / 2, 1220, 120, C.red, pop(t, at('hook', 'signature') - .05, .3), -.07);
       } }),
   // recap flashes, then PART 4 slams on black (the competitor's "PART II" card)
@@ -55,7 +55,7 @@ const SHOTS = {
       } }),
   door: beats([['r3', .5, .5, 1.0], ['r3', .42, .55, 1.5], ['r3', .64, .42, 2.0]],
     { tint: ['#8FB6E0', .25], push: .12, cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
-      after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 350, 'WEDNESDAY', [['9:02', C.gold], [' A.M.', C.white]], { type: true, w: 520 }) }),
+      after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 350, 'FRIDAY', [['9:02', C.gold], [' A.M.', C.white]], { type: true, w: 520 }) }),
   // Lucky's inner voice: close on the pocket, cold light, slow push
   inner: beats([['q14', .52, .58, 1.3], ['r3', .4, .62, 1.7]], { tint: ['#3A6FB0', .45], push: .2, cuts: () => [(S('inner') + E('inner')) / 2],
     after: t => recBadge(t, at('pocket', 'recording'), W / 2, 1340) }),
@@ -131,8 +131,8 @@ const SHOTS = {
 
 // recording badge stays on while the phone records; flashes and black cuts on the reveals
 window.OVERLAY_EXTRA = (t, id) => {
-  // deadline is always on screen once the day starts (Wed 9:02 -> Fri 17:00); turns red after the second threat
-  if (!HUD_OFF.has(id) && t >= S('door')) deadlineChip(t, S('door') + .2, 2 * 86400 + 7 * 3600 + 58 * 60, 'FRIDAY 5PM', t > at('upload', 'same'));
+  // deadline is always on screen once the day starts (Fri 9:02 -> Fri 17:00); turns red after the second threat
+  if (!HUD_OFF.has(id) && t >= S('door')) deadlineChip(t, S('door') + .2, 7 * 3600 + 58 * 60, 'TODAY 5PM', t > at('upload', 'same'));
   if (t > at('pocket', 'recording') && t < E('tape')) recBadge(t, at('pocket', 'recording'), W / 2, 1340);
   negFlash(t, at('cold', 'signature'));
   negFlash(t, at('bossB', 'signature'));

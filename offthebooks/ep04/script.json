@@ -36,8 +36,9 @@
  },
  {
   "shot": "bossA",
-  "say": "Half. By Friday. Or everyone in this building finds out.",
-  "pause": 0.5
+  "say": "Half. By five o'clock today. Or everyone in this building finds out.",
+  "pause": 0.5,
+  "show": "Half. By 5 o'clock today. Or everyone in this building finds out."
  },
  {
   "shot": "tape",
@@ -87,7 +88,8 @@
  },
  {
   "shot": "cta",
-  "say": "Comment lock or bait, and follow, because Friday is two days away."
+  "say": "Comment lock or bait, and follow, because his deadline is five p.m. today.",
+  "show": "Comment lock or bait, and follow, because his deadline is 5 p.m. today."
  },
  {
   "shot": "third",
