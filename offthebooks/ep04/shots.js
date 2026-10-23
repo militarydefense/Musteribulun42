@@ -138,7 +138,7 @@ function SFX() {
   const ev = [];
   const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
   // hook: counter fills digitally, name tag types out
-  add('fill', .05, .55, .95); add('cash_drop', 1.1, .45); add('stamp', at('hook', 'nobody'), .7);
+  add('money_count', .05, .8, .95);  // like the competitor's money counter: ratchet clicks, then a ding add('stamp', at('hook', 'nobody'), .7);
   add('typewriter', at('hook', 'boss') + .1, .45, .9); add('thump', at('hook', 'half') - .05, .9);
   // vote race bars fill
   add('click', S('vote'), .5); add('fill', S('vote') + .2, .5, 1.1); add('thump', at('vote', 'tied'), .7);

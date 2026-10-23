@@ -266,8 +266,21 @@ def typewriter(d=1.0):  # typewriter keys, ends with the carriage bell
     return x
 
 
+def money_count(d=.9):  # money counter: fast metallic ratchet clicks (~28/s, 7.3 & 11.7 kHz), then a bright ding
+    x = np.zeros(int((d + 1.0) * SR)); t = 0.0
+    while t < d:
+        ct = tt(.012); s = int(t * SR)
+        c = (np.sin(2 * np.pi * 7350 * ct) + .6 * np.sin(2 * np.pi * 11700 * ct) + .3 * noise(len(ct))) * np.exp(-ct * 420)
+        _put(x, s, c * rng.uniform(.7, 1) * .5)
+        t += .036
+    bt = tt(1.0); s = int(d * SR)
+    ding = np.sin(2 * np.pi * 8650 * bt) * np.exp(-bt * 22) * .45 + np.sin(2 * np.pi * 4850 * bt) * np.exp(-bt * 4.5) * (1 + .15 * np.sin(2 * np.pi * 7 * bt)) * .3
+    _put(x, s, ding)
+    return x
+
+
 SYN.update({"knock3": knock3, "keyboard": keyboard, "ring": ring, "buzz": buzz, "rec_beep": rec_beep,
-            "crickets": crickets, "fill": fill, "typewriter": typewriter})
+            "crickets": crickets, "fill": fill, "typewriter": typewriter, "money_count": money_count})
 sfx = np.zeros(N)
 mutes = []
 for e in EV:
