@@ -238,7 +238,7 @@ def crickets(d=6.0):  # night ambience: a few crickets chirping at different rat
             for p in range(int(rng.integers(3, 5))):
                 s = int((start + p * .034) * SR); pt = tt(.022)
                 _put(x, s, (np.sin(2 * np.pi * f * pt) * np.sin(np.pi * pt / .022)) * rng.uniform(.5, 1) * .4)
-    return x * env(len(t), .6, .8)
+    return x * env(len(t), .15, .35)
 
 
 def fill(d=1.1):  # digital bar filling up: stepping blips that climb, then a confirm chime

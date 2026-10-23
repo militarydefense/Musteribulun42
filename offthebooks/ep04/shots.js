@@ -152,10 +152,9 @@ function SFX() {
   add('stamp', at('tape', 'extortion'), .9); add('rec_beep', at('tape', 'tape') - .1, .55);
   add('silence', at('bossB', 'signature') - .05, .9); add('boom', at('bossB', 'signature'), .9);
   // midnight kitchen flashback
-  add('crickets', S('slip'), .7, E('slip') - S('slip') + .3); add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
+  add('crickets', S('slip'), .5, Math.min(1.8, at('slip', 'midnight') - S('slip')));  // 1-2 s, stops before the cut add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
   // his screen, at night: crickets outside, his keyboard, boxes typing
   add('click', S('how') + .1, .5); add('typewriter', at('how', 'both'), .4, .8); add('beep', at('how', 'cloud'), .3);
-  add('crickets', at('how', 'cloud'), .55, E('rule') - at('how', 'cloud'));
   add('glitch', at('how', 'same'), .45); add('typewriter', at('how', 'same') + .1, .4, .8); add('typewriter', at('how', 'cloud') - .2, .4, .7); add('tick', S('door') + .2, .5);
   add('keyboard', at('how', 'work') - .1, .5, E('how') - at('how', 'work') + 1.6); add('fill', at('how', 'work'), .4, .5);
   add('knock', at('rule', 'rule'), .6); add('stamp', at('rule', 'broke'), 1);
