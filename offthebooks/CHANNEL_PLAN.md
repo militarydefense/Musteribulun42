@@ -249,3 +249,7 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 3. YouTube akışı için ilk kare: parlak, yakın plan yüz, tek iri satır, ilk 0,5 sn'de hareket (Part 2 YouTube akışında %46 kaldı).
 4. Zamanlanmış yayın denemesi: 02:00 TR (19:00 ET).
 5. Oylar ikiye bölününce "so you did both" ile iki tarafı da hikâyeye yaz.
+
+## 17. Hesabın sesi (23 Ekim)
+- İzleyiciye görünen hiçbir metinde Türkiye saati ya da "(TR)" yazılmaz. Saat gerekiyorsa ET (ABD Doğu), tercihen göreli süre: "Votes close in 6 hours", "Part 4 drops tonight".
+- Çeviri: 20:00 TR = 13:00 ET (Ekim–Kasım başı, EDT); 3 Kasım sonrası (EST) 20:00 TR = 12:00 ET.

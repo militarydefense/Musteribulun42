@@ -32,7 +32,7 @@ Parts 1 & 2 are on my profile. Fiction for entertainment, not financial or legal
 ```
 **Sabitlenecek yorum:**
 ```
-RECORD or REPORT? 👇 Votes close tomorrow 6PM (TR). The majority writes Part 4.
+RECORD or REPORT? 👇 Votes close tomorrow 1PM ET. The majority writes Part 4.
 ```
 
 ## YouTube Shorts
