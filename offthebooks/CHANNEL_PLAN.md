@@ -309,3 +309,19 @@ Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `release
 - Ağustos böceği/cırcır sesi **kullanılmaz** (ofis hikâyesinde yersiz duruyor).
 - Tek kelimelik altyazı 84 px (önce 112), en fazla 820 px genişlik.
 - Siyah kare kesmesi kullanılmaz; negatif flaş yalnızca 1–3 büyük ters köşede.
+
+## 25. Rakip 1 Part 8 analizi: "hikâye tonu" (23 Ekim)
+Ölçüm (anlatım temposu, 5 sn pencereler): rakip 108–240 kelime/dk (sapma 39), biz 132–216 (sapma 23). Ortalama aynı (174), fark **değişkenlikte**: rakip bilgi verirken hızlanıyor, açıklamada yavaşlıyor. Rakipte 0,35 sn'den uzun 17 duraklama, ortalama 0,76 sn, en uzunu 1,7 sn ("No name." sonrası). Bizde 32 duraklama, ortalama 0,56 sn: çok sayıda eşit, kısa boşluk = "düz akış" hissi.
+Görsel/ses gözlemleri:
+1. Her sahnenin kendi rengi var: kasa sahnesi pembe-kırmızı, kapı yağmurda soğuk mavi, büfe sıcak sarı, siluet sahnesi far ışığı. Bizde neredeyse her sahne aynı lacivert-altın.
+2. Karakter kendi sesiyle, mırıldanır gibi konuşuyor ("I know that signature.", "Somebody took my mail."); yakın plan yüz ifadesiyle eşleşiyor.
+3. Geçişler hikâyedeki nesneden doğuyor: beyaz kopya üstüne sarı kopya kayıyor, posta damgası basılıyor, kimlik kartında isim daktiloyla yazılıyor, farlar silueti açığa çıkarıyor, dev sayaç ("26 → 1,355 NAMED HIM") karakterin üstünde dönüyor.
+4. İzleyici hikâyenin karakteri: "200,000 of you stole $10 million. Together." / "Over 1,300 of you named the man who helped you."
+5. Efektler sahneye özgü ve anlatıcının altında; müzik sürekli ve gerilimi taşıyor.
+Uygulama planı (Part 5):
+- Anlatıcı: duygu etiketleri destekleyen ses (ElevenLabs v3: [whispers], [pause], [slowly], [nervously]) denenir; bilgi cümleleri hızlı, açıklamalar yavaş ve 0,8–1,5 sn dramatik sessizlikle. `align.py`'a satır başına özel duraklama (`"pause"`).
+- Lucky'nin iç sesi: fısıltı, hafif yankı/alçak geçiren filtre, italik altyazı.
+- Karakter tonlaması sahneye göre (Grant: alaycı / tehditkâr / panik).
+- Sahne başına renk tonu (soğuk mavi = tehdit, sıcak = güvenli, kırmızı = tehlike, soluk = geçmiş) — kodla, kredisiz.
+- Nesneden doğan geçişler (kâğıt kayması, ekran içinden geçiş, damga, ışık parlaması) — kodla.
+- Lucky için 3–4 ifade varyasyonu (korku, rahatlama, öfke, kurnaz gülümseme).
