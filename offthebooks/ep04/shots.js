@@ -25,14 +25,14 @@ const SHOTS = {
       } }),
   // recap flashes, then PART 4 slams on black (the competitor's "PART II" card)
   title: { noPunch: true, draw(t, lt, dur) {
-    if (lt < .36) { const f = ['q6', 'q8', 'q14'][Math.min(2, Math.floor(lt / .12))]; drawImg(f, [.5, .5, 1.15], {}); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H); return; }
+    if (lt < .8) { const f = ['q6', 'q14'][Math.min(1, Math.floor(lt / .4))]; drawImg(f, [.5, .5, 1.15], {}); ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, 0, W, H); return; }
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
-    const k = pop(lt, .36, .3), green = '#58D68D';
-    withT(W / 2, 860, k * lerp(1.25, 1, easeOut(prog(lt, .36, .4))), 0, () => {
+    const k = pop(lt, .8, .3), green = '#58D68D';
+    withT(W / 2, 860, k * lerp(1.25, 1, easeOut(prog(lt, .8, .4))), 0, () => {
       text('PART', 0, -40, 150, green, { shadow: 'rgba(88,214,141,.5)', shadowBlur: 40 });
       text('4', 0, 140, 210, green, { shadow: 'rgba(88,214,141,.5)', shadowBlur: 50 });
     });
-    mono('ON TAPE', W / 2, 1120, 34, C.white, { weight: 700, spacing: 12, alpha: easeOut(prog(lt, .6, .3)) });
+    mono('ON TAPE', W / 2, 1120, 34, C.white, { weight: 700, spacing: 12, alpha: easeOut(prog(lt, 1.0, .3)) });
   } },
   // the vote as a race, the top comment decides
   vote: beats([['q1', .5, .45, 1.15], ['q12', .5, .42, 1.05]],
@@ -41,8 +41,8 @@ const SHOTS = {
         voteRace(t, S('vote'), [['RECORD', .5, '3 VOTES'], ['BOTH', .5, '3 VOTES']], 'RECORD WON', at('vote', 'record'), E('vote') + .1);
         commentCard(t, at('vote', 'picked') - .05, 'TOP COMMENT · ❤ 4', '"Record him"', 760, E('vote') + .1, 4);
       } }),
-  pocket: beats([['q6', .5, .5, 1.05], ['q14', .5, .5, 1.0], ['q14', .55, .62, 1.5]],
-    { cuts: () => [at('pocket', 'so'), at('pocket', 'recording')],
+  pocket: beats([['q6', .5, .5, 1.05], ['q14', .52, .55, 1.15]],
+    { cuts: () => [at('pocket', 'so')],
       after: t => {
         commentCard(t, S('pocket') + .05, 'YOUR IDEA · PART 3', '"jacket pocket"', 360, at('pocket', 'phone'));
         waveStrip(t, at('pocket', 'recording'), E('pocket') + .1, 1180);
@@ -62,18 +62,18 @@ const SHOTS = {
   bossB: beats([['p8', .5, .45, 1.05], ['p8', .5, .4, 1.45]], { push: .2, cuts: () => [at('bossB', 'signature')] }),
   // the planted clue
   slip: beats([['q7', .5, .5, 1.0], ['q7', .55, .62, 1.6], ['r8', .5, .42, 1.1]],
-    { push: .12, cuts: () => [at('slip', 'midnight'), at('slip', 'nobody')],
+    { push: .12, cuts: () => [(S('slip') + at('slip', 'nobody')) / 2, at('slip', 'nobody')],
       after: t => contra(t, at('slip', 'nobody') - .05, E('slip') + .1, ['YOU SIGNED IT', 'ALONE'], ['HE SAW', 'THE SIGNATURE']) }),
-  how: beats([['q8', .5, .5, 1.0], ['r6', .5, .45, 1.0], ['r6', .3, .42, 1.8], ['r7', .5, .45, 1.05], ['r7', .5, .32, 1.5]],
-    { cuts: () => [at('how', 'both'), at('how', 'cloud'), at('how', 'same'), at('how', 'work')],
+  how: beats([['q8', .5, .5, 1.0], ['r6', .4, .44, 1.3], ['r7', .5, .42, 1.15]],
+    { cuts: () => [at('how', 'went'), at('how', 'logged')],
       after: t => {
         typedList(t, at('how', 'both') - .1, E('how') + .1, 350, 'HOW HE SAW IT', [
           [at('how', 'both'), [['1. You ', C.white], ['photographed', C.gold], [' the ticket', C.white]]],
           [at('how', 'cloud') - .2, [['2. It backed up to your ', C.white], ['CLOUD', C.gold]]],
           [at('how', 'same') + .1, [['3. ', C.white], ['OFFICE PC', C.red], [': still signed in', C.white]]]]);
       } }),
-  rule: beats([['r6', .3, .42, 1.8], ['r7', .5, .45, 1.0], ['r7', .5, .32, 1.5]],
-    { cuts: () => [at('rule', 'personal'), at('rule', 'you')],
+  rule: beats([['r6', .3, .42, 1.8], ['r7', .5, .32, 1.5]],
+    { cuts: () => [(S('rule') + E('rule')) / 2],
       after: t => {
         overlayTag(t, S('rule') + .05, 'RULE 4', 'Nothing personal', 'on a work computer.');
         stamp('BROKEN', W / 2, 1180, 130, C.red, pop(t, at('rule', 'broke'), .3), -.08);
@@ -110,8 +110,8 @@ const SHOTS = {
         });
       } }),
   // open loop right after the vote
-  third: beats([['q14', .55, .6, 1.45], ['r8', .5, .55, 1.3], ['r11', .5, .5, 1.0], ['r11', .32, .42, 1.9]],
-    { vig: .7, push: .22, cuts: () => [at('third', 'play'), at('third', 'someone'), at('third', 'said')],
+  third: beats([['q14', .55, .6, 1.45], ['r8', .5, .55, 1.3], ['r11', .45, .46, 1.3]],
+    { vig: .7, push: .22, cuts: () => [at('third', 'play'), at('third', 'someone')],
       after: t => {
         infoBox(t, at('third', 'play') - .1, at('third', 'someone') + .2, 330, '▶ PLAYING', 'Recording_0902.m4a', { w: 700, size: 52 });
         waveStrip(t, at('third', 'play'), E('third'), 1180, C.gold);
@@ -129,7 +129,6 @@ window.OVERLAY_EXTRA = (t, id) => {
   negFlash(t, at('bossB', 'signature'));
   negFlash(t, at('upload', 'same'));
   negFlash(t, at('third', 'name'), .2);
-  blackCut(t, at('slip', 'nobody') - .32, .28);
 };
 
 // ---- HUD: EXPOSED only goes up ----
@@ -155,7 +154,7 @@ function SFX() {
   // money counter (ratchet + ding), name tag types, HE SAW IT stamp
   add('money_count', S('hook') + .05, .85, .95); add('typewriter', at('hook', 'boss') + .05, .45, .9); add('stamp', at('hook', 'signature') - .05, .9);
   // recap flashes + riser into the PART 4 slam with a sub boom
-  add('riser_short', S('title') - 1.0, .55); add('glitch', S('title'), .5); add('boom', S('title') + .36, 1);
+  add('riser_short', S('title') - .45, .55); add('glitch', S('title'), .5); add('boom', S('title') + .8, 1);
   // vote race bars fill digitally, the top comment pops, RECORD WON
   add('fill', S('vote') + .2, .55, 1.1); add('pin', at('vote', 'picked'), .6); add('stamp', at('vote', 'record'), .9);
   // the phone starts recording
@@ -166,8 +165,8 @@ function SFX() {
   add('drone', S('bossA'), .45); add('thump', at('bossA', 'half'), .6); add('thump', at('bossA', 'or'), .6);
   add('stamp', at('tape', 'extortion'), .9); add('rec_beep', at('tape', 'tape') - .1, .55);
   add('silence', at('bossB', 'signature') - .05, .9); add('boom', at('bossB', 'signature'), .9);
-  // midnight kitchen flashback: crickets for 1-2 s only, they stop before the cut
-  add('crickets', S('slip'), .5, Math.min(1.8, at('slip', 'midnight') - S('slip'))); add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
+  // midnight kitchen flashback
+  add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
   // his screen, at night: his keyboard, boxes typing
   add('click', S('how') + .1, .5); add('typewriter', at('how', 'both'), .4, .8); add('beep', at('how', 'cloud'), .3);
   add('glitch', at('how', 'same'), .45); add('typewriter', at('how', 'same') + .1, .4, .8); add('typewriter', at('how', 'cloud') - .2, .4, .7); add('tick', S('door') + .2, .5);

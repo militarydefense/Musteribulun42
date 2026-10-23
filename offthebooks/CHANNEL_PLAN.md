@@ -287,7 +287,7 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `releases/part04/New_SFX_Demo.m4a`.
 
 ## 21. Kesme süreleri ve efekt ses ayarı (23 Ekim)
-- Her bölümde render sonrası kesme ölçümü yapılır (`ffmpeg select=gt(scene,0.18)`): aynı görsel art arda iki kare olursa tek sahne gibi algılanır, sayılmaz. Hedef: hiçbir sahne **2,8 sn'den uzun** değil, hiçbir normal kesme **0,6 sn'den kısa** değil (negatif flaş ve siyah kesme hariç; onlar bilerek kısa).
+- Her bölümde render sonrası kesme ölçümü yapılır (`ffmpeg select=gt(scene,0.18)`): aynı görsel art arda iki kare olursa tek sahne gibi algılanır, sayılmaz. Hedef: hiçbir sahne **2,8 sn'den uzun** değil, hiçbir normal kesme **0,9 sn'den kısa** değil (izleyici ne olduğunu anlamalı) (negatif flaş ve siyah kesme hariç; onlar bilerek kısa).
 - Aynı görselin iki kırpması arka arkaya gelmez; aynı görsel tekrar kullanılacaksa araya başka görsel girer.
 - Efektler `SFX_GAIN=.42` ile daha yüksek; efekt çalarken müzik ~6 dB kısılır, efekt bitince ~350 ms'de geri gelir.
 
@@ -303,3 +303,9 @@ Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `release
 - Oy kısmı ≤2,5 sn; seslendirme "Your comments picked it: …" gibi kısa, "tied/vote came in" gibi iç ayrıntı yok.
 - Para sayacı ekranın ortasında dev (`bigCounter`) + `money_count` sesi. Damgalar yüzlerin üstüne gelmez.
 - Teslimden önce soru: **"Bu videoyu ilk kez görsem ilk 3 saniyede durur muydum?"** Cevap kısa ve dürüst olarak teslim notuna yazılır.
+
+## 24. Kullanıcı düzeltmeleri (23 Ekim)
+- Bölüm numarası ekranı (PART N) en az ~1,5 sn ekranda kalır; önündeki hatırlatma kareleri en fazla 2 tane, her biri ≥0,4 sn.
+- Ağustos böceği/cırcır sesi **kullanılmaz** (ofis hikâyesinde yersiz duruyor).
+- Tek kelimelik altyazı 84 px (önce 112), en fazla 820 px genişlik.
+- Siyah kare kesmesi kullanılmaz; negatif flaş yalnızca 1–3 büyük ters köşede.

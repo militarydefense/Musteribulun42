@@ -258,15 +258,15 @@ function wordCaption(t) {
   if (!w) return;
   const str = w.w.replace(/[,.:;!?…"]+$/g, '').replace(/^"/, '').toUpperCase();
   if (!str) return;
-  let size = 112;
+  let size = 84;
   ctx.save();
   ctx.font = `900 ${size}px ${SANS}`;
   const tw = ctx.measureText(str).width;
-  if (tw > 900) size *= 900 / tw;
+  if (tw > 820) size *= 820 / tw;
   const k = easeOut(prog(t, w.s - .03, .09));
   const hot = isNum(str) || (typeof KEY_WORDS !== 'undefined' && KEY_WORDS.has(str.replace(/[^A-Z]/g, '')));
-  withT(W / 2, 1500, lerp(1.18, 1, k), 0, () => text(str, 0, 0, size, hot ? C.gold : C.white,
-    { stroke: '#05070F', strokeW: 16, shadow: 'rgba(0,0,0,.8)', shadowBlur: 24, shadowY: 6 }));
+  withT(W / 2, 1500, lerp(1.12, 1, k), 0, () => text(str, 0, 0, size, hot ? C.gold : C.white,
+    { stroke: '#05070F', strokeW: 12, shadow: 'rgba(0,0,0,.8)', shadowBlur: 24, shadowY: 6 }));
   ctx.restore();
 }
 
