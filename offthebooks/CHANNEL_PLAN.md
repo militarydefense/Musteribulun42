@@ -325,3 +325,12 @@ Uygulama planı (Part 5):
 - Sahne başına renk tonu (soğuk mavi = tehdit, sıcak = güvenli, kırmızı = tehlike, soluk = geçmiş) — kodla, kredisiz.
 - Nesneden doğan geçişler (kâğıt kayması, ekran içinden geçiş, damga, ışık parlaması) — kodla.
 - Lucky için 3–4 ifade varyasyonu (korku, rahatlama, öfke, kurnaz gülümseme).
+
+## 26. Part 4 ilk saat dersi (23 Ekim)
+Part 4 (Instagram, ~1 sa): geçme %44 (Part 3 %29), 10. sn ~%27 (Part 3 ~%50), ortalama 15 sn; ilk paylaşımlar (%3,3).
+Kırılmalar: 0–3 sn (başka karakterin sesiyle soğuk açılış + yazı kutusu: "sen" yok, konu 2,3. sn'de) ve ~9,5 sn (siyah PART 4 kartı = "bitti/reklam" sinyali).
+Kurallar:
+- **Açılış Part 3 formülü:** anlatıcı + "You won fifty million dollars…" ilk kelimeden, parlak sayaç ilk karede. Soğuk açılış (başka karakterin repliği) kullanılmaz.
+- **Siyah ara kart yok;** bölüm numarası sahnenin üstünde küçük etiket.
+- **Her bölümde tek değişken** denenir; teslim notunda hangisi olduğu yazılır.
+- TikTok Part 4 bu formülle ayrı kurgu (`ep04tt/`): iki açılışın karşılaştırması.

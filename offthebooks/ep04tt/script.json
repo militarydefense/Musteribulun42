@@ -1,0 +1,99 @@
+[
+ {
+  "shot": "hook",
+  "say": "You won fifty million dollars, nobody can know, and your boss just told you he's seen your signature.",
+  "show": "You won $50 million, nobody can know, and your boss just told you he's seen your signature."
+ },
+ {
+  "shot": "title",
+  "say": "Here's how."
+ },
+ {
+  "shot": "title",
+  "card": 0.15
+ },
+ {
+  "shot": "vote",
+  "say": "Your comments picked it: record him."
+ },
+ {
+  "shot": "pocket",
+  "say": "One of you said, jacket pocket. So that's where the phone goes, and it's already recording."
+ },
+ {
+  "shot": "door",
+  "say": "Nine a.m., you knock on his door, and he doesn't even look up.",
+  "show": "9 a.m., you knock on his door, and he doesn't even look up."
+ },
+ {
+  "shot": "inner",
+  "say": "Don't look at the pocket. Don't look at the pocket.",
+  "pause": 0.5
+ },
+ {
+  "shot": "bossA",
+  "say": "Half. By five o'clock today. Or everyone in this building finds out.",
+  "pause": 0.5,
+  "show": "Half. By 5 o'clock today. Or everyone in this building finds out."
+ },
+ {
+  "shot": "tape",
+  "say": "That's it. That's extortion, and it's on tape.",
+  "pause": 0.7
+ },
+ {
+  "shot": "bossB",
+  "say": "Oh, and nice signature, by the way.",
+  "pause": 1.0
+ },
+ {
+  "shot": "slip",
+  "say": "You signed that ticket alone, in your kitchen, at midnight. Nobody saw it.",
+  "pause": 0.6
+ },
+ {
+  "shot": "how",
+  "say": "Except your phone did. Both photos went straight to your cloud, the same account you're still logged into, on your work computer."
+ },
+ {
+  "shot": "rule",
+  "say": "Rule four: never log into anything personal on a work computer. You broke it.",
+  "pause": 0.5
+ },
+ {
+  "shot": "fact",
+  "say": "In the U.S., your employer can usually see everything on a company computer."
+ },
+ {
+  "shot": "calm",
+  "say": "The good news? A photo can't claim the prize. The lottery wants the original ticket."
+ },
+ {
+  "shot": "hr",
+  "say": "Some of you said take it straight to HR. Hold that thought."
+ },
+ {
+  "shot": "upload",
+  "say": "Because your phone just buzzed. Your recording finished uploading, to the same cloud he can see.",
+  "pause": 0.8
+ },
+ {
+  "shot": "choice",
+  "say": "So, do you lock him out right now, or leave the door open and feed him a fake?",
+  "pause": 0.6
+ },
+ {
+  "shot": "cta",
+  "say": "Comment lock or bait, and follow, because his deadline is five p.m. today.",
+  "show": "Comment lock or bait, and follow, because his deadline is 5 p.m. today."
+ },
+ {
+  "shot": "third",
+  "say": "And one more thing. Play the recording back. Someone else is in that room, and they just said your name.",
+  "pause": 1.0
+ },
+ {
+  "shot": "black",
+  "card": 1.2
+ }
+]
