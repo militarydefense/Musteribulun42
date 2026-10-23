@@ -36,10 +36,10 @@ const SHOTS = {
         waveStrip(t, at('pocket', 'recording'), E('pocket') + .1, 1180);
       } }),
   door: beats([['r3', .5, .5, 1.0], ['r3', .42, .55, 1.5], ['r3', .64, .42, 2.0]],
-    { cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
-      after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 330, 'WEDNESDAY', '9:02 A.M.', { type: true, w: 520 }) }),
+    { push: .12, cuts: () => [at('door', 'knock'), at('door', 'doesnt')],
+      after: t => infoBox(t, S('door') + .05, at('door', 'knock') + .3, 350, 'WEDNESDAY', [['9:02', C.gold], [' A.M.', C.white]], { type: true, w: 520 }) }),
   bossA: beats([['r4', .5, .45, 1.0], ['r4', .45, .3, 1.6]],
-    { cuts: () => [at('bossA', 'or')],
+    { push: .16, cuts: () => [at('bossA', 'or')],
       after: t => waveStrip(t, S('bossA'), E('bossA'), 1180) }),
   tape: beats([['q12', .5, .45, 1.0], ['q12', .5, .38, 1.35]],
     { cuts: () => [at('tape', 'extortion')],
@@ -47,16 +47,18 @@ const SHOTS = {
         stamp('EXTORTION', W / 2, 760, 110, C.red, pop(t, at('tape', 'extortion'), .3), -.06);
         pill('✓ ON TAPE', 1240, t, at('tape', 'tape') - .1);
       } }),
-  bossB: beats([['p8', .5, .45, 1.05], ['p8', .5, .4, 1.45]], { cuts: () => [at('bossB', 'signature')] }),
+  bossB: beats([['p8', .5, .45, 1.05], ['p8', .5, .4, 1.45]], { push: .2, cuts: () => [at('bossB', 'signature')] }),
   // the planted clue
   slip: beats([['q7', .5, .5, 1.0], ['q7', .55, .62, 1.6], ['r8', .5, .42, 1.1]],
-    { cuts: () => [at('slip', 'midnight'), at('slip', 'nobody')],
+    { push: .12, cuts: () => [at('slip', 'midnight'), at('slip', 'nobody')],
       after: t => contra(t, at('slip', 'nobody') - .05, E('slip') + .1, ['YOU SIGNED IT', 'ALONE'], ['HE SAW', 'THE SIGNATURE']) }),
   how: beats([['q8', .5, .5, 1.0], ['r6', .5, .45, 1.0], ['r6', .3, .42, 1.8], ['r7', .5, .45, 1.05], ['r7', .5, .32, 1.5]],
     { cuts: () => [at('how', 'both'), at('how', 'cloud'), at('how', 'same'), at('how', 'work')],
       after: t => {
-        infoBox(t, at('how', 'both'), at('how', 'same'), 330, 'AUTO-BACKUP', '2 PHOTOS → CLOUD ✓', { type: true });
-        infoBox(t, at('how', 'same') + .1, E('how') + .1, 330, 'SIGNED IN ON', 'OFFICE PC · DESK 14', { type: true, border: 'rgba(229,72,77,.9)', tagCol: C.red });
+        typedList(t, at('how', 'both') - .1, E('how') + .1, 350, 'HOW HE SAW IT', [
+          [at('how', 'both'), [['1. You ', C.white], ['photographed', C.gold], [' the ticket', C.white]]],
+          [at('how', 'cloud') - .2, [['2. It backed up to your ', C.white], ['CLOUD', C.gold]]],
+          [at('how', 'same') + .1, [['3. ', C.white], ['OFFICE PC', C.red], [': still signed in', C.white]]]]);
       } }),
   rule: beats([['r6', .3, .42, 1.8], ['r7', .5, .45, 1.0], ['r7', .5, .32, 1.5]],
     { cuts: () => [at('rule', 'personal'), at('rule', 'you')],
@@ -71,14 +73,14 @@ const SHOTS = {
     { cuts: () => [at('calm', 'photo'), at('calm', 'lottery')],
       after: t => {
         pill('📷 PHOTO ≠ PRIZE', 1240, t, at('calm', 'photo') - .05, { t1: at('calm', 'lottery') });
-        infoBox(t, at('calm', 'original') - .1, E('calm') + .1, 330, 'TO CLAIM', 'ORIGINAL TICKET ONLY', { type: true });
+        infoBox(t, at('calm', 'original') - .1, E('calm') + .1, 350, 'TO CLAIM', [['ORIGINAL', C.gold], [' TICKET ONLY', C.white]], { type: true });
       } }),
   hr: beats([['q15', .5, .5, 1.0], ['q15', .62, .5, 1.5]],
     { cuts: () => [at('hr', 'hold')],
       after: t => commentCard(t, S('hr') + .05, 'YOUR COMMENTS · PART 3', '"record and then report"', 360, E('hr') + .1) }),
   // the second threat
   upload: beats([['r8', .5, .62, 1.25], ['r8', .5, .55, 1.6], ['r8', .5, .42, 1.1]],
-    { cuts: () => [at('upload', 'recording'), at('upload', 'same')],
+    { push: .15, cuts: () => [at('upload', 'recording'), at('upload', 'same')],
       after: t => {
         notif(t, at('upload', 'buzzed') - .1, E('upload') + .1, 330, 'CLOUD · NOW', 'Upload complete', 'Recording_0902.m4a', {});
         notif(t, at('upload', 'same') - .05, E('upload') + .1, 540, 'SECURITY ALERT', 'Also signed in', 'Office PC · Desk 14 · active now', { icon: C.red, glyph: '!', red: true });
@@ -97,7 +99,7 @@ const SHOTS = {
       } }),
   // open loop right after the vote
   third: beats([['q14', .55, .6, 1.45], ['r8', .5, .55, 1.3], ['r11', .5, .5, 1.0], ['r11', .32, .42, 1.9]],
-    { vig: .7, cuts: () => [at('third', 'play'), at('third', 'someone'), at('third', 'said')],
+    { vig: .7, push: .22, cuts: () => [at('third', 'play'), at('third', 'someone'), at('third', 'said')],
       after: t => {
         infoBox(t, at('third', 'play') - .1, at('third', 'someone') + .2, 330, '▶ PLAYING', 'Recording_0902.m4a', { w: 700, size: 52 });
         waveStrip(t, at('third', 'play'), E('third'), 1180, C.gold);
@@ -108,6 +110,8 @@ const SHOTS = {
 
 // recording badge stays on while the phone records; flashes and black cuts on the reveals
 window.OVERLAY_EXTRA = (t, id) => {
+  // deadline is always on screen once the day starts (Wed 9:02 -> Fri 17:00); turns red after the second threat
+  if (!HUD_OFF.has(id) && t >= S('door')) deadlineChip(t, S('door') + .2, 2 * 86400 + 7 * 3600 + 58 * 60, 'FRIDAY 5PM', t > at('upload', 'same'));
   if (t > at('pocket', 'recording') && t < E('tape')) recBadge(t, at('pocket', 'recording'), W / 2, 1340);
   negFlash(t, at('bossB', 'signature'));
   negFlash(t, at('upload', 'same'));
@@ -152,7 +156,7 @@ function SFX() {
   // his screen, at night: crickets outside, his keyboard, boxes typing
   add('click', S('how') + .1, .5); add('typewriter', at('how', 'both'), .4, .8); add('beep', at('how', 'cloud'), .3);
   add('crickets', at('how', 'cloud'), .55, E('rule') - at('how', 'cloud'));
-  add('glitch', at('how', 'same'), .45); add('typewriter', at('how', 'same') + .1, .4, .8);
+  add('glitch', at('how', 'same'), .45); add('typewriter', at('how', 'same') + .1, .4, .8); add('typewriter', at('how', 'cloud') - .2, .4, .7); add('tick', S('door') + .2, .5);
   add('keyboard', at('how', 'work') - .1, .5, E('how') - at('how', 'work') + 1.6); add('fill', at('how', 'work'), .4, .5);
   add('knock', at('rule', 'rule'), .6); add('stamp', at('rule', 'broke'), 1);
   add('paper', S('fact') + .1, .5); add('click', at('fact', 'see'), .4);

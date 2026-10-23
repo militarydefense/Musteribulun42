@@ -290,3 +290,8 @@ Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `release
 - Her bölümde render sonrası kesme ölçümü yapılır (`ffmpeg select=gt(scene,0.18)`): aynı görsel art arda iki kare olursa tek sahne gibi algılanır, sayılmaz. Hedef: hiçbir sahne **2,8 sn'den uzun** değil, hiçbir normal kesme **0,6 sn'den kısa** değil (negatif flaş ve siyah kesme hariç; onlar bilerek kısa).
 - Aynı görselin iki kırpması arka arkaya gelmez; aynı görsel tekrar kullanılacaksa araya başka görsel girer.
 - Efektler `SFX_GAIN=.42` ile daha yüksek; efekt çalarken müzik ~6 dB kısılır, efekt bitince ~350 ms'de geri gelir.
+
+## 22. Part 4'e eklenen kredisiz öğeler (23 Ekim) — sonraki bölümlerde de kullanılır
+- `deadlineChip`: HUD etiketinin yanında gerçek zamanlı geri sayım ("⏱ FRIDAY 5PM · 2D 07:58:00"), ikinci tehditten sonra kırmızı.
+- `typedList`: numaralı daktilo listesi; `segText` ile anahtar kelimeler renkli (altın = önemli, kırmızı = tehlike). `infoBox` değeri de renkli parça listesi alabilir.
+- `beats(..., { push })`: tedirgin sahnelerde hızlanan yaklaşma (dolly-in) + kenarlardan kapanan karartma; derinlik hissi. Part 4: kapı .12, "Half…" .16, "signature" .20, mutfak .12, yükleme .15, ikinci ses .22.

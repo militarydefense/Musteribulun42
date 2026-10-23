@@ -108,7 +108,14 @@ function beats(frames, o = {}) {
       const pop = lerp(1.035, 1, easeOut(clamp((lt - starts[i]) / .15)));
       let dx = 0, dy = 0;
       if (o.shake) { const s = o.shake(t); dx = Math.sin(t * 71) * 16 * s; dy = Math.cos(t * 53) * 12 * s; }
-      drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + .045 * k)], { dx, dy });
+      // o.push: a slow accelerating dolly-in for tense moments, with the edges closing in (depth)
+      const push = o.push ? o.push * Math.pow(k, 1.4) : .045 * k;
+      drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + push)], { dx, dy });
+      if (o.push) {
+        const g = ctx.createRadialGradient(W / 2, H * .45, H * (.42 - .14 * k), W / 2, H * .45, H * .8);
+        g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(3,4,10,${.15 + .45 * k})`);
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      }
       if (o.after) o.after(t, lt, dur);
     },
   };

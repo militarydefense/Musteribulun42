@@ -13,8 +13,11 @@ function infoBox(t, t0, t1, y, tag, value, o = {}) {
   ctx.save(); ctx.globalAlpha = k;
   uiBox(x, y, w, h, o);
   mono(tag, W / 2, y + 38, 24, o.tagCol || C.gold, { weight: 700, spacing: 4 });
-  const v = typeof value === 'function' ? value(t) : o.type ? typed(value, t, t0 + .1, o.cps || 24) : value;
-  text(v, W / 2, y + 100, o.size || 64, o.col || C.white);
+  if (Array.isArray(value)) segText(value, W / 2, y + 100, o.size || 64, o.type ? Math.floor((t - t0 - .1) * (o.cps || 24)) : 1e9, 'center');
+  else {
+    const v = typeof value === 'function' ? value(t) : o.type ? typed(value, t, t0 + .1, o.cps || 24) : value;
+    text(v, W / 2, y + 100, o.size || 64, o.col || C.white);
+  }
   if (o.sub) mono(o.sub, W / 2, y + h - 16, 20, C.grey, { spacing: 2 });
   ctx.restore();
 }
@@ -186,3 +189,43 @@ function negFlash(t, t0, d = .16) {
   ctx.restore();
 }
 function blackCut(t, t0, d = .3) { if (t >= t0 && t < t0 + d) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); } }
+
+// coloured segments [[str, colour], ...], typed out to n characters
+function segText(segs, x, y, size, n, align = 'left') {
+  ctx.save();
+  ctx.font = `900 ${size}px ${SANS}`;
+  const full = segs.reduce((w, [str]) => w + ctx.measureText(str).width, 0);
+  let cx = align === 'center' ? x - full / 2 : x, left = Math.max(0, n);
+  for (const [str, col] of segs) {
+    const part = str.slice(0, left); left -= part.length;
+    if (part) text(part, cx, y, size, col || C.white, { align: 'left' });
+    cx += ctx.measureText(str).width;
+    if (left <= 0) break;
+  }
+  ctx.restore();
+}
+// numbered typewriter list; each item = [start time, segments]
+function typedList(t, t0, t1, y, tag, items, o = {}) {
+  const k = fadeIn(t, t0, t1);
+  if (k <= 0) return;
+  const x = 70, w = W - 140, h = 90 + items.length * 78;
+  ctx.save(); ctx.globalAlpha = k;
+  uiBox(x, y, w, h, o);
+  mono(tag, x + 36, y + 42, 24, o.tagCol || C.gold, { align: 'left', weight: 700, spacing: 4 });
+  items.forEach(([ts, segs], i) => { if (t >= ts) segText(segs, x + 36, y + 100 + i * 78, o.size || 44, Math.floor((t - ts) * (o.cps || 30)), 'left'); });
+  ctx.restore();
+}
+// deadline chip next to the HUD label: counts down in real time
+function deadlineChip(t, t0, secsLeft, label = 'FRIDAY 5:00 PM', hot = false) {
+  if (t < t0) return;
+  const k = easeOut(prog(t, t0, .25)), s = Math.max(0, Math.floor(secsLeft - (t - t0)));
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+  const str = `⏱ ${label} · ${d}D ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  ctx.save(); ctx.globalAlpha = k;
+  ctx.font = `700 22px ${MONO}`;
+  const w = ctx.measureText(str).width + 50;
+  rr(W - 40 - w, 280, w, 46, 8); ctx.fillStyle = hot ? C.red : 'rgba(8,11,22,.88)'; ctx.fill();
+  ctx.lineWidth = 2; ctx.strokeStyle = hot ? C.red : C.gold; ctx.stroke();
+  mono(str, W - 40 - w / 2, 304, 22, hot ? C.white : C.gold, { weight: 700, spacing: 1.5 });
+  ctx.restore();
+}
