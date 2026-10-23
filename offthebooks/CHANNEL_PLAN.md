@@ -277,3 +277,11 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 10. **Siyah kare kesmeleri** (0,3–0,5 sn) büyük açıklamadan önce + siyah-beyaz/negatif flaş.
 11. **Son:** sahne kararır, "WHAT WOULD YOU DO?" başlığı, iki seçenek kutusu ve her birinin altında **tek satırlık sonucu**; "COMMENT YOUR CHOICE · Your votes decide what happens next"; soru iki kez sorulur; siyah 1,5 sn ile biter.
 12. Az görsel (diner'da 4–5 açı), çok arayüz öğesi. Öğretici bilgi yok; bizde bilgiler kalır ama kısa.
+
+## 20. Ses efekti kütüphanesi (23 Ekim eklemeleri)
+`engine/mix.py` içinde, SFX olaylarına isteğe bağlı süre (`d`) verilebilir:
+- `knock3`: kapıya üç kez vurma (kayıt) · `keyboard`: klavye (patron bilgisayar başındayken) · `ring`: cep telefonu zil sesi · `buzz`: titreşim
+- `rec_beep`: kayıt başlarken iki tonlu bip · `crickets`: gece sahneleri için ağustos böceği/cırcır ambiyansı
+- `fill`: gösterge/çubuk dolarken dijital tırmanan bip + onay sesi (sayaçlar, oy yarışı, EXPOSED sıçramaları)
+- `typewriter`: daktilo tuşları + satır sonu zili (daktilo efektli kutular, isim etiketleri)
+Kural: her ekran öğesinin kendi sesi var; whoosh yok. Örnek dinleme: `releases/part04/New_SFX_Demo.m4a`.

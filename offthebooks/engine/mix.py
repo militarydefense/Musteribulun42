@@ -177,12 +177,105 @@ def soft_whoosh():  # quieter, randomized length and colour so cuts never sound 
 
 
 SYN["whoosh"] = soft_whoosh
+
+
+# ---- 23 Oct: more specific sounds (each on-screen element gets its own) ----
+def _put(x, s, y):  # add y into x at sample s, clipped to x
+    m = min(len(y), len(x) - s)
+    if m > 0 and s >= 0: x[s:s + m] += y[:m]
+
+
+def _lib_or(name, fallback):
+    return from_lib(name) if name in LIB else fallback()
+
+
+def knock3(d=None):  # knock-knock-knock on a door, recorded takes
+    x = np.zeros(int(.8 * SR))
+    for k, (o, g) in enumerate(((0, 1), (.19, .85), (.36, .95))):
+        h = _lib_or("knock", thud) * g; s = int(o * SR); _put(x, s, (h))
+    return x
+
+
+def keyboard(d=1.6):  # office keyboard typing: uneven bursts of key clicks, the odd spacebar
+    x = np.zeros(int(d * SR)); t = rng.uniform(0, .05)
+    while t < d - .06:
+        s = int(t * SR); kt = tt(.035)
+        key = (hp(noise(len(kt)), 2) * .6 + np.sin(2 * np.pi * rng.uniform(1700, 2600) * kt) * .25) * np.exp(-kt * rng.uniform(140, 220))
+        if rng.random() < .12: key = key * .6 + np.sin(2 * np.pi * 180 * kt) * np.exp(-kt * 60) * .5  # spacebar
+        _put(x, s, key * rng.uniform(.45, 1))
+        t += rng.uniform(.06, .14) if rng.random() > .15 else rng.uniform(.22, .4)
+    return x * 1.3
+
+
+def ring(d=1.9):  # mobile phone ringtone: two trilling bursts
+    t = tt(d); x = np.zeros(len(t))
+    for o in (0, 1.0):
+        m = (t >= o) & (t < o + .75)
+        tr = .5 + .5 * np.sign(np.sin(2 * np.pi * 18 * (t - o)))
+        x[m] += ((np.sin(2 * np.pi * 1320 * t) + .6 * np.sin(2 * np.pi * 1760 * t)) * tr)[m] * .32
+    return x * env(len(t), .005, .05)
+
+
+def buzz(d=.75):  # phone vibrating on a desk / in a pocket
+    t = tt(d); am = (np.sin(2 * np.pi * 28 * t) > -.2).astype(float)
+    x = (np.sin(2 * np.pi * 155 * t) + .4 * np.sin(2 * np.pi * 310 * t)) * am
+    gate = ((t % .38) < .28).astype(float)
+    return smooth(x * gate, 8) * env(len(t), .01, .05) * .7
+
+
+def rec_beep(d=None):  # voice recorder "start" beep: two rising tones
+    out = []
+    for f in (880, 1320):
+        t = tt(.11); out.append(np.sin(2 * np.pi * f * t) * env(len(t), .004, .03) * .45); out.append(np.zeros(int(.03 * SR)))
+    return np.concatenate(out)
+
+
+def crickets(d=6.0):  # night ambience: a few crickets chirping at different rates
+    t = tt(d); x = np.zeros(len(t))
+    for c in range(3):
+        f, rate, ph = rng.uniform(4300, 5200), rng.uniform(.55, .9), rng.uniform(0, 1)
+        for start in np.arange(ph * rate, d, rate):
+            for p in range(int(rng.integers(3, 5))):
+                s = int((start + p * .034) * SR); pt = tt(.022)
+                _put(x, s, (np.sin(2 * np.pi * f * pt) * np.sin(np.pi * pt / .022)) * rng.uniform(.5, 1) * .4)
+    return x * env(len(t), .6, .8)
+
+
+def fill(d=1.1):  # digital bar filling up: stepping blips that climb, then a confirm chime
+    x = np.zeros(int((d + .3) * SR)); n = max(6, int(d / .045))
+    for i in range(n):
+        f = 500 * 2 ** (i / n * 1.6); bt = tt(.03); s = int(i * d / n * SR)
+        b = np.sign(np.sin(2 * np.pi * f * bt)) * np.exp(-bt * 90) * .22
+        _put(x, s, (b))
+    ct = tt(.28); s = int(d * SR)
+    ch = (np.sin(2 * np.pi * 1760 * ct) + .5 * np.sin(2 * np.pi * 2640 * ct)) * np.exp(-ct * 14) * .3
+    _put(x, s, (ch))
+    return smooth(x, 2)
+
+
+def typewriter(d=1.0):  # typewriter keys, ends with the carriage bell
+    x = np.zeros(int((d + .5) * SR)); t = 0.0
+    while t < d:
+        s = int(t * SR); kt = tt(.05)
+        k = hp(noise(len(kt)), 2) * np.exp(-kt * 160) * .7 + np.sin(2 * np.pi * 130 * kt) * np.exp(-kt * 70) * .5
+        _put(x, s, k * rng.uniform(.6, 1))
+        t += rng.uniform(.07, .12)
+    bt = tt(.45); s = int(d * SR)
+    bell = (np.sin(2 * np.pi * 2350 * bt) + .4 * np.sin(2 * np.pi * 4700 * bt)) * np.exp(-bt * 9) * .28
+    _put(x, s, (bell))
+    return x
+
+
+SYN.update({"knock3": knock3, "keyboard": keyboard, "ring": ring, "buzz": buzz, "rec_beep": rec_beep,
+            "crickets": crickets, "fill": fill, "typewriter": typewriter})
 sfx = np.zeros(N)
 mutes = []
 for e in EV:
     if e["name"] == "silence":
         mutes.append((e["t"], e["t"] + e["gain"])); continue
-    x = (from_lib(e["name"]) if e["name"] in LIB else SYN[e["name"]]()) * e["gain"]
+    if e["name"] in LIB: x = from_lib(e["name"])
+    else: x = SYN[e["name"]](e["d"]) if "d" in e else SYN[e["name"]]()
+    x = x * e["gain"]
     s = int(e["t"] * SR)
     if s < 0: x = x[-s:]; s = 0
     m = min(len(x), N - s)

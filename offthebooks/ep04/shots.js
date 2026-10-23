@@ -132,24 +132,35 @@ function HUD(t, id) {
 // ---- sound: every on-screen element has its own sound; no whooshes ----
 function SFX() {
   const ev = [];
-  const add = (name, t, gain = 1) => ev.push({ name, t: +t.toFixed(3), gain });
-  for (let i = 0; i < 8; i++) add('tick', .05 + i * .16, .35 - i * .02);
-  add('cash_drop', 1.3, .6); add('stamp', at('hook', 'nobody'), .7); add('type', at('hook', 'boss') + .1, .4); add('thump', at('hook', 'half') - .05, .9);
-  add('click', S('vote'), .5); for (let i = 0; i < 5; i++) add('tick', S('vote') + .2 + i * .22, .3); add('thump', at('vote', 'tied'), .7);
+  const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
+  // hook: counter fills digitally, name tag types out
+  add('fill', .05, .55, .95); add('cash_drop', 1.1, .45); add('stamp', at('hook', 'nobody'), .7);
+  add('typewriter', at('hook', 'boss') + .1, .45, .9); add('thump', at('hook', 'half') - .05, .9);
+  // vote race bars fill
+  add('click', S('vote'), .5); add('fill', S('vote') + .2, .5, 1.1); add('thump', at('vote', 'tied'), .7);
   add('pin', at('vote', 'top'), .6); add('stamp', at('vote', 'record'), .9);
-  add('pin', S('pocket') + .05, .5); add('cloth', at('pocket', 'phone'), .6); add('beep', at('pocket', 'recording'), .5);
-  add('step', S('door') + .1, .45); add('type', S('door') + .15, .35); add('knock', at('door', 'knock'), 1); add('knock', at('door', 'knock') + .22, .8); add('paper', at('door', 'doesnt'), .5);
-  add('drone', S('bossA'), .45); add('thump', at('bossA', 'half'), .6); add('thump', at('bossA', 'or') , .6);
-  add('stamp', at('tape', 'extortion'), .9); add('click', at('tape', 'tape') - .1, .6);
+  // the phone starts recording
+  add('pin', S('pocket') + .05, .5); add('cloth', at('pocket', 'phone'), .6); add('rec_beep', at('pocket', 'recording') - .05, .8);
+  // knock on his door; the time types out
+  add('step', S('door') + .1, .45); add('typewriter', S('door') + .15, .4, .45); add('knock3', at('door', 'knock') - .02, 1);
+  add('keyboard', at('door', 'doesnt') - .2, .35, 1.2);
+  add('drone', S('bossA'), .45); add('thump', at('bossA', 'half'), .6); add('thump', at('bossA', 'or'), .6);
+  add('stamp', at('tape', 'extortion'), .9); add('rec_beep', at('tape', 'tape') - .1, .55);
   add('silence', at('bossB', 'signature') - .05, .9); add('boom', at('bossB', 'signature'), .9);
-  add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
-  add('click', S('how') + .1, .5); add('type', at('how', 'both'), .4); add('beep', at('how', 'cloud'), .35); add('glitch', at('how', 'same'), .5); add('type', at('how', 'same') + .1, .4);
-  add('knock', at('rule', 'rule'), .7); add('stamp', at('rule', 'broke'), 1);
+  // midnight kitchen flashback
+  add('crickets', S('slip'), .7, E('slip') - S('slip') + .3); add('scratch', S('slip') + .2, .5); add('hit', at('slip', 'nobody'), .7);
+  // his screen, at night: crickets outside, his keyboard, boxes typing
+  add('click', S('how') + .1, .5); add('typewriter', at('how', 'both'), .4, .8); add('beep', at('how', 'cloud'), .3);
+  add('crickets', at('how', 'cloud'), .55, E('rule') - at('how', 'cloud'));
+  add('glitch', at('how', 'same'), .45); add('typewriter', at('how', 'same') + .1, .4, .8);
+  add('keyboard', at('how', 'work') - .1, .5, E('how') - at('how', 'work') + 1.6); add('fill', at('how', 'work'), .4, .5);
+  add('knock', at('rule', 'rule'), .6); add('stamp', at('rule', 'broke'), 1);
   add('paper', S('fact') + .1, .5); add('click', at('fact', 'see'), .4);
-  add('paper', at('calm', 'photo'), .5); add('type', at('calm', 'original') - .1, .4);
+  add('paper', at('calm', 'photo'), .5); add('typewriter', at('calm', 'original') - .1, .4, .8);
   add('pin', S('hr') + .05, .5); add('step', at('hr', 'hold'), .4);
-  add('beep', at('upload', 'buzzed') - .1, .7); add('beep', at('upload', 'buzzed') + .1, .7); add('beep', at('upload', 'same') - .05, .6);
-  add('boom', at('upload', 'same'), .8); add('riser_short', at('upload', 'see') - .4, .6);
+  // the phone: vibration, ringtone, security alert, gauge fills
+  add('buzz', at('upload', 'buzzed') - .25, .9); add('ring', at('upload', 'buzzed') + .15, .45, 1.0);
+  add('beep', at('upload', 'same') - .05, .6); add('boom', at('upload', 'same'), .8); add('fill', at('upload', 'see') - .05, .55, .6);
   add('thump', S('choice'), .7); add('click', S('choice') + .25, .5); add('click', S('choice') + .55, .5); add('click', at('cta', 'follow') - .1, .8);
   add('static', at('third', 'play'), .4); add('drone', at('third', 'someone'), .55); add('silence', at('third', 'name') - .05, 1.6); add('hit', at('third', 'name'), .9);
   return ev.sort((a, b) => a.t - b.t);
