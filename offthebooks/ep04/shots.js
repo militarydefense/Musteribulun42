@@ -14,8 +14,13 @@ const CHOICES = [['LOCK', 'Change the password. He knows you know.'], ['BAIT', '
 
 const SHOTS = {
   // 0-1.8 s: cold open on the strongest line of the episode, on tape
-  cold: beats([['p8', .5, .45, 1.05], ['p8', .5, .36, 1.45]], { tint: ['#B0302A', .45], push: .3, cuts: () => [at('cold', 'signature')],
-    after: t => { waveStrip(t, 0, E('cold') + .05, 1180); recBadge(t, 0, W / 2, 1340, 47); } }),
+  // frame 0 reads on its own: a bright full face + one big line; two angles in the first 1.5 s
+  cold: beats([['r4', .5, .4, 1.0], ['p8', .5, .45, 1.0], ['r4', .45, .34, 1.25]], { tint: ['#F5B640', .18], cuts: () => [at('cold', 'signature'), at('cold', 'by')],
+    after: t => {
+      ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = 'rgba(255,214,150,.12)'; ctx.fillRect(0, 0, W, H); ctx.restore();
+      hookLine(t, ['MY BOSS SAW', 'MY $50M TICKET.']);
+      waveStrip(t, 0, E('cold') + .05, 1180); recBadge(t, 0, W / 2, 1340, 47);
+    } }),
   // premise + today's threat in one sentence; a giant money counter like the competitor's opening
   hook: beats([['r1', .5, .42, 1.0], ['q11', .5, .45, 1.05], ['r4', .5, .42, 1.05], ['q7', .55, .6, 1.5]],
     { tint: ['#F5B640', .25], cuts: () => [at('hook', 'nobody'), at('hook', 'boss'), at('hook', 'seen')],

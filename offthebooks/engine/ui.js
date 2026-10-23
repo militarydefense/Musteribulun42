@@ -241,3 +241,12 @@ function bigCounter(t, t0, t1, tag, value) {
   text(value(t), W / 2, 725, 128, C.white, { shadow: 'rgba(245,197,24,.5)', shadowBlur: 30 });
   ctx.restore();
 }
+
+// frame-0 hook line: big, centred, readable before anything moves
+function hookLine(t, lines, y = 470) {
+  ctx.save();
+  rr(40, y - 110, W - 80, 110 * lines.length + 70, 28); ctx.fillStyle = 'rgba(6,8,18,.82)'; ctx.fill();
+  ctx.lineWidth = 6; ctx.strokeStyle = C.gold; ctx.stroke();
+  lines.forEach((l, i) => text(l, W / 2, y - 18 + i * 110, 92, i ? C.gold : C.white, { shadow: 'rgba(0,0,0,.7)', shadowBlur: 16 }));
+  ctx.restore();
+}
