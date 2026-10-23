@@ -263,3 +263,17 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 5. **Kural güncellemesi (§13.4):** "≤2,5 sn'de yeni görsel" yerine "≤2 sn'de ekranda yeni bir şey" (görsel, arayüz öğesi, sayaç, kamera kesmesi). Daha az görsel = daha az kredi.
 6. Yakın plan karakter yüzü + sahne üstünde oy butonları; video siyah 2 sn ile biter (döngü).
 7. Hikâye: sade gizem ve son tarih; öğretici bilgi yok. Bizim farkımız gerçek bilgiler; onları koruyup daha kısa tutuyoruz.
+
+## 19. İkinci rakip, Part 2 (107 sn) — Part 4'e kopyalanacaklar
+1. **Oy sonucu yarışı:** "THE VOTES ARE IN" kutusu, RETURN/KEEP çubukları 0'dan gerçek yüzdeye yarışarak dolar, "RETURN WON" rozeti (~3 sn). Bizde gerçek sayılarla; berabere ise "TIE → SO YOU DID BOTH" damgası.
+2. **Açılış:** 1,5 sn önceki bölümden hızlı görsel özet + siyah "PART II" kartı (1 sn) + oy yarışı. Bizim kuralımız gereği öncül cümlesi yine ilk saniyelerde kalır.
+3. **Daktilo isim etiketi:** "BEN · AN OLD FRIEND · ALMOST A YEAR SINCE YOU LAST MET".
+4. **Daktilo talimat kutusu, anahtar kelimeler renkli:** "TAKE TWO STACKS. KEEP THE REST HIDDEN."
+5. **Sayaç/bilgi kutuları:** ağırlık 0 → 220 LB, "13 MINUTES UNTIL MIDNIGHT", "CURRENT TIME 11:58 P.M.", "MEETING LOCATION 18 MERCER ROAD" (daktilo).
+6. **Telefon mesajı kutusu:** "FROM YOUR NUMBER ***-8147" + mesaj metni.
+7. **Çelişki kutusu (ipucu):** "YOU SAID: SOMETHING / HE SAID: BAGS". İzleyiciye dedektiflik yaptırır, tekrar izletir. Her bölüme dikkatli izleyiciyi ödüllendiren bir ipucu koy.
+8. **Geçmişe dönüş araları:** geçmiş olaydan bahsedilince önceki bölümlerin görselleri 1–2 sn araya girer (kredisiz).
+9. **İki karakterli diyalog sahnesi:** karşılıklı çekim, ikinci ses; anlatıcı kısa.
+10. **Siyah kare kesmeleri** (0,3–0,5 sn) büyük açıklamadan önce + siyah-beyaz/negatif flaş.
+11. **Son:** sahne kararır, "WHAT WOULD YOU DO?" başlığı, iki seçenek kutusu ve her birinin altında **tek satırlık sonucu**; "COMMENT YOUR CHOICE · Your votes decide what happens next"; soru iki kez sorulur; siyah 1,5 sn ile biter.
+12. Az görsel (diner'da 4–5 açı), çok arayüz öğesi. Öğretici bilgi yok; bizde bilgiler kalır ama kısa.
