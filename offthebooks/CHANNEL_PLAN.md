@@ -253,3 +253,13 @@ Ayrılma anları ("İnsanlar Reels videonu gördüğünde"): 0:00 (~%35), **~0:1
 ## 17. Hesabın sesi (23 Ekim)
 - İzleyiciye görünen hiçbir metinde Türkiye saati ya da "(TR)" yazılmaz. Saat gerekiyorsa ET (ABD Doğu), tercihen göreli süre: "Votes close in 6 hours", "Part 4 drops tonight".
 - Çeviri: 20:00 TR = 13:00 ET (Ekim–Kasım başı, EDT); 3 Kasım sonrası (EST) 20:00 TR = 12:00 ET.
+
+## 18. İkinci rakip (plotshift.studios, "You found $20 million", 23 Ekim)
+85 sn, ~15 farklı görsel; görseller 4–6 sn kalıyor ama ekran her 1–2 sn'de **üstüne binen arayüz öğeleriyle** değişiyor. Uygulanacaklar (hepsi kredisiz, canvas):
+1. **Tek kelimelik dev altyazı** (ekranın alt-ortası, kalın, gölgeli), satırlık karaoke yerine.
+2. **İlk karede sayaç:** "YOU JUST FOUND $0 → $20,000,000" 1,5 sn'de yükselir; hareket 0. saniyede başlar.
+3. **Hikâye içi arayüz:** telefon mesaj balonları (UNKNOWN SENDER), gelen arama kutusu, pil %1 → %0, saat 11:47 P.M., "13 MINUTES LEFT TO DECIDE" geri sayımı, bilgi kutuları (200,000 BILLS, ≈72 KG → 200 KG sayacı), daktilo listesi.
+4. **Negatif/ters renk flaşı** ters köşe kelimelerinde (whoosh yerine görsel geçiş).
+5. **Kural güncellemesi (§13.4):** "≤2,5 sn'de yeni görsel" yerine "≤2 sn'de ekranda yeni bir şey" (görsel, arayüz öğesi, sayaç, kamera kesmesi). Daha az görsel = daha az kredi.
+6. Yakın plan karakter yüzü + sahne üstünde oy butonları; video siyah 2 sn ile biter (döngü).
+7. Hikâye: sade gizem ve son tarih; öğretici bilgi yok. Bizim farkımız gerçek bilgiler; onları koruyup daha kısa tutuyoruz.
