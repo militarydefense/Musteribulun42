@@ -351,3 +351,6 @@ Kurallar:
 - Real facts on screen: 1,178 lifeboat seats vs ~2,224 aboard (1,046 without a seat); 3rd class reached the deck too late.
 - New SFX: horn, groan, water, heartbeat, bell3, gate. Music: assets/music.mp3 (Suno orchestral, first 4 s cut).
 - Vote STAY / RUN. 85 s, 20 images. Release: releases/titanic_part01/.
+- 25 Oct v2 (user: "first scenes stay too long, every cut looks the same, add emotion"): voice 77 s (inner silences capped at 0.24 s, opening line +7% tempo),
+  hook = 6 pictures in 5.7 s; beats() frames take a 5th option {tr: crash|flash|whip|glitch|red|dip|shake|tilt, move: in|out|left|right|up|down|crash,
+  rot: dutch degrees, fx: sway|flicker|pulse, shake}. Rule: neighbouring cuts never use the same transition; emotion → move (fear: crash+pulse, chaos: sway+rot, dread: dip+flicker).

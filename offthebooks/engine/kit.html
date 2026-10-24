@@ -103,14 +103,61 @@ function beats(frames, o = {}) {
       let i = 0;
       while (i + 1 < n && lt >= starts[i + 1]) i++;
       const seg = (i + 1 < n ? starts[i + 1] : dur) - starts[i], k = clamp((lt - starts[i]) / seg);
-      const [name, cx, cy, z] = frames[i];
+      const [name, cx, cy, z, f = {}] = frames[i];
       const dir = i % 2 ? -1 : 1;
-      const pop = lerp(1.035, 1, easeOut(clamp((lt - starts[i]) / .15)));
+      const ls = lt - starts[i];  // time since this framing started
+      const pop = lerp(1.035, 1, easeOut(clamp(ls / .15)));
       let dx = 0, dy = 0;
       if (o.shake) { const s = o.shake(t); dx = Math.sin(t * 71) * 16 * s; dy = Math.cos(t * 53) * 12 * s; }
+      // f.tr 'shake' / f.shake: a hit on the cut
+      const hitK = (f.tr === 'shake' ? 1 : f.shake || 0) * clamp(1 - ls / .45);
+      if (hitK) { dx += Math.sin(t * 83) * 28 * hitK; dy += Math.cos(t * 61) * 22 * hitK; }
       // o.push: a slow accelerating dolly-in for tense moments, with the edges closing in (depth)
       const push = o.push ? o.push * Math.pow(k, 1.4) : .045 * k;
-      drawImg(name, [cx + dir * .015 * k, cy, z * pop * (1 + push)], { dx, dy });
+      // per-framing camera move (f.move): in / out / left / right / up / down / crash (fast punch-in that settles)
+      let zz = z * pop * (1 + push), ccx = cx + dir * .015 * k, ccy = cy;
+      const mv = f.move;
+      if (mv === 'out') zz = z * pop * (1.16 - .14 * easeOut(k));
+      if (mv === 'left' || mv === 'right') ccx = cx + (mv === 'left' ? -1 : 1) * (.07 * easeInOut(k) - .035);
+      if (mv === 'up' || mv === 'down') ccy = cy + (mv === 'up' ? -1 : 1) * (.08 * easeInOut(k) - .04);
+      if (mv === 'crash') zz = z * (1 + .32 * easeOut(clamp(ls / .22)) + .04 * k);
+      if (f.tr === 'crash') zz *= lerp(1.45, 1, easeOut(clamp(ls / .2)));
+      if (f.fx === 'pulse') zz *= 1 + .025 * Math.pow(Math.max(0, Math.sin(t * Math.PI / .8)), 8);
+      // rotation: f.rot = dutch angle in degrees, f.fx 'sway' = ship rolling
+      let rot = (f.rot || 0) * Math.PI / 180;
+      if (f.fx === 'sway') { rot += Math.sin(t * 1.4) * .028; dy += Math.sin(t * 1.4 + 1) * 14; }
+      if (f.tr === 'tilt') rot += lerp(.12, 0, easeOut(clamp(ls / .35)));
+      if (rot) zz *= 1 + Math.abs(rot) * 1.1;
+      // whip: the new picture slides in fast with a motion smear
+      const wk = f.tr === 'whip' ? 1 - easeOut(clamp(ls / .22)) : 0;
+      ctx.save();
+      if (rot) { ctx.translate(W / 2, H / 2); ctx.rotate(rot); ctx.translate(-W / 2, -H / 2); }
+      if (wk > 0) {
+        drawImg(name, [ccx, ccy, zz * 1.04], { dx, dy, filter: 'blur(6px)' });
+        for (let j = 4; j >= 0; j--) { ctx.globalAlpha = j ? .22 : 1; drawImg(name, [ccx, ccy, zz], { dx: dx + (wk * W * .55 + j * 40 * wk) * (dir > 0 ? 1 : -1), dy }); }
+        ctx.globalAlpha = 1;
+      } else drawImg(name, [ccx, ccy, zz], { dx, dy });
+      // glitch: RGB-split copies for a beat
+      if (f.tr === 'glitch' && ls < .28) {
+        ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = .45;
+        drawImg(name, [ccx, ccy, zz], { dx: dx + 22, dy, filter: 'hue-rotate(120deg)' });
+        drawImg(name, [ccx, ccy, zz], { dx: dx - 22, dy: dy + 6, filter: 'hue-rotate(240deg)' });
+        ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+      // lights: f.fx 'flicker' = failing bulbs
+      if (f.fx === 'flicker') {
+        const n = rnd(Math.floor(t * 18)), dark = n > .82 ? .55 : n > .7 ? .25 : 0;
+        if (dark) { ctx.fillStyle = `rgba(2,3,8,${dark})`; ctx.fillRect(0, 0, W, H); }
+      }
+      // cut flashes: white / red / dark dip
+      if (f.tr === 'flash' || f.tr === 'red' || f.tr === 'dip') {
+        const a = clamp(1 - ls / (f.tr === 'dip' ? .16 : .2));
+        if (a > 0) { ctx.fillStyle = f.tr === 'flash' ? `rgba(255,255,255,${a * .85})` : f.tr === 'red' ? `rgba(200,20,30,${a * .6})` : `rgba(0,0,0,${a * .8})`; ctx.fillRect(0, 0, W, H); }
+      }
+      if (f.tint) {
+        ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = f.tint[1]; ctx.fillStyle = f.tint[0]; ctx.fillRect(0, 0, W, H); ctx.restore();
+      }
       if (o.tint) {  // per-scene colour mood: [css colour, strength]
         ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = o.tint[1]; ctx.fillStyle = o.tint[0]; ctx.fillRect(0, 0, W, H);
         ctx.globalCompositeOperation = 'color'; ctx.globalAlpha = o.tint[1] * .35; ctx.fillRect(0, 0, W, H); ctx.restore();
