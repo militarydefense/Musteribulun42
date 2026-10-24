@@ -334,3 +334,13 @@ Kurallar:
 - **Siyah ara kart yok;** bölüm numarası sahnenin üstünde küçük etiket.
 - **Her bölümde tek değişken** denenir; teslim notunda hangisi olduğu yazılır.
 - TikTok Part 4 bu formülle ayrı kurgu (`ep04tt/`): iki açılışın karşılaştırması.
+
+## 27. İkinci seri kararı: Titanik (25 Ekim)
+- "Nobody Can Know" (NCK) 2–3 bölümde güçlü bir finalle kapanır; kanalda kalır ve yeni izleyiciye yönlendirilir.
+- Yeni seri: Titanik'ten kaçış, izleyici oylarıyla. Çalışma adı "LAST LIFEBOAT". Kurgu, gerçek olaylardan esinlenme ("Fiction inspired by real events"); gerçek yolcular karikatürleştirilmez.
+- Kanal kimliği bağlantısı: karakterin yanında sahibi belirsiz bir servet (emanet mücevher/para çantası).
+- Yapı: gerçek zaman çizelgesi 23:40 (buzdağı) → 02:20 (batış), ekranda sürekli geri sayım; her bölüm ~10–15 dk. 12–15 bölüm (+ Carpathia/New York ile 20'ye kadar).
+- Kurallar NCK ile aynı (§13, §15, §26): anlatıcı + "you" ilk kelimede, konu + bölümün yeni olayı ilk cümlede, parlak ilk kare, siyah ara kart yok, her bölümde tek yenilik.
+- Gerçek bilgi: 2.224 kişi / 1.178 filika kapasitesi, ilk filika 65 kişilik 28 kişiyle, su -2°C, Californian'ın yardıma gelmemesi vb. Her rakam yayından önce kaynakla kontrol edilir.
+- İki seri birlikte: profilde ayrı öne çıkan story + ayrı oynatma listesi, kapaklarda seri adı ve renk farkı. Biri patlarsa diğerine çapraz yönlendirme (sabit yorum, açıklama, son karede "other story on my profile").
+- Önce 3 bölümlük test; rakamlara göre devam.
