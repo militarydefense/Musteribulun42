@@ -1,0 +1,20 @@
+[
+ {"shot": "hook", "say": "You won fifty million dollars, nobody can know, and your boss's deadline ends in three, two, one.",
+  "show": "You won $50 million, nobody can know, and your boss's deadline ends in 3, 2, 1."},
+ {"shot": "five", "say": "Five o'clock. Nothing happens. And that's what scares you.", "show": "5 o'clock. Nothing happens. And that's what scares you."},
+ {"shot": "vote", "say": "You voted lock, so you already did it, at four fifty-eight.", "show": "You voted lock, so you already did it, at 4:58."},
+ {"shot": "lock", "say": "New password. Two-factor on. Sign out of every device."},
+ {"shot": "list", "say": "Your cloud keeps a list of every device that's signed in, so you check it."},
+ {"shot": "twist", "say": "And there's one more. A laptop you've never seen, signed in from Riverside Apartments."},
+ {"shot": "who", "say": "Grant doesn't live in Riverside. But whoever said your name does."},
+ {"shot": "him", "say": "Nice try. A new password doesn't help... if I'm the one getting your codes.", "pause": 0.4},
+ {"shot": "code", "say": "Then your phone buzzes. A login code you never asked for."},
+ {"shot": "fact", "say": "That's called a SIM swap: scammers move your number to their phone, and every text code goes to them."},
+ {"shot": "rule", "say": "Rule five: don't use text codes. Use an authenticator app."},
+ {"shot": "grant", "say": "He's in. Monday, we take all of it.", "pause": 0.4},
+ {"shot": "two", "say": "So there are two of them. One in your office, and one in your phone."},
+ {"shot": "choice", "say": "So, do you call your carrier and lock your number, or go find the guy in the red jacket?"},
+ {"shot": "cta", "say": "Comment call or find, and follow, so you don't miss Monday."},
+ {"shot": "third", "say": "And one more thing. You've seen him before. He's the guy who sold you the ticket.", "pause": 0.5},
+ {"shot": "end", "card": 1.0}
+]
