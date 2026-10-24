@@ -1,6 +1,6 @@
 """Episode cover (Reels / Shorts thumbnail) in the series template.
 
-Usage: python3 -I cover.py <scene image> <part number> "<TITLE LINE 1|LINE 2>" <out.png> [focus_y]
+Usage: python3 -I cover.py <scene image> <part number> "<TITLE LINE 1|LINE 2>" <out.png> [focus_y] [series name]
 focus_y (0..1) picks which part of the scene stays visible under the title (default 0.6).
 Everything that matters sits inside the 1080x1440 band Instagram keeps in the profile grid.
 """
@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 src, part, title, out = sys.argv[1:5]
 focus = float(sys.argv[5]) if len(sys.argv) > 5 else .6
+series = sys.argv[6] if len(sys.argv) > 6 else "NOBODY CAN KNOW"
 W, H = 1080, 1920
 NAVY, GOLD = (14, 20, 36), (245, 197, 24)
 # one accent per part, cycling, so the grid reads as a numbered shelf
@@ -36,7 +37,7 @@ d = ImageDraw.Draw(im)
 
 F = lambda size: ImageFont.truetype(BLACK, size)
 x = 70
-d.text((x, 290), "NOBODY CAN KNOW", font=ImageFont.truetype(MONO, 34), fill=(200, 205, 215))
+d.text((x, 290), series, font=ImageFont.truetype(MONO, 34), fill=(200, 205, 215))
 d.text((x, 395), "PART", font=F(130), fill="white")
 pw = d.textlength("PART", font=F(130))
 # big number with a soft glow

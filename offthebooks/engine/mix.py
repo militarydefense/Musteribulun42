@@ -279,8 +279,60 @@ def money_count(d=.9):  # money counter: fast metallic ratchet clicks (~28/s, 7.
     return x
 
 
+# ---- 25 Oct: Titanic series sounds ----
+def horn(d=2.6):  # ship's steam whistle: low three-note chord, breathy attack, long tail
+    t = tt(d + .8)
+    tone = sum(g * np.sign(np.sin(2 * np.pi * f * t)) * .25 + g * np.sin(2 * np.pi * f * t) for f, g in ((110, 1), (138.6, .7), (164.8, .55)))
+    tone = smooth(tone, 6) + smooth(noise(len(t)), 12) * .35
+    return tone * env(len(t), .18, 1.0) * .35
+
+
+def groan(d=2.2):  # hull metal groaning under strain: slow pitch-wobbling low partials + grit
+    t = tt(d); f = 55 + 12 * np.sin(2 * np.pi * .7 * t) + 6 * np.sin(2 * np.pi * 3.1 * t)
+    ph = 2 * np.cumsum(np.pi * f) / SR
+    x = np.sin(ph) + .5 * np.sin(2.01 * ph) + .3 * np.sin(3.7 * ph)
+    grit = smooth(noise(len(t)), 40) * (1 + np.sin(2 * np.pi * 9 * t)) * .4
+    x = (x + grit) * env(len(t), .4, .9)
+    for _ in range(2):
+        if "metal" in LIB: _put(x, int(rng.uniform(.2, d * .6) * SR), from_lib("metal") * .5)
+    return x * .5
+
+
+def water(d=2.5):  # sea water rushing / trickling in: filtered noise with a slow swell
+    t = tt(d); n = noise(len(t))
+    x = smooth(n, 30) * 1.6 + hp(smooth(n, 4), 12) * .5
+    x *= (.6 + .4 * np.sin(2 * np.pi * .8 * t + 1)) * env(len(t), .5, .8)
+    return x * .45
+
+
+def heartbeat(d=2.0):  # lub-dub every ~0.8 s
+    x = np.zeros(int(d * SR)); t0 = 0.0
+    while t0 < d - .3:
+        for o, g in ((0, 1), (.2, .7)):
+            bt = tt(.18); _put(x, int((t0 + o) * SR), np.sin(2 * np.pi * (48 + 30 * np.exp(-bt * 30)) * bt) * np.exp(-bt * 22) * g)
+        t0 += .8
+    return x * .9
+
+
+def bell3(d=None):  # crow's nest bell, three strikes
+    x = np.zeros(int(2.4 * SR))
+    for k in range(3):
+        bt = tt(1.4)
+        b = sum(g * np.sin(2 * np.pi * f * bt) * np.exp(-bt * dk) for f, g, dk in ((880, 1, 3), (1873, .5, 5), (2540, .3, 7), (3610, .15, 9)))
+        _put(x, int(k * .42 * SR), b * .35)
+    return x
+
+
+def gate(d=None):  # iron gate slammed shut: metal take + a heavy thud
+    x = np.zeros(int(1.4 * SR))
+    _put(x, 0, (from_lib("metal") if "metal" in LIB else hit()) * .9)
+    _put(x, int(.02 * SR), thud() * .8)
+    return x
+
+
 SYN.update({"knock3": knock3, "keyboard": keyboard, "ring": ring, "buzz": buzz, "rec_beep": rec_beep,
-            "crickets": crickets, "fill": fill, "typewriter": typewriter, "money_count": money_count})
+            "crickets": crickets, "fill": fill, "typewriter": typewriter, "money_count": money_count,
+            "horn": horn, "groan": groan, "water": water, "heartbeat": heartbeat, "bell3": bell3, "gate": gate})
 sfx = np.zeros(N)
 mutes = []
 for e in EV:

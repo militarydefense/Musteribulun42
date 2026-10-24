@@ -1,4 +1,4 @@
-# LAST NIGHT ON THE TITANIC — Part 1 "The Bag"  (ONAY BEKLİYOR)
+# LAST NIGHT ON THE TITANIC — Part 1 "The Bag"  (ÜRETİLDİ — 85 sn, son senaryo script.json içinde)
 
 Kahraman: **Tommy** (3. sınıf yolcu, 1912) — gri kasket, tüvit ceket, kırmızı atkı.
 Hedef süre: ~75–80 sn · Part 3 formülü: ilk cümlede kanca + ilk karede parlak sayaç, karaoke altyazı, siyah kart YOK, whoosh YOK.

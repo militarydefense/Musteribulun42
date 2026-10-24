@@ -344,3 +344,10 @@ Kurallar:
 - Gerçek bilgi: 2.224 kişi / 1.178 filika kapasitesi, ilk filika 65 kişilik 28 kişiyle, su -2°C, Californian'ın yardıma gelmemesi vb. Her rakam yayından önce kaynakla kontrol edilir.
 - İki seri birlikte: profilde ayrı öne çıkan story + ayrı oynatma listesi, kapaklarda seri adı ve renk farkı. Biri patlarsa diğerine çapraz yönlendirme (sabit yorum, açıklama, son karede "other story on my profile").
 - Önce 3 bölümlük test; rakamlara göre devam.
+
+## 28. Titanic Part 1 "The Bag" (25 Oct)
+- Hero Tommy (3rd class), Lady (English_Graceful_Lady, female), Steward (English_Debator), Bowler Hat man (English_CaptivatingStoryteller), inner voice filtered.
+- Frame 0: Tommy + giant ticking "THE TITANIC SINKS IN 2:39:59"; HUD = story clock that jumps forward between scenes + DANGER %.
+- Real facts on screen: 1,178 lifeboat seats vs ~2,224 aboard (1,046 without a seat); 3rd class reached the deck too late.
+- New SFX: horn, groan, water, heartbeat, bell3, gate. Music: assets/music.mp3 (Suno orchestral, first 4 s cut).
+- Vote STAY / RUN. 85 s, 20 images. Release: releases/titanic_part01/.
