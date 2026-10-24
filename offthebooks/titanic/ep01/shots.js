@@ -5,8 +5,9 @@
 /*UI*/
 
 loadImages(['ti1', 'ti2', 'ti3', 'ti4', 'ti5', 'ti6', 'ti7', 'ti8', 'ti9', 'ti10',
-  'ti11', 'ti12', 'ti13', 'ti14', 'ti15', 'ti16', 'ti17', 'ti18', 'ti19', 'ti20']);
-const NO_CAPTION = new Set(['end']);
+  'ti11', 'ti12', 'ti13', 'ti14', 'ti15', 'ti16', 'ti17', 'ti18', 'ti19', 'ti20',
+  'ti21', 'ti22', 'ti23', 'ti24', 'ti25', 'ti26', 'ti27', 'ti28', 'ti29', 'ti30']);
+const NO_CAPTION = new Set(['end', 'impact']);
 const SEPIA = ['#C8A060', .55], ICE = ['#3A7BD5', .35], RED = ['#C0262D', .4];
 
 // ---- story clock: 2:40:00 at the hook, real seconds tick, and it jumps forward between scenes ----
@@ -81,10 +82,14 @@ const SHOTS = {
         if (t < 3) mono('FICTION INSPIRED BY REAL EVENTS', W / 2, 1830, 22, 'rgba(255,255,255,.7)', { spacing: 4 });
         stamp('NOT YOURS.', W / 2, 760, 110, C.red, pop(t, H_('isnt'), .3), -.06);
       } }),
-  time: beats([['ti14', .5, .3, 1.15, { tr: 'dip', move: 'in' }], ['ti14', .52, .3, 1.7, { tr: 'crash' }],
-    ['ti15', .5, .4, 1.05, { tr: 'whip', move: 'up' }], ['ti19', .6, .45, 1.1, { tr: 'flash', shake: 1, rot: -5, fx: 'sway' }]],
-    { cuts: () => [at('time', 'eleven'), at('time', 'the'), at('time', 'iceberg')], shake: t => t > at('time', 'iceberg') ? clamp(1 - (t - at('time', 'iceberg')) / 1.2) : 0,
+  time: beats([['ti14', .5, .3, 1.15, { tr: 'dip', move: 'in' }], ['ti15', .5, .4, 1.05, { tr: 'whip', move: 'up' }],
+    ['ti22', .5, .45, 1.05, { tr: 'crash', rot: -3, fx: 'sway' }], ['ti21', .5, .45, 1.1, { tr: 'flash', shake: 1, rot: -5 }]],
+    { cuts: () => [at('time', 'eleven'), at('time', 'the'), at('time', 'hit')], shake: t => t > at('time', 'hit') ? clamp(1 - (t - at('time', 'hit')) / 1.2) : 0,
       after: t => infoBox(t, S('time') + .1, at('time', 'the'), 1000, 'SUNDAY NIGHT', 'APRIL 14, 1912 · 11:40 PM', { size: 54, type: true, cps: 30, w: 900 }) }),
+  // the collision itself: 1.6 s with no voice, only metal, ice and the shudder
+  impact: beats([['ti21', .55, .5, 1.25, { tr: 'shake', move: 'crash', rot: 4 }], ['ti24', .5, .4, 1.05, { tr: 'flash', shake: 1, rot: -6 }],
+    ['ti25', .5, .5, 1.05, { tr: 'dip', move: 'out', fx: 'sway' }]],
+    { cuts: () => [S('impact') + .55, S('impact') + 1.05], shake: t => clamp(1 - (t - S('impact')) / 1.4) }),
   you: beats([['ti2', .5, .4, 1.0, { tr: 'shake', fx: 'flicker', rot: -4 }], ['ti2', .5, .35, 1.4, { tr: 'crash', fx: 'flicker' }]],
     { cuts: () => [at('you', 'the')],
       after: t => nameTag(t, S('you') + .05, E('you') + .1, 70, 360, 'THIS IS YOU', 'TOMMY', '3RD CLASS · BOTTOM OF THE SHIP') }),
@@ -102,12 +107,12 @@ const SHOTS = {
   water: beats([['ti6', .5, .6, 1.05, { tr: 'dip', move: 'down', fx: 'flicker' }], ['ti13', .5, .5, 1.0, { tr: 'whip', move: 'in' }],
     ['ti13', .5, .75, 1.35, { move: 'down', rot: 4, fx: 'flicker' }]],
     { cuts: () => [at('water', 'a'), at('water', 'sliding')], tint: ICE }),
-  fact0: beats([['ti5', .5, .45, 1.0, { tr: 'whip', move: 'right', fx: 'sway' }], ['ti20', .5, .5, 1.05, { move: 'down' }]], { cuts: () => [at('fact0', 'knows')],
+  fact0: beats([['ti23', .5, .45, 1.05, { tr: 'dip', move: 'in', fx: 'pulse' }], ['ti26', .5, .45, 1.05, { tr: 'glitch', move: 'right' }]], { cuts: () => [at('fact0', 'knows')],
     after: t => pill('NOBODY ON BOARD KNOWS YET', 1520, t, S('fact0') + .1, { bg: C.gold, fg: C.navy }) }),
-  seats: beats([['ti20', .5, .55, 1.15, { move: 'out', fx: 'sway' }], ['ti5', .6, .5, 1.2, { tr: 'crash' }]], { cuts: () => [at('seats', 'people')],
+  seats: beats([['ti30', .5, .5, 1.1, { tr: 'whip', move: 'out', fx: 'sway' }], ['ti20', .5, .55, 1.15, { tr: 'crash' }]], { cuts: () => [at('seats', 'people')],
     after: t => { overlayTag(t, S('seats'), 'REAL FACT · 1912', '', '', '');
       bigCounter(t, S('seats') + .1, E('seats') + .05, 'LIFEBOAT SEATS', t => Math.round(count(t, S('seats') + .3, 1.6, 0, 1178, easeOut)).toLocaleString('en-US')); } }),
-  aboard: beats([['ti1', .45, .45, 1.05, { tr: 'whip', move: 'out', fx: 'sway' }], ['ti5', .4, .5, 1.25, { tr: 'red', move: 'in' }]], { cuts: () => [at('aboard', 'on')],
+  aboard: beats([['ti28', .5, .45, 1.05, { tr: 'whip', move: 'out', fx: 'sway' }], ['ti5', .4, .5, 1.25, { tr: 'red', move: 'in' }]], { cuts: () => [at('aboard', 'on')],
     after: t => {
       bigCounter(t, S('aboard'), E('aboard') + .3, 'PEOPLE ON BOARD', t => Math.round(count(t, S('aboard') + .2, 1.2, 1178, 2224, easeOut)).toLocaleString('en-US'));
       pill('1,046 WITHOUT A SEAT', 1000, t, at('aboard', 'this'), { bg: C.red, fg: C.white, t1: E('aboard') + .3 });
@@ -115,22 +120,22 @@ const SHOTS = {
   gate: beats([['ti18', .5, .45, 1.0, { tr: 'crash', shake: 1, move: 'in' }], ['ti7', .5, .5, 1.05, { tr: 'shake', move: 'crash' }]], { cuts: () => [at('gate', 'the', 1)] }),
   steward: beats([['ti7', .58, .42, 1.35, { move: 'in', rot: -3 }], ['ti7', .58, .35, 1.6, { tr: 'crash', rot: 3, shake: .6 }]], { cuts: () => [at('steward', 'there')],
     after: t => nameTag(t, S('steward') + .05, E('steward') + .1, 70, 360, 'CREW', 'THE STEWARD', 'HE WON\'T OPEN THE GATE') }),
-  late: beats([['ti7', .3, .35, 1.5, { tr: 'dip', move: 'left' }], ['ti5', .5, .5, 1.1, { move: 'out', fx: 'sway' }]], { cuts: () => [at('late', 'reached')],
+  late: beats([['ti7', .3, .35, 1.5, { tr: 'dip', move: 'left' }], ['ti30', .5, .5, 1.1, { move: 'out', fx: 'sway' }]], { cuts: () => [at('late', 'reached')],
     tint: ['#506080', .35],
     after: t => overlayTag(t, S('late'), 'REAL FACT', 'They reached the deck', 'too late.', 'Third class had the lowest survival rate.') }),
-  back: beats([['ti8', .5, .45, 1.0, { tr: 'dip', move: 'in' }], ['ti8', .35, .3, 1.5, { tr: 'crash', fx: 'pulse' }]], { cuts: () => [at('back', 'but')] }),
+  back: beats([['ti29', .5, .45, 1.05, { tr: 'dip', move: 'left' }], ['ti8', .35, .3, 1.5, { tr: 'crash', fx: 'pulse' }]], { cuts: () => [at('back', 'but')] }),
   lady2: beats([['ti8', .4, .35, 1.25, { move: 'in', fx: 'pulse' }], ['ti16', .5, .4, 1.05, { tr: 'whip', fx: 'flicker' }],
     ['ti16', .45, .3, 1.5, { tr: 'crash', rot: -4, fx: 'pulse' }], ['ti7', .6, .4, 1.3, { tr: 'glitch', move: 'crash', rot: 5 }]],
     { cuts: () => [at('lady2', 'hide'), at('lady2', 'trust'), at('lady2', 'uniform')],
       after: t => { if (t > at('lady2', 'uniform')) { ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .5; ctx.fillStyle = '#C0262D'; ctx.fillRect(0, 0, W, H); ctx.restore(); }
         stamp('NO UNIFORMS.', W / 2, 1020, 90, C.red, pop(t, at('lady2', 'uniform'), .3), .05); } }),
   inner: beats([['ti16', .45, .35, 1.35, { move: 'in' }], ['ti10', .5, .45, 1.15, { tr: 'dip', move: 'in', fx: 'pulse' }]], { cuts: () => [at('inner', 'diamonds')], tint: ICE }),
-  choice: beats([['ti10', .5, .42, 1.1, { move: 'in' }], ['ti13', .5, .45, 1.1, { tr: 'whip', move: 'left' }], ['ti18', .5, .45, 1.05, { tr: 'whip', move: 'in' }]],
+  choice: beats([['ti27', .5, .45, 1.05, { tr: 'flash', move: 'up' }], ['ti10', .5, .42, 1.1, { tr: 'crash' }], ['ti18', .5, .45, 1.05, { tr: 'whip', move: 'in' }]],
     { cuts: () => [at('choice', 'stay'), at('choice', 'run')],
-      after: t => choiceBoxes(t, S('choice') + .3, CHOICES, 'COMMENT STAY OR RUN') }),
-  cta: beats([['ti2', .5, .4, 1.1, { tr: 'flash', fx: 'flicker' }], ['ti16', .5, .4, 1.15, { tr: 'whip' }], ['ti10', .5, .4, 1.2, { tr: 'crash' }]],
+      after: t => choiceBoxes(t, at('choice', 'stay') - .1, CHOICES, 'COMMENT STAY OR RUN', at('choice', 'stay') + 2.9) }),
+  cta: beats([['ti24', .5, .4, 1.1, { tr: 'flash' }], ['ti16', .5, .4, 1.15, { tr: 'whip', fx: 'flicker' }], ['ti10', .5, .4, 1.2, { tr: 'crash' }]],
     { cuts: () => [at('cta', 'the'), at('cta', 'follow')],
-      after: t => { choiceBoxes(t, S('choice') + .3, CHOICES, 'COMMENT STAY OR RUN'); followBtn(t, at('cta', 'follow') - .1); } }),
+      after: t => { pill('COMMENT: STAY or RUN?', 1520, t, S('cta'), { bg: C.gold, fg: C.navy, bob: true, t1: at('cta', 'follow') - .15 }); followBtn(t, at('cta', 'follow') - .1); } }),
   // open loop: the man in the bowler hat
   stairs: beats([['ti9', .5, .35, 1.0, { tr: 'dip', move: 'up' }], ['ti9', .5, .2, 1.7, { tr: 'crash' }], ['ti9', .5, .75, 1.35, { move: 'down', fx: 'flicker' }]],
     { cuts: () => [at('stairs', 'bag'), at('stairs', 'stairs')], push: .1,
@@ -155,14 +160,15 @@ function SFX() {
   add('stamp', H_('isnt'), .7); add('thump', H_('isnt'), .5);
   add('typewriter', S('time') + .1, .4, 1.2);
   add('bell3', at('time', 'the') - .05, .7);
-  add('groan', at('time', 'iceberg') - .1, .9, 2.4); add('boom', at('time', 'iceberg'), .9);
+  add('horn', at('time', 'the'), .35, 1.0); add('hit', at('time', 'hit'), .7);
+  add('groan', S('impact') - .05, 1.0, 2.6); add('boom', S('impact'), 1.0); add('gate', S('impact') + .1, .6); add('metal', S('impact') + .55, .7); add('water', S('impact') + .9, .5, 1.5);
   add('thud', S('you') + .05, .5); add('typewriter', S('you') + .15, .3, .6);
   add('step', at('flash', 'ran'), .5); add('step', at('flash', 'ran') + .3, .45); add('cloth', at('flash', 'pushed'), .6);
   add('drone', S('lady1') - .1, .45, 3);
   add('silence', S('open') - .3, .5); add('heartbeat', S('open') - .3, .7, 1.6);
   add('money_count', at('diam', 'diamonds') - .05, .7, .7); add('fill', at('diam', 'enough') + .1, .4, .6);
   add('water', S('water'), .8, 4.2); add('tick', S('water') + .05, .7); add('groan', at('water', 'sliding'), .6, 2.0);
-  add('click', S('fact0') + .1, .5);
+  add('click', S('fact0') + .1, .5); add('glitch', at('fact0', 'knows'), .35);
   add('fill', S('seats') + .3, .55, 1.4); add('fill', S('aboard') + .2, .55, 1.0); add('thump', at('aboard', 'this'), .7);
   add('step', S('gate'), .5); add('step', S('gate') + .25, .5); add('step', S('gate') + .5, .5);
   add('gate', at('gate', 'shut') - .05, .9); add('thump', S('gate'), .5); add('tick', S('gate') + .05, .6);
@@ -171,7 +177,7 @@ function SFX() {
   add('tick', S('back') + .05, .6); add('thud', at('back', 'but'), .6);
   add('heartbeat', S('lady2'), .6, 6.5); add('cloth', at('lady2', 'hide'), .6); add('stamp', at('lady2', 'uniform'), .7); add('glitch', at('lady2', 'uniform'), .5); add('thump', at('lady2', 'trust'), .5);
   add('drone', S('inner'), .4, 3);
-  add('thump', S('choice') + .3, .7); add('click', S('choice') + .55, .5); add('click', S('choice') + .85, .5);
+  add('thump', S('choice') + .3, .7); add('click', at('choice', 'stay') + .15, .5); add('click', at('choice', 'stay') + .45, .5);
   add('click', at('cta', 'follow') - .1, .8);
   add('tick', S('stairs') + .05, .6); add('drone', S('stairs'), .6, 5.5);
   for (let i = 0; i < 5; i++) add('step', S('stairs') + .4 + i * .62, .55);

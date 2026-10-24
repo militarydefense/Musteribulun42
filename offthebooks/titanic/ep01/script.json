@@ -9,6 +9,10 @@
   "say": "April fourteenth, nineteen twelve. Eleven forty P.M. The ship just hit an iceberg."
  },
  {
+  "shot": "impact",
+  "card": 1.6
+ },
+ {
   "shot": "you",
   "say": "You're Tommy. Third class. The bottom of the ship."
  },
