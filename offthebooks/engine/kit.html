@@ -122,11 +122,14 @@ function beats(frames, o = {}) {
       if (mv === 'up' || mv === 'down') ccy = cy + (mv === 'up' ? -1 : 1) * (.08 * easeInOut(k) - .04);
       if (mv === 'crash') zz = z * (1 + .32 * easeOut(clamp(ls / .22)) + .04 * k);
       if (f.tr === 'crash') zz *= lerp(1.45, 1, easeOut(clamp(ls / .2)));
+      if (f.tr === 'smash' || f.tr === 'impact') zz *= lerp(1.6, 1, easeOut(clamp(ls / .16)));
+      if (f.tr === 'impact') { const s2 = clamp(1 - ls / .35); dx += Math.sin(t * 97) * 34 * s2; dy += Math.cos(t * 71) * 26 * s2; }
       if (f.fx === 'pulse') zz *= 1 + .025 * Math.pow(Math.max(0, Math.sin(t * Math.PI / .8)), 8);
       // rotation: f.rot = dutch angle in degrees, f.fx 'sway' = ship rolling
       let rot = (f.rot || 0) * Math.PI / 180;
       if (f.fx === 'sway') { rot += Math.sin(t * 1.4) * .028; dy += Math.sin(t * 1.4 + 1) * 14; }
       if (f.tr === 'tilt') rot += lerp(.12, 0, easeOut(clamp(ls / .35)));
+      if (f.tr === 'smash') rot += lerp(-.09, 0, easeOut(clamp(ls / .18)));
       if (rot) zz *= 1 + Math.abs(rot) * 1.1;
       // whip: the new picture slides in fast with a motion smear
       const wk = f.tr === 'whip' ? 1 - easeOut(clamp(ls / .22)) : 0;
@@ -149,6 +152,12 @@ function beats(frames, o = {}) {
       if (f.fx === 'flicker') {
         const n = rnd(Math.floor(t * 18)), dark = n > .82 ? .55 : n > .7 ? .25 : 0;
         if (dark) { ctx.fillStyle = `rgba(2,3,8,${dark})`; ctx.fillRect(0, 0, W, H); }
+      }
+      // hard cuts: smash = two black frames before the picture slams in, impact = a negative black-and-white hit
+      if (f.tr === 'smash' && ls < .07) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H); }
+      if (f.tr === 'impact' && ls < .1) {
+        ctx.save(); ctx.globalCompositeOperation = 'difference'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = 'saturation'; ctx.fillStyle = '#808080'; ctx.fillRect(0, 0, W, H); ctx.restore();
       }
       // cut flashes: white / red / dark dip
       if (f.tr === 'flash' || f.tr === 'red' || f.tr === 'dip') {

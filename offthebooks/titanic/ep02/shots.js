@@ -3,7 +3,7 @@
 // open loop (bowler hat tips his hat) BEFORE the vote, vote ≤3 s, CTA last ~2 s, every cut a different transition.
 /*UI*/
 
-loadImages(['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'ti4', 'ti5', 'ti13', 'ti17', 'ti18', 'ti20', 'ti27', 'ti28', 'ti30']);
+loadImages(['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'ti4', 'ti5', 'ti13', 'ti17', 'ti18', 'ti20', 'ti27', 'ti28', 'ti30']);
 const NO_CAPTION = new Set(['end']);
 const ICE = ['#3A7BD5', .35], RED = ['#C0262D', .4];
 
@@ -59,10 +59,10 @@ const SHOTS = {
     { cuts: () => [H_('titanic'), H_('diamonds'), H_('man'), H_('grabbed')],
       after: t => { slam([['HE FOUND', C.white], ['YOU.', C.red]], t, -.2, 990, H_('titanic'));
         if (t < 2.5) mono('PART 2 · FICTION INSPIRED BY REAL EVENTS', W / 2, 1830, 22, 'rgba(255,255,255,.7)', { spacing: 3 }); } }),
-  run: beats([['v1', .45, .5, 1.3, { tr: 'shake', rot: -6 }], ['ti18', .5, .45, 1.05, { tr: 'whip', move: 'in' }]],
+  run: beats([['w1', .5, .45, 1.05, { tr: 'impact', move: 'crash', rot: -5 }], ['ti18', .5, .45, 1.05, { tr: 'smash', move: 'in' }]],
     { cuts: () => [at('run', 'run')],
       after: t => commentCard(t, S('run') + .05, 'TOP COMMENT · PART 1', 'Run of course 🏃', 1000, at('run', 'run') + .5, 5) }),
-  water: beats([['v2', .5, .5, 1.05, { tr: 'dip', move: 'down', fx: 'flicker' }], ['v2', .45, .35, 1.5, { tr: 'crash', fx: 'pulse' }]],
+  water: beats([['w2', .5, .5, 1.05, { tr: 'smash', move: 'in', shake: .6 }], ['v2', .45, .4, 1.3, { tr: 'impact', fx: 'flicker' }]],
     { cuts: () => [at('water', 'water')], tint: ICE,
       after: t => infoBox(t, at('water', 'minus') - .1, E('water') + .2, 1000, 'REAL · NORTH ATLANTIC, 1912', 'SEA WATER: −2°C (28°F)', { size: 56, type: true, cps: 30, w: 920 }) }),
   fact: beats([['ti13', .5, .55, 1.15, { tr: 'whip', move: 'left', fx: 'flicker' }], ['v2', .5, .55, 1.3, { tr: 'dip', move: 'in' }]],
@@ -76,17 +76,19 @@ const SHOTS = {
       after: t => infoBox(t, at('deck', 'half') - .15, E('deck') + .2, 1000, 'REAL · LIFEBOAT 7, THE FIRST ONE DOWN', '28 PEOPLE · 65 SEATS', { size: 60, type: true, cps: 26, w: 940 }) }),
   see: beats([['ti27', .5, .45, 1.05, { tr: 'crash', move: 'in' }], ['v5', .5, .4, 1.1, { tr: 'flash', move: 'crash' }]],
     { cuts: () => [at('see', 'shes')] }),
-  lady: beats([['v5', .5, .35, 1.4, { tr: 'shake', move: 'crash', fx: 'pulse' }], ['v5', .45, .3, 1.9, { tr: 'red', rot: -4 }]],
+  lady: beats([['v5', .5, .35, 1.4, { tr: 'impact', move: 'crash', fx: 'pulse' }], ['v5', .45, .3, 1.9, { tr: 'smash', rot: -4 }]],
     { cuts: () => [at('lady', 'stole')], tint: RED,
       after: t => stamp('THIEF!', W / 2, 1040, 130, C.red, pop(t, at('lady', 'stole'), .3), -.08) }),
-  officer: beats([['v6', .5, .45, 1.1, { tr: 'crash', shake: 1, rot: 3 }]],
-    { after: t => nameTag(t, S('officer') + .05, E('officer') + .1, 70, 360, 'SHIP\'S OFFICER', 'BOAT DECK', 'EVERYONE IS STARING AT YOU') }),
-  inner: beats([['v6', .62, .5, 1.7, { tr: 'dip', move: 'in', fx: 'pulse' }]], { tint: ICE }),
+  officer: beats([['w4', .5, .45, 1.05, { tr: 'impact', move: 'crash', rot: 3 }], ['v6', .5, .45, 1.1, { tr: 'whip', shake: .6 }]],
+    { cuts: () => [at('officer', 'stop')],
+      after: t => nameTag(t, S('officer') + .05, E('officer') + .1, 70, 360, 'SHIP\'S OFFICER', 'BOAT DECK', 'EVERYONE IS STARING AT YOU') }),
+  inner: beats([['w3', .5, .45, 1.1, { tr: 'glitch', move: 'crash', fx: 'pulse' }], ['v6', .62, .5, 1.7, { tr: 'smash', fx: 'pulse' }]],
+    { cuts: () => [at('inner', 'up')], tint: ICE }),
   // open loop before the vote
-  loop: beats([['v7', .45, .3, 1.35, { tr: 'dip', move: 'in' }], ['v7', .42, .36, 1.6, { tr: 'glitch', move: 'crash', fx: 'pulse' }]],
+  loop: beats([['v7', .45, .3, 1.35, { tr: 'dip', move: 'in' }], ['w5', .5, .5, 1.1, { tr: 'impact', move: 'crash', fx: 'pulse' }]],
     { cuts: () => [at('loop', 'tips')],
       after: t => nameTag(t, at('loop', 'tips'), E('loop') + .1, 70, 360, '???', 'THE BOWLER HAT', 'THEY\'RE TOGETHER') }),
-  choice: beats([['v8', .5, .45, 1.05, { tr: 'flash', move: 'in', fx: 'sway' }], ['ti20', .5, .55, 1.25, { tr: 'whip', move: 'down' }]],
+  choice: beats([['v8', .5, .45, 1.05, { tr: 'flash', move: 'in', fx: 'sway' }], ['w6', .5, .5, 1.1, { tr: 'smash', move: 'down', shake: .5 }]],
     { cuts: () => [at('choice', 'or')],
       after: t => choiceBoxes(t, S('choice') + .1, CHOICES, 'COMMENT JUMP OR TALK', S('choice') + 3.0) }),
   cta: beats([['v8', .5, .35, 1.45, { tr: 'crash', fx: 'pulse' }]],
@@ -105,17 +107,17 @@ function SFX() {
   const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
   add('boom', 0, .9); add('hit', 0, .7); add('cloth', .05, .7);
   add('groan', H_('titanic') - .05, .6, 1.6); add('money_count', H_('diamonds'), .45, .35); add('glitch', H_('man'), .45); add('hit', H_('grabbed'), .7);
-  add('heartbeat', S('run'), .5, 2); add('click', S('run') + .1, .45); add('step', at('run', 'run'), .6); add('step', at('run', 'run') + .25, .55); add('step', at('run', 'run') + .5, .5);
-  add('water', S('water'), .85, 3); add('typewriter', at('water', 'minus'), .35, .8);
+  add('heartbeat', S('run'), .5, 2); add('hit', S('run'), .7); add('cloth', S('run'), .7); add('click', S('run') + .1, .45); add('step', at('run', 'run'), .6); add('step', at('run', 'run') + .25, .55); add('step', at('run', 'run') + .5, .5);
+  add('water', S('water'), .85, 3); add('thump', S('water'), .6); add('typewriter', at('water', 'minus'), .35, .8);
   add('drone', S('fact'), .45, 3.5); add('paper', S('fact') + .1, .35);
   for (let i = 0; i < 6; i++) add('step', S('road') + i * .4, .5);
   add('tick', S('road') + .05, .6); add('thump', at('road', 'secret'), .5);
   add('metal', S('deck'), .55); add('tick', S('deck') + .05, .6); add('horn', at('deck', 'boat') - .05, .45, 1.4); add('typewriter', at('deck', 'half') - .1, .35, .9);
   add('hit', at('see', 'shes'), .7);
   add('silence', S('lady') - .1, .3); add('stamp', at('lady', 'stole'), .8); add('hit', at('lady', 'stole'), .7);
-  add('thud', S('officer'), .7); add('cloth', S('officer') + .05, .6);
-  add('heartbeat', S('inner'), .7, 1.6);
-  add('drone', S('loop'), .55, 4); add('glitch', at('loop', 'tips'), .55);
+  add('thud', S('officer'), .7); add('hit', S('officer'), .5); add('cloth', S('officer') + .05, .6);
+  add('heartbeat', S('inner'), .7, 1.6); add('glitch', S('inner'), .45);
+  add('drone', S('loop'), .55, 4); add('hit', at('loop', 'tips'), .7); add('glitch', at('loop', 'tips'), .4);
   add('thump', S('choice') + .1, .7); add('click', S('choice') + .35, .5); add('click', S('choice') + .65, .5);
   add('click', at('cta', 'follow') - .1, .8);
   add('hit', S('end'), .7); add('horn', S('end') + .1, .35, 1.0);
