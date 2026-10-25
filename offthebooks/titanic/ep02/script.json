@@ -1,0 +1,16 @@
+[
+ {"shot": "hook", "say": "You're on the sinking Titanic with a bag of diamonds that isn't yours, and a man in a bowler hat just grabbed your scarf."},
+ {"shot": "run", "say": "So you do what you all said. You run."},
+ {"shot": "water", "say": "The corridor is flooding, and the water is minus two degrees.", "show": "The corridor is flooding, and the water is minus 2 degrees."},
+ {"shot": "fact", "say": "In water that cold, most people last minutes, not hours."},
+ {"shot": "road", "say": "So you take Scotland Road, the crew's long secret corridor."},
+ {"shot": "deck", "say": "Twelve forty-five. The boat deck. The first lifeboat is going down half empty."},
+ {"shot": "see", "say": "And then you see her. The woman who gave you the bag. She's in the boat."},
+ {"shot": "lady", "say": "That's him! He stole my diamonds!"},
+ {"shot": "officer", "say": "You there! Stop right there!"},
+ {"shot": "inner", "say": "She set me up.", "show": "(She set me up.)"},
+ {"shot": "loop", "say": "And behind the officer, the man in the bowler hat... tips his hat to her.", "pause": 0.3},
+ {"shot": "choice", "say": "Do you jump into the boat with the bag, or stay and tell the officer the truth?"},
+ {"shot": "cta", "say": "Comment jump or talk, and follow."},
+ {"shot": "end", "card": 0.8}
+]
