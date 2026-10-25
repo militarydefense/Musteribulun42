@@ -362,3 +362,5 @@ Kurallar:
 - Weak spots: (1) first 3 s still loses ~40%; (2) the drop at the CTA hides the open loop (bowler hat) from most viewers; (3) follows 1/1,071 → no reason to follow.
 - Vote so far: RUN 4/4 (just_clark24 "Run of course", naomi.geiwald, carlo_yinke_, + 1).
 - Part 2 rules: open loop BEFORE the CTA, CTA ≤ 2 s at the very end; give a follow reason ("follow to see if Tommy makes it off").
+- YouTube NCK Part 5 (~14 h): 461 views, flat for ~9 h then a steady climb (still rising), 95.7% Shorts feed, 58.3% kept watching
+  (best so far; Part 2 was 43%), avg 0:31 of 1:19, 2.3 h watch time. YouTube pushes late — judge YT at 48 h, not at 3 h.
