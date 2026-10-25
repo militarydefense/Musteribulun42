@@ -379,3 +379,7 @@ Kurallar:
 - Part 6 at ~3 h: 894 views / 645 viewers, curve jumped up at ~2.5 h (second wave, well above typical), IG badge
   "more comments than nearby Reels in the first 3 h". Skip 27.0%, likes 3.2%, comments 0.9% (7), saves 1, shares 0,
   follows 2, avg 19 s / 44 s. Comments are the signal that opened the second wave → reply to every comment fast.
+- Part 6 at ~4 h: 1,420 views / 1,152 viewers (Titanic P1 needed 8 h for 1,071), still climbing steeply; skip 30.7%,
+  likes 35 (3.0%), comments 9, saves 4, shares 0, avg 20 s. Profile visits 19 → follows 3. 99.8% non-followers, US 40%.
+  Skip moments: the only real skip spike is 0:00–0:03 (~30%); almost nobody skips mid-video. → the 45 s format works;
+  the remaining lever is the first 3 s, and the profile (19 visits → 3 follows) should explain both series.
