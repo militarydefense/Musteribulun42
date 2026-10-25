@@ -1,6 +1,7 @@
 # LAST NIGHT ON THE TITANIC — Part 2 "Thief" (RUN 5–0)
 
-- `Titanic_Part2.mp4` (42 sn; son karede kapak) — Instagram / TikTok / YouTube
+- `Titanic_Part2_Instagram.mp4` (42 sn) — Instagram + TikTok
+- `Titanic_Part2_YouTube.mp4` (42,6 sn, son karede kapak) — YouTube Shorts
 - `Cover_Titanic_Part2.png` — kapak
 Oylama: **JUMP / TALK**
 
