@@ -1,0 +1,18 @@
+[
+ {"shot": "hook", "say": "You won fifty million dollars, nobody can know, and your phone company just told you someone called them pretending to be you.",
+  "show": "You won $50 million, nobody can know, and your phone company just told you someone called them pretending to be you."},
+ {"shot": "rep", "say": "He had your PIN. He asked us to move your number to a new phone."},
+ {"shot": "lock", "say": "So you lock it, right there."},
+ {"shot": "fact", "say": "Most carriers let you lock your number, so nobody can move it without a code only you know."},
+ {"shot": "rule", "say": "Rule six: lock your number with your carrier."},
+ {"shot": "dead", "say": "Across town, a phone just lost its signal."},
+ {"shot": "callback", "say": "Then she reads you the callback number he left."},
+ {"shot": "grant", "say": "You know that number. It's Grant's.", "pause": 0.35},
+ {"shot": "inner", "say": "Grant... and the guy who sold me the ticket?", "show": "(Grant… and the guy who sold me the ticket?)"},
+ {"shot": "share", "say": "Send this to someone who still uses text codes."},
+ {"shot": "monday", "say": "Then your work calendar pings. Monday, nine A.M. Grant, HR... and one name you've never seen.",
+  "show": "Then your work calendar pings. Monday, 9 A.M. Grant, HR… and one name you've never seen."},
+ {"shot": "choice", "say": "Tonight, do you claim the ticket through a trust, or take the recording to the police?"},
+ {"shot": "cta", "say": "Comment trust or police, and follow for Monday."},
+ {"shot": "end", "card": 0.8}
+]
