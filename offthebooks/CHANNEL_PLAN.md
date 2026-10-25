@@ -368,3 +368,11 @@ Kurallar:
   Retention: >100% at 0:00 (rewinds), 100→66% between ~0:03 and ~0:10 (the recap after the cold-open line), ~45% at 0:25,
   flat ~35% to ~1:02, then drops at the vote/CTA. Same CTA drop as Titanic P1 → rule confirmed: open loop before CTA, CTA last ≤2 s;
   no recap in the first 10 s ("you voted X" goes after the new event, not before it).
+
+## 30. NCK Part 6 (45 s, first ~2.5 h IG, posted ~19:00)
+- 487 views / 258 viewers (1.9 views per viewer → rewatches), avg 18 s of 44 s (41%), skip 20.7% (IG: "lower" ✓),
+  likes 2.9% (higher ✓), comments 1.2% (higher ✓, 5), saves 0.2%, shares 0. Curve above typical.
+- Retention: 100→~58% by 0:05, ~48% at 0:12, slow slide to ~37% at 0:28, then a step down at ~0:29–0:33 (= the
+  "Send this to someone…" line) to ~25%, flat ~22% to 0:42. ~20% reach the end (Titanic P1 78 s: ~5%).
+- Lessons: short (45 s) works — 4× more people reach the end; the mid-video share line costs ~10% and got 0 shares →
+  never put a CTA in the middle; share ask goes in the caption/pinned comment or in the last 2 s only.
