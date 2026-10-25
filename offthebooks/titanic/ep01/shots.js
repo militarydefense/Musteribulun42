@@ -73,12 +73,13 @@ const H_ = w => at('hook', w);
 
 const SHOTS = {
   // 0–6 s: a hit on frame 0 and a new picture every ~1 s, the countdown stays on top until "and"
-  hook: beats([['ti10', .5, .4, 1.0, { tr: 'crash', shake: 1 }], ['ti19', .6, .45, 1.1, { tr: 'flash', move: 'in', rot: -4 }],
+  hook: beats([['ti10', .5, .4, 1.0, { tr: 'crash', shake: 1 }], ['ti21', .5, .45, 1.15, { tr: 'flash', move: 'crash', rot: 4 }],
+    ['ti19', .6, .45, 1.1, { tr: 'whip', move: 'in', rot: -4 }],
     ['ti1', .5, .5, 1.05, { tr: 'whip', move: 'out', fx: 'sway' }], ['ti12', .5, .45, 1.1, { tr: 'crash', move: 'in' }],
     ['ti4', .5, .5, 1.1, { tr: 'flash', move: 'crash' }], ['ti10', .5, .3, 1.6, { tr: 'red', move: 'in', rot: 3 }]],
-    { cuts: () => [H_('minutes'), H_('titanic'), H_('holding'), H_('fortune'), H_('isnt')],
+    { cuts: () => [H_('hours'), H_('minutes'), H_('titanic'), H_('holding'), H_('fortune'), H_('isnt')],
       after: t => {
-        sinksIn(t, at('hook', 'and', 1));
+        sinksIn(t, H_('minutes'));
         if (t < 3) mono('FICTION INSPIRED BY REAL EVENTS', W / 2, 1830, 22, 'rgba(255,255,255,.7)', { spacing: 4 });
         stamp('NOT YOURS.', W / 2, 760, 110, C.red, pop(t, H_('isnt'), .3), -.06);
       } }),
@@ -154,7 +155,7 @@ const SHOTS = {
 function SFX() {
   const ev = [];
   const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
-  add('boom', 0, .9); add('hit', 0, .6); add('hit', H_('minutes'), .45); add('horn', H_('titanic') - .05, .7, 2.0);
+  add('boom', 0, .9); add('hit', 0, .6); add('hit', H_('hours'), .5); add('thump', H_('minutes'), .45); add('horn', H_('titanic') - .05, .7, 2.0);
   add('thump', H_('holding'), .6); add('money_count', H_('fortune'), .5, .4);
   for (let i = 1; i < 5; i++) add('tick', i * 1.0, .4);
   add('stamp', H_('isnt'), .7); add('thump', H_('isnt'), .5);
