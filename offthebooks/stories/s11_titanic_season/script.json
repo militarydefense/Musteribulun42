@@ -1,0 +1,8 @@
+[
+ {"shot": "date", "say": "April fourteenth, nineteen twelve."},
+ {"shot": "impact", "card": 1.6},
+ {"shot": "hist", "say": "History says more than fifteen hundred people never made it home.", "show": "History says more than 1,500 people never made it home."},
+ {"shot": "rewrite", "say": "This time... history is being rewritten.", "pause": 0.3},
+ {"shot": "fate", "say": "And their fate is in your hands.", "pause": 0.25},
+ {"shot": "end", "card": 2.6}
+]
