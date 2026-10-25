@@ -354,3 +354,11 @@ Kurallar:
 - 25 Oct v2 (user: "first scenes stay too long, every cut looks the same, add emotion"): voice 77 s (inner silences capped at 0.24 s, opening line +7% tempo),
   hook = 6 pictures in 5.7 s; beats() frames take a 5th option {tr: crash|flash|whip|glitch|red|dip|shake|tilt, move: in|out|left|right|up|down|crash,
   rot: dutch degrees, fx: sway|flicker|pulse, shake}. Rule: neighbouring cuts never use the same transition; emotion → move (fear: crash+pulse, chaos: sway+rot, dread: dip+flicker).
+
+## 29. Titanic Part 1 data (~8 h, IG)
+- 1,288 views / 1,071 viewers, avg 26 s (of 78 s), skip 33.4% (30 min: 14.6%), likes 29 (2.6%), comments 4, saves 5 (0.5%), shares 1, follows 1.
+- Curve still climbing steeply at 8 h, far above typical; 91.4% from Reels tab (non-followers).
+- Retention: ~100→60% in first ~3 s, ~45% by ~6 s, then FLAT ~38% to ~1:05, then drops at the vote/CTA → people who pass 6 s watch to the end.
+- Weak spots: (1) first 3 s still loses ~40%; (2) the drop at the CTA hides the open loop (bowler hat) from most viewers; (3) follows 1/1,071 → no reason to follow.
+- Vote so far: RUN 4/4 (just_clark24 "Run of course", naomi.geiwald, carlo_yinke_, + 1).
+- Part 2 rules: open loop BEFORE the CTA, CTA ≤ 2 s at the very end; give a follow reason ("follow to see if Tommy makes it off").
