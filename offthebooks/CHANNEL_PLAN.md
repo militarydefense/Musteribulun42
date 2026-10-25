@@ -364,3 +364,7 @@ Kurallar:
 - Part 2 rules: open loop BEFORE the CTA, CTA ≤ 2 s at the very end; give a follow reason ("follow to see if Tommy makes it off").
 - YouTube NCK Part 5 (~14 h): 461 views, flat for ~9 h then a steady climb (still rising), 95.7% Shorts feed, 58.3% kept watching
   (best so far; Part 2 was 43%), avg 0:31 of 1:19, 2.3 h watch time. YouTube pushes late — judge YT at 48 h, not at 3 h.
+- YouTube NCK Part 2 (lifetime): 770 views, flat after ~1.5 days, +3 subs; avg 0:36 (49.3%).
+  Retention: >100% at 0:00 (rewinds), 100→66% between ~0:03 and ~0:10 (the recap after the cold-open line), ~45% at 0:25,
+  flat ~35% to ~1:02, then drops at the vote/CTA. Same CTA drop as Titanic P1 → rule confirmed: open loop before CTA, CTA last ≤2 s;
+  no recap in the first 10 s ("you voted X" goes after the new event, not before it).
