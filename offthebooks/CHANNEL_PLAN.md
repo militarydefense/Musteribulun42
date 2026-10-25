@@ -376,3 +376,6 @@ Kurallar:
   "Send this to someone…" line) to ~25%, flat ~22% to 0:42. ~20% reach the end (Titanic P1 78 s: ~5%).
 - Lessons: short (45 s) works — 4× more people reach the end; the mid-video share line costs ~10% and got 0 shares →
   never put a CTA in the middle; share ask goes in the caption/pinned comment or in the last 2 s only.
+- Part 6 at ~3 h: 894 views / 645 viewers, curve jumped up at ~2.5 h (second wave, well above typical), IG badge
+  "more comments than nearby Reels in the first 3 h". Skip 27.0%, likes 3.2%, comments 0.9% (7), saves 1, shares 0,
+  follows 2, avg 19 s / 44 s. Comments are the signal that opened the second wave → reply to every comment fast.
