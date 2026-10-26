@@ -1,0 +1,17 @@
+[
+ {"shot": "hook", "say": "The Titanic sinks in ninety minutes, and you just jumped six stories into a lifeboat with a bag of stolen diamonds.",
+  "show": "The Titanic sinks in 90 minutes, and you just jumped 6 stories into a lifeboat with a bag of stolen diamonds."},
+ {"shot": "land", "say": "You land hard. Every face in the boat turns to you."},
+ {"shot": "fact", "say": "That really happened. One officer fired his pistol to stop people jumping into his boat."},
+ {"shot": "next", "say": "Then you see who's sitting next to you. Her."},
+ {"shot": "lady", "say": "Clever boy. Now open it."},
+ {"shot": "open", "say": "You open the bag.", "pause": 0.3},
+ {"shot": "coal", "say": "No diamonds. Just coal.", "pause": 0.5},
+ {"shot": "inner", "say": "I was the bait.", "show": "(I was the bait.)"},
+ {"shot": "glove", "say": "She sent the bowler hat after you, while the real diamonds stayed hidden in her glove."},
+ {"shot": "stop", "say": "Then the boat stops. Halfway down."},
+ {"shot": "loop", "say": "Above you, someone is holding the rope. Bowler hat. And a knife."},
+ {"shot": "choice", "say": "Do you climb back up and face him, or grab her glove and take the real diamonds?"},
+ {"shot": "cta", "say": "Comment climb or grab, and follow."},
+ {"shot": "end", "card": 0.8}
+]
