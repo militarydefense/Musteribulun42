@@ -5,7 +5,7 @@
 // a real fact at 0:09, the twist at 0:21, open loop before the vote, vote ≤3 s, CTA last.
 /*UI*/
 
-loadImages(['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'v5', 'w3', 'w5', 'w6', 'v8', 'ti4', 'ti20', 'ti27']);
+loadImages(['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'v5', 'w3', 'w5', 'x10', 'v8', 'ti4']);
 const NO_CAPTION = new Set(['end']);
 const ICE = ['#3A7BD5', .35], RED = ['#C0262D', .4], GOLD = ['#E8B04A', .35];
 
@@ -60,13 +60,13 @@ const H_ = w => at('hook', w);
 const SHOTS = {
   // frame 0: bright mid-air jump + giant countdown; one clear action, not a montage
   hook: beats([['x1', .5, .35, 1.05, { tr: 'crash', move: 'down', shake: .6 }], ['v8', .5, .45, 1.15, { tr: 'whip', move: 'down', rot: -4 }],
-    ['w6', .5, .5, 1.1, { tr: 'smash', move: 'down' }], ['ti4', .5, .5, 1.1, { tr: 'flash', move: 'crash' }]],
+    ['x10', .5, .45, 1.1, { tr: 'smash', move: 'down' }], ['ti4', .5, .5, 1.1, { tr: 'flash', move: 'crash' }]],
     { cuts: () => [H_('jumped'), H_('lifeboat'), H_('stolen')],
       after: t => { sinksIn(t, H_('jumped'));
         if (t < 2.5) mono('PART 3 · FICTION INSPIRED BY REAL EVENTS', W / 2, 1830, 22, 'rgba(255,255,255,.7)', { spacing: 3 }); } }),
   land: beats([['x2', .5, .55, 1.05, { tr: 'impact', move: 'crash', rot: 4 }], ['x2', .5, .3, 1.45, { tr: 'smash', fx: 'sway' }]],
     { cuts: () => [at('land', 'every')], shake: t => clamp(1 - (t - S('land')) / .8) }),
-  fact: beats([['x3', .5, .35, 1.05, { tr: 'flash', move: 'up' }], ['x3', .45, .3, 1.5, { tr: 'impact', shake: .6 }], ['ti20', .5, .55, 1.15, { tr: 'whip', move: 'down', fx: 'sway' }]],
+  fact: beats([['x3', .5, .35, 1.05, { tr: 'flash', move: 'up' }], ['x3', .45, .3, 1.5, { tr: 'impact', shake: .6 }], ['x10', .5, .55, 1.25, { tr: 'whip', move: 'down', fx: 'sway' }]],
     { cuts: () => [at('fact', 'fired'), at('fact', 'jumping')],
       after: t => overlayTag(t, S('fact') + .05, 'REAL · LIFEBOAT 14', 'An officer fired', 'warning shots.', 'To stop people jumping into a lowering boat.') }),
   next: beats([['x4', .65, .5, 1.25, { tr: 'dip', move: 'left' }], ['v5', .5, .35, 1.3, { tr: 'smash', move: 'crash', fx: 'pulse' }]],

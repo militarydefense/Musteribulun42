@@ -383,3 +383,6 @@ Kurallar:
   likes 35 (3.0%), comments 9, saves 4, shares 0, avg 20 s. Profile visits 19 → follows 3. 99.8% non-followers, US 40%.
   Skip moments: the only real skip spike is 0:00–0:03 (~30%); almost nobody skips mid-video. → the 45 s format works;
   the remaining lever is the first 3 s, and the profile (19 visits → 3 follows) should explain both series.
+- Titanic P3 fix (26 Oct): user spotted realistic human silhouettes/skin in 3 shots (x3 officer crowd, x6 glove arm,
+  ep02 w6 crewman). RULE: every image with people gets the hero sheet as a reference + "every person has a round pure
+  white head, no skin color, white glove hands, no realistic humans"; check each image for skin/realistic faces before render.
