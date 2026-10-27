@@ -13,11 +13,11 @@ function question(t, t1) {
   if (k <= 0) return;
   ctx.save(); ctx.globalAlpha = k;
   const s = lerp(1.08, 1, easeOut(clamp(t / .3)));
-  ctx.translate(W / 2, 1060); ctx.scale(s, s); ctx.translate(-W / 2, -1060);
-  rr(50, 800, W - 100, 520, 30); ctx.fillStyle = 'rgba(5,7,15,.82)'; ctx.fill();
-  ctx.lineWidth = 6; ctx.strokeStyle = C.red; ctx.stroke();
+  ctx.translate(W / 2, 1460); ctx.scale(s, s); ctx.translate(-W / 2, -1460);
+  rr(70, 1255, W - 140, 410, 26); ctx.fillStyle = 'rgba(5,7,15,.78)'; ctx.fill();
+  ctx.lineWidth = 5; ctx.strokeStyle = C.red; ctx.stroke();
   const L = [[['WOULD YOU WALK', C.white]], [['INTO A ROOM', C.white]], [['YOU ', C.white], ['KNOW', C.red]], [['IS A ', C.white], ['TRAP?', C.red]]];
-  L.forEach((segs, i) => segText(segs, W / 2, 905 + i * 115, 90, 99, 'center'));
+  L.forEach((segs, i) => segText(segs, W / 2, 1335 + i * 92, 76, 99, 'center'));
   ctx.restore();
 }
 function rec(t, t0, t1, dead) {
@@ -51,14 +51,14 @@ const SHOTS = {
     { after: t => question(t, E('hook') + .15) }),
   why: beats([['y2', .5, .45, 1.05, { tr: 'dip', move: 'in' }], ['y5', .5, .3, 1.35, { tr: 'smash', move: 'crash' }], ['y5', .5, .3, 1.1, { tr: 'flash', move: 'out' }], ['y1', .5, .4, 1.3, { tr: 'impact', fx: 'pulse' }]],
     { cuts: () => [at('why', 'your'), at('why', 'man'), at('why', 'they')],
-      after: t => { tag(t, at('why', 'your') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1000);
-        tag(t, at('why', 'man') + .4, at('why', 'they'), 'THE CASHIER', C.red, 1000); } }),
+      after: t => { tag(t, at('why', 'your') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1560);
+        tag(t, at('why', 'man') + .4, at('why', 'they'), 'THE CASHIER', C.red, 1560); } }),
   station: beats([['y3', .5, .45, 1.05, { tr: 'whip', move: 'right' }]],
     { after: t => tag(t, S('station') + .2, E('station'), '1 HOUR EARLIER · POLICE', C.gold, 520) }),
   det: beats([['y3', .7, .4, 1.5, { tr: 'dip', move: 'in' }], ['y4', .5, .55, 1.1, { tr: 'crash', move: 'in', fx: 'pulse' }]],
     { cuts: () => [at('det', 'go')],
       after: t => { overlayTag(t, S('det') + .05, 'REAL', 'Blackmail is a crime', 'in every U.S. state.', '', at('det', 'go'));
-        tag(t, at('det', 'wearing'), E('det') + .2, 'HIDDEN MIC', C.red, 1000); } }),
+        tag(t, at('det', 'wearing'), E('det') + .2, 'HIDDEN MIC', C.red, 1560); } }),
   walk: beats([['y1', .55, .45, 1.2, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.15, { tr: 'impact', move: 'crash' }]],
     { cuts: () => [at('walk', 'you', 1)], after: t => rec(t, at('walk', 'walk'), E('dead') + .3, t > S('dead') + .6) }),
   g1: beats([['y5', .5, .25, 1.6, { tr: 'crash', fx: 'pulse' }], ['y5', .2, .25, 1.6, { tr: 'whip' }]],
@@ -71,10 +71,10 @@ const SHOTS = {
   dead: beats([['y8', .5, .38, 1.3, { tr: 'glitch', move: 'crash', fx: 'flicker' }]],
     { tint: ICE, after: t => rec(t, 0, 1e9, t > S('dead') + .5) }),
   g3: beats([['y6', .5, .4, 1.15, { tr: 'impact', move: 'crash' }]],
-    { after: t => { rec(t, 0, 1e9, true); tag(t, S('g3') + .1, E('g3') + .3, 'SIGNAL JAMMER', C.red, 1000); } }),
+    { after: t => { rec(t, 0, 1e9, true); tag(t, S('g3') + .1, E('g3') + .3, 'SIGNAL JAMMER', C.red, 1560); } }),
   lock: beats([['y7', .5, .5, 1.1, { tr: 'smash', move: 'in', shake: .6 }], ['y8', .5, .4, 1.3, { tr: 'dip', move: 'crash', fx: 'pulse' }]],
     { cuts: () => [at('lock', 'locked')], tint: RED,
-      after: t => { rec(t, 0, 1e9, true); tag(t, at('lock', 'locked') + .1, E('lock') + .1, 'LOCKED IN', C.red, 1000); } }),
+      after: t => { rec(t, 0, 1e9, true); tag(t, at('lock', 'locked') + .1, E('lock') + .1, 'LOCKED IN', C.red, 1560); } }),
   choice: beats([['y8', .5, .42, 1.1, { tr: 'flash', move: 'in' }], ['y6', .5, .35, 1.2, { tr: 'whip' }]],
     { cuts: () => [at('choice', 'now')],
       after: t => { question(t, 0); choiceBoxes(t, at('choice', 'now') - .1, CHOICES, 'COMMENT SHOW OR WALK OUT', at('choice', 'now') + 3.0); } }),
