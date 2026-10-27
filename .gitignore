@@ -5,3 +5,4 @@ __pycache__/
 *.db
 .env
 offthebooks/titanic/*/build/
+offthebooks/ep*/build/video_noaudio.mp4
