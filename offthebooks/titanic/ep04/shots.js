@@ -83,11 +83,11 @@ const SHOTS = {
   cut: beats([['z6', .5, .3, 1.1, { tr: 'whip', move: 'down' }], ['z6', .55, .7, 1.5, { tr: 'dip', move: 'in', fx: 'sway' }]],
     { cuts: () => [at('cut', 'water')], tint: ICE, after: t => tag(t, at('cut', 'water') - .1, E('cut') + .1, '−2°C', '#8FD3FF', 1450, 130) }),
   lady2: beats([['z3', .48, .4, 1.6, { tr: 'glitch', move: 'crash', fx: 'pulse' }], ['z3', .5, .6, 2.0, { tr: 'smash' }]],
-    { cuts: () => [at('lady2', 'bottom')], tint: GOLD }),
-  wait: beats([['z4', .5, .5, 1.25, { tr: 'impact', move: 'crash', shake: 1 }]],
-    { tint: RED, shake: t => .7 * clamp(1 - (t - S('wait')) / 1.0), after: t => shadowDown(t, S('wait'), .25) }),
-  feet: beats([['z4', .5, .5, 1.5, { tr: 'shake', move: 'in', fx: 'pulse' }]],
-    { tint: RED, after: t => { shadowDown(t, S('feet') - .3, .4); tag(t, at('feet', 'three'), E('feet') + .2, '3 FEET', C.red, 1560, 90); } }),
+    { cuts: () => [at('lady2', 'rich')], tint: GOLD }),
+  wait: beats([['z2', .5, .5, 1.3, { tr: 'impact', move: 'crash', shake: 1 }], ['z4', .5, .5, 1.25, { tr: 'smash', move: 'in' }]],
+    { cuts: () => [at('wait', 'crushed')], tint: RED, shake: t => .7 * clamp(1 - (t - S('wait')) / 1.0), after: t => shadowDown(t, S('wait'), .25) }),
+  feet: beats([['z1', .5, .4, 1.3, { tr: 'shake', move: 'in', fx: 'pulse' }]],
+    { tint: RED, after: t => { shadowDown(t, S('feet') - .3, .3); tag(t, at('feet', 'three'), E('feet') + .2, '3 FEET', C.red, 1560, 90); } }),
   choice: beats([['z4', .5, .45, 1.1, { tr: 'flash', move: 'in' }], ['z6', .5, .5, 1.2, { tr: 'whip' }]],
     { cuts: () => [at('choice', 'or')], after: t => choiceBoxes(t, S('choice'), CHOICES, 'COMMENT LIFE OR DIAMONDS', S('choice') + 3.0) }),
   cta: beats([['z1', .5, .4, 1.3, { tr: 'crash', fx: 'pulse' }]],
@@ -113,7 +113,7 @@ function SFX() {
   add('paper', at('down', 'coming') + .05, .3);
   add('hit', S('sailor'), .9); add('thump', S('sailor') + .05, .7); add('cloth', S('sailor') + .3, .6);
   add('water', S('cut'), .6, 1.6); add('thump', at('cut', 'water'), .6);
-  add('glitch', S('lady2'), .4); add('thump', at('lady2', 'bottom'), .6);
+  add('glitch', S('lady2'), .4); add('thump', at('lady2', 'rich'), .6); add('money_count', at('lady2', 'rich'), .4, .4);
   add('metal', S('wait'), .8); add('groan', S('wait'), .8, 1.5); add('hit', at('wait', 'crushed'), .9);
   add('heartbeat', S('feet') - .2, .8, 2.0); add('metal', at('feet', 'left'), .6);
   add('thump', S('choice') + .1, .7); add('click', S('choice') + .35, .5); add('click', S('choice') + .65, .5);
