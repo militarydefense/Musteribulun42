@@ -16,7 +16,7 @@ function question(t, t1) {
   ctx.translate(W / 2, 1460); ctx.scale(s, s); ctx.translate(-W / 2, -1460);
   rr(70, 1255, W - 140, 410, 26); ctx.fillStyle = 'rgba(5,7,15,.78)'; ctx.fill();
   ctx.lineWidth = 5; ctx.strokeStyle = C.red; ctx.stroke();
-  const L = [[['WOULD YOU WALK', C.white]], [['INTO A ROOM', C.white]], [['YOU ', C.white], ['KNOW', C.red]], [['IS A ', C.white], ['TRAP?', C.red]]];
+  const L = [[['$50 MILLION', C.gold]], [['IS BEHIND THIS DOOR…', C.white]], [['AND SO IS A ', C.white], ['TRAP.', C.red]], [['WOULD YOU WALK IN?', C.white]]];
   L.forEach((segs, i) => segText(segs, W / 2, 1335 + i * 92, 76, 99, 'center'));
   ctx.restore();
 }
@@ -47,8 +47,8 @@ function followBtn(t, t0) {
 const CHOICES = [['SHOW', 'Put the ticket on the table.'], ['WALK OUT', 'Leave without it. The door is locked.']];
 
 const SHOTS = {
-  hook: beats([['y1', .5, .42, 1.05, { tr: 'crash', move: 'in', fx: 'pulse' }]],
-    { after: t => question(t, E('hook') + .15) }),
+  hook: beats([['y1', .5, .42, 1.05, { tr: 'crash', move: 'in', fx: 'pulse' }], ['y7', .5, .4, 1.2, { tr: 'glitch', move: 'crash', tint: ['#C0262D', .3] }], ['y1', .55, .3, 1.45, { tr: 'impact', move: 'in' }]],
+    { cuts: () => [at('hook', 'trap') - .15, at('hook', 'would') - .05], after: t => question(t, E('hook') + .15) }),
   why: beats([['y2', .5, .45, 1.05, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.35, { tr: 'impact', move: 'crash' }], ['y5', .2, .3, 1.7, { tr: 'whip' }], ['y5', .5, .3, 1.1, { tr: 'flash', move: 'out' }], ['y1', .5, .4, 1.3, { tr: 'impact', fx: 'pulse' }]],
     { cuts: () => [at('why', 'your'), at('why', 'man'), at('why', 'ticket'), at('why', 'they')],
       after: t => { tag(t, at('why', 'your') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1560);
@@ -71,14 +71,14 @@ const SHOTS = {
     { tint: ICE, after: t => rec(t, 0, 1e9, t > S('dead') + .5) }),
   g3: beats([['y6', .5, .4, 1.15, { tr: 'impact', move: 'crash' }]],
     { after: t => { rec(t, 0, 1e9, true); tag(t, S('g3') + .1, E('g3') + .3, 'SIGNAL JAMMER', C.red, 1560); } }),
-  lock: beats([['y6', .5, .3, 1.4, { tr: 'impact', move: 'crash' }], ['y7', .5, .5, 1.1, { tr: 'smash', move: 'in', shake: .6 }], ['y8', .5, .4, 1.3, { tr: 'dip', move: 'crash', fx: 'pulse' }]],
-    { cuts: () => [at('lock', 'and'), at('lock', 'locked') + .5], tint: RED,
-      after: t => { rec(t, 0, 1e9, true); tag(t, at('lock', 'locked') + .1, E('lock') + .1, 'LOCKED IN', C.red, 1560); } }),
-  choice: beats([['y8', .5, .42, 1.1, { tr: 'flash', move: 'in' }], ['y6', .5, .35, 1.2, { tr: 'whip' }]],
-    { cuts: () => [at('choice', 'now')],
-      after: t => { question(t, 0); choiceBoxes(t, at('choice', 'now') - .1, CHOICES, 'COMMENT SHOW OR WALK OUT', at('choice', 'now') + 3.0); } }),
+  lock: beats([['y8', .5, .42, 1.15, { tr: 'flash', move: 'in' }], ['y6', .5, .3, 1.4, { tr: 'impact', move: 'crash' }], ['y7', .5, .5, 1.1, { tr: 'smash', move: 'in', shake: .6 }], ['y8', .5, .4, 1.3, { tr: 'dip', move: 'crash', fx: 'pulse' }]],
+    { cuts: () => [at('lock', 'only'), at('lock', 'and'), at('lock', 'locked') + .5], tint: RED,
+      after: t => { rec(t, 0, 1e9, true); tag(t, at('lock', 'confession') - .1, at('lock', 'only'), 'CONFESSION ✓', '#58D68D', 1560); tag(t, at('lock', 'only'), at('lock', 'and'), 'NO RECORDING', C.red, 1560); tag(t, at('lock', 'locked') + .1, E('lock') + .1, 'LOCKED IN', C.red, 1560); } }),
+  choice: beats([['y7', .5, .45, 1.1, { tr: 'flash', move: 'in' }], ['y2', .5, .45, 1.2, { tr: 'whip' }]],
+    { cuts: () => [at('choice', 'or')],
+      after: t => { question(t, 0); choiceBoxes(t, S('choice'), CHOICES, 'COMMENT SHOW OR WALK OUT', S('choice') + 3.0); } }),
   cta: beats([['y1', .5, .4, 1.3, { tr: 'crash', fx: 'pulse' }]],
-    { after: t => { pill('COMMENT: SHOW or WALK OUT', 1520, t, S('cta'), { bg: C.gold, fg: C.navy, bob: true }); followBtn(t, at('cta', 'follow') - .1); } }),
+    { after: t => { pill('COMMENT: SHOW or WALK OUT', 1520, t, S('cta'), { bg: C.gold, fg: C.navy, bob: true }); followBtn(t, S('cta') + .5); } }),
   end: { img: true, draw(t, lt) {
     drawImg('y7', [.5, .5, 1.25]);
     ctx.fillStyle = 'rgba(4,6,14,.7)'; ctx.fillRect(0, 0, W, H);
@@ -114,8 +114,8 @@ function SFX() {
   add('static', S('dead'), .7, 1.2); add('glitch', S('dead') + .3, .6); add('buzz', S('dead') + .4, .4, .5);
   add('hit', S('g3'), .8); add('beep', S('g3') + .2, .4);
   add('metal', at('lock', 'locked') - .05, .8); add('thud', at('lock', 'locked'), .8); add('silence', at('lock', 'locked') + .1, .5);
-  add('thump', at('choice', 'now') - .1, .7); add('click', at('choice', 'now') + .15, .5); add('click', at('choice', 'now') + .45, .5);
-  add('click', at('cta', 'follow') - .1, .8);
+  add('thump', S('choice'), .7); add('click', S('choice') + .25, .5); add('click', S('choice') + .55, .5);
+  add('click', S('cta') + .5, .8); add('fill', at('lock', 'confession'), .4, .5); add('glitch', at('lock', 'only'), .45);
   add('hit', S('end'), .7);
   return ev.sort((a, b) => a.t - b.t);
 }

@@ -1,14 +1,14 @@
 # NOBODY CAN KNOW — Part 7 "The Trap" (POLICE)
 
 - `Part7_Instagram.mp4` (44 sn) — Instagram + TikTok · `Part7_YouTube.mp4` (son karede kapak) · `Part7_Cover.png`
-- Altın kural: açılış sorusu "Would you walk into a room you KNOW is a trap?" · Sesler: ElevenLabs v3
-- Oylama: **SHOW / WALK OUT** · Final: Part 8
+- Açılış sorusu (0.0 sn, ses + ekran): "$50 million is behind this door… and so is a trap. Would you walk in?"
+- Final soru aynı kapıya döner: "So, was it worth walking in?" · Oylama: **SHOW / WALK OUT** → Final: Part 8
 
 ## Instagram
 ```
-Would you walk into a room you KNOW is a trap? 🚪😳
+$50 million is behind this door… and so is a trap. Would you walk in? 🚪💰
 
-Your boss, HR and the man who sold you your $50M ticket were waiting. The police gave you a hidden mic… then the signal died.
+Your boss, HR and the man who sold you the ticket are waiting inside. The police wired you… then the signal died. And the door just locked.
 
 SHOW or WALK OUT? 👇 The most liked comment decides the FINALE.
 
@@ -17,26 +17,26 @@ SHOW or WALK OUT? 👇 The most liked comment decides the FINALE.
 
 ## TikTok
 ```
-Would you walk into a room you KNOW is a trap? 🚪 SHOW or WALK OUT? 👇 Finale tomorrow #storytime #animation #lottery #plottwist #youdecide #wouldyou #fyp
+$50 million is behind this door… and so is a trap 🚪 Would you walk in? SHOW or WALK OUT 👇 Finale tomorrow #storytime #animation #lottery #plottwist #youdecide #wouldyou #fyp
 ```
 
 ## YouTube Shorts
 Başlık:
 ```
-Would You Walk Into A Room You KNOW Is A Trap? 🚪 #shorts
+$50 Million Is Behind This Door… And So Is A Trap 🚪 Would You Walk In? #shorts
 ```
 Açıklama:
 ```
-Your boss, HR and the man who sold you your $50M ticket are waiting behind the door. The police wired you with a hidden mic… then the signal died.
+$50 million is behind this door… and so is a trap. Your boss, HR and the man who sold you the ticket are waiting inside. The police wired you with a hidden mic… then the signal died, and the door locked.
 SHOW or WALK OUT? The most liked comment decides the finale.
 #storytime #animation #plottwist #shorts
 ```
 Etiketler:
 ```
-would you, trap, lottery winner, plot twist, hidden mic, blackmail, boss, animated story, interactive story, you decide, nobody can know, shorts
+would you, would you walk in, trap, 50 million, lottery winner, plot twist, hidden mic, blackmail, animated story, interactive story, you decide, nobody can know, shorts
 ```
 
 ## Sabit yorum
 ```
-🚪 Would YOU have walked in? SHOW or WALK OUT 👇 Finale tomorrow
+🚪 $50M or a trap… would YOU have walked in? SHOW or WALK OUT 👇 Finale tomorrow
 ```

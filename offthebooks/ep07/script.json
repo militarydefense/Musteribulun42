@@ -1,7 +1,8 @@
 [
  {
   "shot": "hook",
-  "say": "Would you walk into a room you KNOW is a trap?"
+  "say": "Fifty million dollars is behind this door... and so is a trap. Would you walk in?",
+  "show": "$50 million is behind this door… and so is a trap. Would you walk in?"
  },
  {
   "shot": "why",
@@ -47,15 +48,15 @@
  },
  {
   "shot": "lock",
-  "say": "He knew you'd walk in. And he just locked the door."
+  "say": "So, was it worth walking in? You got his confession... but now, only you heard it. And he just locked the door."
  },
  {
   "shot": "choice",
-  "say": "You walked into the trap. Now, do you put the ticket on the table, or walk out without it?"
+  "say": "Do you put the ticket on the table, or walk out without it?"
  },
  {
   "shot": "cta",
-  "say": "Comment show, or walk out. Follow, the finale is tomorrow."
+  "say": "Comment show, or walk out."
  },
  {
   "shot": "end",
