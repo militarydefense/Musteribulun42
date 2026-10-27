@@ -16,7 +16,7 @@ function danger(t) {
   for (const [id, to] of steps) { const k = easeOut(prog(t, S(id) + .1, .5)); if (k > 0) v = lerp(v, to, k); }
   return v;
 }
-const HUD_OFF = new Set(['hook', 'choice', 'cta', 'end']);
+const HUD_OFF = new Set(['hook', 'sailor', 'choice', 'cta', 'end']);
 function HUD() { return null; }
 window.OVERLAY_EXTRA = (t, id) => {
   if (HUD_OFF.has(id)) return;
@@ -57,6 +57,16 @@ function shadowDown(t, t0, amt) {
   g.addColorStop(0, 'rgba(0,0,0,.92)'); g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * k);
 }
+// the real fact stays readable through the sailor shot, small and low so both faces stay clear
+function realLine(t, t0, t1) {
+  const k = fadeIn(t, t0, t1, .15);
+  if (k <= 0) return;
+  ctx.save(); ctx.globalAlpha = k;
+  rr(90, 1700, W - 180, 120, 18); ctx.fillStyle = 'rgba(5,7,15,.85)'; ctx.fill();
+  mono('REAL · LIFEBOATS 13 & 15', W / 2, 1740, 24, C.gold, { weight: 700, spacing: 4 });
+  text('Boat 13 was almost crushed by Boat 15.', W / 2, 1790, 40, C.white, { weight: 800 });
+  ctx.restore();
+}
 function followBtn(t, t0) {
   const f = pop(t, t0, .4);
   if (f > 0) withT(W / 2, 1480, f * (1 + .05 * Math.sin(t * 8)), 0, () => {
@@ -77,9 +87,10 @@ const SHOTS = {
     { tint: RED, after: t => shadowDown(t, S('shadow') + .2, .7) }),
   down: beats([['z4', .5, .5, 1.05, { tr: 'impact', move: 'in', shake: .6 }], ['z4', .5, .5, 1.35, { tr: 'smash', move: 'crash' }]],
     { cuts: () => [at('down', 'right')], tint: RED,
-      after: t => overlayTag(t, at('down', 'coming'), 'REAL · LIFEBOATS 13 & 15', 'Boat 13 was almost', 'crushed by Boat 15.', 'They cut the ropes just in time.', E('down') + 1.0) }),
-  sailor: beats([['z5', .5, .45, 1.1, { tr: 'smash', move: 'crash', shake: 1, rot: 4 }], ['z5', .45, .6, 1.5, { tr: 'impact', move: 'in' }]],
-    { cuts: () => [S('sailor') + (E('sailor') - S('sailor')) / 2], shake: t => .8 * clamp(1 - (t - S('sailor')) / 1.2) }),
+      after: t => overlayTag(t, S('down'), 'REAL · LIFEBOATS 13 & 15', 'Boat 13 was almost', 'crushed by Boat 15.', 'They cut the ropes just in time.', E('down') + .1) }),
+  sailor: beats([['z5', .5, .5, 1.0, { tr: 'smash', move: 'crash', shake: 1, rot: 4 }], ['z5', .45, .6, 1.5, { tr: 'impact', move: 'in' }]],
+    { cuts: () => [S('sailor') + (E('sailor') - S('sailor')) / 2], shake: t => .8 * clamp(1 - (t - S('sailor')) / 1.2),
+      after: t => realLine(t, S('sailor'), E('sailor') + .1) }),
   cut: beats([['z6', .5, .3, 1.1, { tr: 'whip', move: 'down' }], ['z6', .55, .7, 1.5, { tr: 'dip', move: 'in', fx: 'sway' }]],
     { cuts: () => [at('cut', 'water')], tint: ICE, after: t => tag(t, at('cut', 'water') - .1, E('cut') + .1, '−2°C', '#8FD3FF', 1450, 130) }),
   lady2: beats([['z3', .48, .4, 1.6, { tr: 'glitch', move: 'crash', fx: 'pulse' }], ['z3', .5, .6, 2.0, { tr: 'smash' }]],

@@ -1,6 +1,6 @@
 # LAST NIGHT ON THE TITANIC — Part 4 "Your Life or the Diamonds"
 
-- `Titanic_Part4_Instagram.mp4` (29 sn) — Instagram + TikTok (`releases/tiktok/TikTok_Titanic_Part4.mp4`)
+- `Titanic_Part4_Instagram.mp4` (27 sn) — Instagram + TikTok (`releases/tiktok/TikTok_Titanic_Part4.mp4`)
 - `Titanic_Part4_YouTube.mp4` (son karede kapak) — YouTube Shorts · `Cover_Titanic_Part4.png`
 - Açılış sorusu (0.0 sn, 1.5 sn'de biter): "Your life… or the diamonds?" · Oylama: **LIFE / DIAMONDS**
 

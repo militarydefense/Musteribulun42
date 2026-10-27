@@ -11,7 +11,7 @@
  },
  {
   "shot": "lady",
-  "say": "Next to you, the woman who framed you. The real diamonds are in her glove."
+  "say": "Next to you: a woman hiding the real diamonds. In her glove."
  },
  {
   "shot": "shadow",
@@ -19,8 +19,7 @@
  },
  {
   "shot": "down",
-  "say": "Another lifeboat is coming down. Right on top of you.",
-  "pause": 1.0
+  "say": "Another lifeboat is coming down. Right on top of you."
  },
  {
   "shot": "sailor",
