@@ -401,3 +401,10 @@ Uygulama (her bölüm, iki seri):
 5. Oylama aynı soruyla kapanır (callback): videonun başında kafasında cevap veren izleyici yorumda yazar.
 6. Her bölüm 2–3 soru alternatifi yazılır, en kısa/en kişisel olan seçilir. Kontrol sorusu: "Bunu duyunca cevap vermeden
    geçebilir miyim?" Geçebiliyorsam soru zayıf.
+
+## 32. ONAY SÜRECİ (27 Oct, kullanıcı kuralı) — her bölüm, iki seri
+1. Önce hikâyenin TÜRKÇE metnini yaz: açılış sorusu (2–3 seçenek), sahne sahne akış, gerçek bilgi, ters köşe,
+   oylamadan önceki merak sahnesi, oylama seçenekleri, kapanış. Görsel listesi ve tahmini süre/kredi.
+2. Kullanıcıya gönder ve BEKLE. Onay gelmeden görsel, ses veya render üretme (kredi harcama yok).
+3. Değişiklik istenirse birlikte düzenle, son hali tekrar göster.
+4. Onaydan sonra: İngilizce seslendirme metni → görseller → ses → render → paket (video, kapak, metinler).
