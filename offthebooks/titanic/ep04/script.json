@@ -1,0 +1,15 @@
+[
+ {"shot": "hook", "say": "Your life... or the diamonds?", "show": "Your life… or the diamonds?"},
+ {"shot": "stuck", "say": "Your lifeboat is stuck sixty feet above the ocean.", "show": "Your lifeboat is stuck 60 feet above the ocean."},
+ {"shot": "lady", "say": "Next to you, the woman who framed you. The real diamonds are in her glove."},
+ {"shot": "shadow", "say": "Then a shadow falls over you."},
+ {"shot": "down", "say": "Another lifeboat is coming down. Right on top of you.", "pause": 1.0},
+ {"shot": "sailor", "say": "Cut it! Cut it!", "show": "CUT IT! CUT IT!"},
+ {"shot": "cut", "say": "Cut the rope, and you fall into water at minus two degrees.", "show": "Cut the rope, and you fall into water at -2°C."},
+ {"shot": "lady2", "say": "Cut it... and my diamonds go to the bottom with you."},
+ {"shot": "wait", "say": "Wait, and you're both crushed."},
+ {"shot": "feet", "say": "Three feet left."},
+ {"shot": "choice", "say": "So... your life, or the diamonds?", "show": "So… your life, or the diamonds?"},
+ {"shot": "cta", "say": "Comment life, or diamonds."},
+ {"shot": "end", "card": 0.8}
+]
