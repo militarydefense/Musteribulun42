@@ -422,3 +422,11 @@ Uygulama (her bölüm, iki seri):
 - 27 Oct (user): after the question hook the story must MOVE — viewers want the answer fast. Part 7 cut 52 s → 43.7 s:
   pauses inside lines ≤0.22 s, gap between lines 0.12 s, voice tempo ×1.12, redundant line removed, a cut every ~1.4 s.
   Rule: max 45 s; no line exists only to "explain"; every line moves the answer to the opening question closer.
+
+## 34. NCK P7 data (40 min IG) — question hook works, but it was too slow
+- 148 views / 51 viewers, skip 22.2% (best in weeks), avg 10 s / 38 s, above typical curve.
+- Retention: 100 → ~35% by 0:05, then FLAT ~30% to 0:36 → removing the flashback worked (no mid drop).
+- Loss = during the hook itself: the whispered question took 4.5 s and 4 lines on screen; people left before it ended.
+- RULES from now on: spoken question ≤2 s (no slow whisper), on-screen question ≤2 lines and fully visible at 0.0 s,
+  motion in frame 0 (shake/rope/light, not a still door), present tense only (no "an hour ago"), vote words that need
+  no backstory.
