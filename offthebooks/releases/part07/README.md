@@ -1,7 +1,8 @@
 # NOBODY CAN KNOW — Part 7 "The Trap" (POLICE)
 
-- `Part7_Instagram.mp4` (44 sn) — Instagram + TikTok · `Part7_YouTube.mp4` (son karede kapak) · `Part7_Cover.png`
+- `Part7_Instagram.mp4` (38 sn) — Instagram + TikTok · `Part7_YouTube.mp4` (son karede kapak) · `Part7_Cover.png`
 - Açılış sorusu (0.0 sn, ses + ekran): "$50 million is behind this door… and so is a trap. Would you walk in?"
+- Geri dönüş (karakol) yok: polis teli kapıda, dedektif sadece kulaklıkta ses
 - Final soru aynı kapıya döner: "So, was it worth walking in?" · Oylama: **SHOW / WALK OUT** → Final: Part 8
 
 ## Instagram

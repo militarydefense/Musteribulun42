@@ -50,17 +50,17 @@ const SHOTS = {
   hook: beats([['y1', .5, .42, 1.05, { tr: 'crash', move: 'in', fx: 'pulse' }], ['y7', .5, .4, 1.2, { tr: 'glitch', move: 'crash', tint: ['#C0262D', .3] }], ['y1', .55, .3, 1.45, { tr: 'impact', move: 'in' }]],
     { cuts: () => [at('hook', 'trap') - .15, at('hook', 'would') - .05], after: t => question(t, E('hook') + .15) }),
   why: beats([['y2', .5, .45, 1.05, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.35, { tr: 'impact', move: 'crash' }], ['y5', .2, .3, 1.7, { tr: 'whip' }], ['y5', .5, .3, 1.1, { tr: 'flash', move: 'out' }], ['y1', .5, .4, 1.3, { tr: 'impact', fx: 'pulse' }]],
-    { cuts: () => [at('why', 'your'), at('why', 'man'), at('why', 'ticket'), at('why', 'they')],
-      after: t => { tag(t, at('why', 'your') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1560);
+    { cuts: () => [at('why', 'boss'), at('why', 'man'), at('why', 'ticket'), at('why', 'they')],
+      after: t => { tag(t, at('why', 'boss') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1560);
         tag(t, at('why', 'man') + .4, at('why', 'they'), 'THE CASHIER', C.red, 1560); } }),
-  station: beats([['y3', .5, .45, 1.05, { tr: 'smash', move: 'right' }], ['y3', .3, .4, 1.5, { tr: 'whip', move: 'in' }]],
-    { cuts: () => [at('station', 'police')], after: t => tag(t, S('station') + .2, E('station'), '1 HOUR EARLIER · POLICE', C.gold, 520) }),
-  det: beats([['y3', .7, .4, 1.5, { tr: 'impact', move: 'in' }], ['y3', .72, .35, 1.9, { tr: 'smash' }], ['y4', .5, .55, 1.1, { tr: 'crash', move: 'in', fx: 'pulse' }]],
-    { cuts: () => [at('det', 'but'), at('det', 'go')],
-      after: t => { overlayTag(t, S('det') + .05, 'REAL', 'Blackmail is a crime', 'in every U.S. state.', '', at('det', 'go'));
-        tag(t, at('det', 'wearing'), E('det') + .2, 'HIDDEN MIC', C.red, 1560); } }),
-  walk: beats([['y1', .55, .45, 1.2, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.15, { tr: 'impact', move: 'crash' }]],
-    { cuts: () => [at('walk', 'you', 1)], after: t => rec(t, at('walk', 'walk'), E('dead') + .3, t > S('dead') + .6) }),
+  // no flashback: the police wire is revealed at the door, the detective is only a voice in the ear
+  wire: beats([['y1', .5, .45, 1.3, { tr: 'smash', move: 'in' }], ['y4', .5, .55, 1.1, { tr: 'crash', move: 'in', fx: 'pulse' }]],
+    { cuts: () => [at('wire', 'police')], after: t => tag(t, at('wire', 'police'), E('wire') + .2, 'HIDDEN MIC', C.red, 1560) }),
+  det: beats([['y4', .5, .78, 1.7, { tr: 'glitch', move: 'crash' }]],
+    { tint: ICE, after: t => { overlayTag(t, S('det'), 'REAL', 'Blackmail is a crime', 'in every U.S. state.', '', E('det') + .3);
+        tag(t, S('det') + .1, E('det') + .2, 'POLICE · IN YOUR EAR', C.gold, 1560); } }),
+  walk: beats([['y1', .55, .45, 1.2, { tr: 'impact', move: 'in' }], ['y5', .5, .3, 1.15, { tr: 'smash', move: 'crash' }]],
+    { cuts: () => [at('walk', 'in')], after: t => rec(t, at('walk', 'walk'), E('dead') + .3, t > S('dead') + .6) }),
   g1: beats([['y5', .5, .25, 1.6, { tr: 'smash', fx: 'pulse' }], ['y5', .2, .25, 1.7, { tr: 'whip' }], ['y5', .5, .2, 2.0, { tr: 'impact' }]],
     { cuts: () => [at('g1', 'stolen'), at('g1', 'his')], after: t => rec(t, 0, 1e9, false) }),
   hr: beats([['y5', .8, .25, 1.6, { tr: 'whip', move: 'in' }], ['y8', .5, .6, 1.4, { tr: 'smash' }]], { cuts: () => [at('hr', 'on')], after: t => rec(t, 0, 1e9, false) }),
@@ -104,8 +104,8 @@ function SFX() {
   const add = (name, t, gain = 1, d) => ev.push(d ? { name, t: +t.toFixed(3), gain, d: +d.toFixed(2) } : { name, t: +t.toFixed(3), gain });
   add('heartbeat', 0, .55, 3.2); add('drone', 0, .5, 3.5);
   add('hit', S('why'), .6); add('thump', at('why', 'man'), .6); add('stamp', at('why', 'man') + .4, .5);
-  add('step', S('station'), .5); add('step', S('station') + .35, .5); add('door', S('station') + .1, .5);
-  add('paper', at('det', 'go') - .2, .45); add('cloth', at('det', 'wearing'), .6); add('click', at('det', 'wearing') + .3, .5);
+  add('cloth', S('wire'), .6); add('click', at('wire', 'police'), .5); add('thump', at('wire', 'police'), .6);
+  add('static', S('det'), .35); add('beep', S('det') + .05, .4);
   add('door', S('walk') + .05, .8); add('thud', at('walk', 'walk'), .7); add('rec_beep', at('walk', 'walk') + .15, .7);
   add('silence', S('g1') - .1, .4); add('thump', at('g1', 'stolen'), .5);
   add('knock', S('hr') + .05, .4);

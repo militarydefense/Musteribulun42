@@ -6,20 +6,20 @@
  },
  {
   "shot": "why",
-  "say": "Because behind this door, your boss, HR, and the man who sold you your fifty million dollar ticket are waiting. And they all want it.",
-  "show": "Because behind this door, your boss, HR, and the man who sold you your $50 million ticket are waiting. And they all want it."
+  "say": "Inside: the boss who's blackmailing you, HR, and the man who sold you the ticket. They all want your fifty million.",
+  "show": "Inside: the boss who's blackmailing you, HR, and the man who sold you the ticket. They all want your $50 million."
  },
  {
-  "shot": "station",
-  "say": "So an hour ago, you walked into a police station instead."
+  "shot": "wire",
+  "say": "But under your hoodie... a police wire."
  },
  {
   "shot": "det",
-  "say": "Blackmail is a crime. But we need him to say it again. Go in... wearing this."
+  "say": "Make him say it again."
  },
  {
   "shot": "walk",
-  "say": "So you do it. You walk in."
+  "say": "You walk in."
  },
  {
   "shot": "g1",
