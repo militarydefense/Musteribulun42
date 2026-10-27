@@ -386,3 +386,18 @@ Kurallar:
 - Titanic P3 fix (26 Oct): user spotted realistic human silhouettes/skin in 3 shots (x3 officer crowd, x6 glove arm,
   ep02 w6 crewman). RULE: every image with people gets the hero sheet as a reference + "every person has a round pure
   white head, no skin color, white glove hands, no realistic humans"; check each image for skin/realistic faces before render.
+
+## 31. ALTIN KURAL (27 Oct, kullanıcı): ilk saniyede izleyiciye SORU sor
+Sorun: bütün açılışlarımız bir DURUM ANLATIYORDU ("You won $50M…", "You're on the sinking Titanic…"). İzleyici seyirci
+kalıyor ve ilk 3 sn'de ~%30–40'ı gidiyor. Rakipler izleyiciye doğrudan bir karar sorusu soruyor ("What would you do?",
+"Would you take it?", "Can you survive this?") → izleyici kafasında cevap vermeye başlıyor ve hikâyenin içine giriyor.
+
+Uygulama (her bölüm, iki seri):
+1. 0.0 sn: ses ve ekran AYNI ANDA bir soruyla başlar. Önce soru, sonra bağlam. Ses öncesinde efekt/boşluk yok.
+2. Soru: "you" + ikili karar + yüksek bedel; 1,5 sn'de okunur (≤8 kelime ekranda). Örn. "Would you…?", "What would you do?",
+   "Could you say no?", "Would you survive?". Cevabı bilmek için izlemek gerekir.
+3. Ekranda dev soru metni (frame 0, ortada, thumbnail'de okunur) + parlak tek görsel. Sayaç/ HUD sonra.
+4. Hemen ardından (≤2 sn) soruyu doğuran durum: "Because right now…" — yeni olay, özet değil.
+5. Oylama aynı soruyla kapanır (callback): videonun başında kafasında cevap veren izleyici yorumda yazar.
+6. Her bölüm 2–3 soru alternatifi yazılır, en kısa/en kişisel olan seçilir. Kontrol sorusu: "Bunu duyunca cevap vermeden
+   geçebilir miyim?" Geçebiliyorsam soru zayıf.
