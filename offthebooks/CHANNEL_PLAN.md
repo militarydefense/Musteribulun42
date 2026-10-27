@@ -417,3 +417,5 @@ Uygulama (her bölüm, iki seri):
   dark night images, "PART 3" text. Vote words CLIMB/GRAB also need backstory → 0 comments.
 - Conclusion: each Titanic part must work for someone who never saw Part 1 (self-contained dilemma + survival stakes),
   open with a question (§31), bright first frame, no part number on frame 0.
+- 27 Oct correction (user): NCK is NOT proven either (ceiling ~1,500). Competitors hit millions on their first video by
+  putting the viewer inside the story with a question in the first second. From now on §31 is the core of every episode.
