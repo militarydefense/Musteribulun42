@@ -1,19 +1,64 @@
 [
- {"shot": "hook", "say": "Would you walk into a room you KNOW is a trap?"},
- {"shot": "why", "say": "Because behind this door, your boss, HR, and the man who sold you your fifty million dollar ticket are waiting. And they all want it.",
-  "show": "Because behind this door, your boss, HR, and the man who sold you your $50 million ticket are waiting. And they all want it."},
- {"shot": "station", "say": "So an hour ago, you walked into a police station instead."},
- {"shot": "det", "say": "Blackmail is a crime. But we need him to say it again. Go in... wearing this."},
- {"shot": "walk", "say": "So you do it. You walk in."},
- {"shot": "g1", "say": "That ticket was stolen from his register."},
- {"shot": "hr", "say": "Put the ticket on the table."},
- {"shot": "inner", "say": "Keep talking, Grant...", "show": "(Keep talking, Grant…)"},
- {"shot": "g2", "say": "Half. Or you're finished."},
- {"shot": "win", "say": "That's it. That's the sentence the police needed."},
- {"shot": "dead", "say": "We lost you. The wire's dead."},
- {"shot": "g3", "say": "Looking for this?"},
- {"shot": "lock", "say": "He knew you'd walk in. And he just locked the door."},
- {"shot": "choice", "say": "You walked into the trap. Now, do you put the ticket on the table, or walk out without it?"},
- {"shot": "cta", "say": "Comment show, or walk out. Follow, the finale is tomorrow."},
- {"shot": "end", "card": 0.8}
+ {
+  "shot": "hook",
+  "say": "Would you walk into a room you KNOW is a trap?"
+ },
+ {
+  "shot": "why",
+  "say": "Because behind this door, your boss, HR, and the man who sold you your fifty million dollar ticket are waiting. And they all want it.",
+  "show": "Because behind this door, your boss, HR, and the man who sold you your $50 million ticket are waiting. And they all want it."
+ },
+ {
+  "shot": "station",
+  "say": "So an hour ago, you walked into a police station instead."
+ },
+ {
+  "shot": "det",
+  "say": "Blackmail is a crime. But we need him to say it again. Go in... wearing this."
+ },
+ {
+  "shot": "walk",
+  "say": "So you do it. You walk in."
+ },
+ {
+  "shot": "g1",
+  "say": "That ticket was stolen from his register."
+ },
+ {
+  "shot": "hr",
+  "say": "Put the ticket on the table."
+ },
+ {
+  "shot": "inner",
+  "say": "Keep talking, Grant...",
+  "show": "(Keep talking, Grant…)"
+ },
+ {
+  "shot": "g2",
+  "say": "Half. Or you're finished."
+ },
+ {
+  "shot": "dead",
+  "say": "We lost you. The wire's dead."
+ },
+ {
+  "shot": "g3",
+  "say": "Looking for this?"
+ },
+ {
+  "shot": "lock",
+  "say": "He knew you'd walk in. And he just locked the door."
+ },
+ {
+  "shot": "choice",
+  "say": "You walked into the trap. Now, do you put the ticket on the table, or walk out without it?"
+ },
+ {
+  "shot": "cta",
+  "say": "Comment show, or walk out. Follow, the finale is tomorrow."
+ },
+ {
+  "shot": "end",
+  "card": 0.8
+ }
 ]

@@ -1,6 +1,6 @@
 # NOBODY CAN KNOW — Part 7 "The Trap" (POLICE)
 
-- `Part7_Instagram.mp4` (52 sn) — Instagram + TikTok · `Part7_YouTube.mp4` (son karede kapak) · `Part7_Cover.png`
+- `Part7_Instagram.mp4` (44 sn) — Instagram + TikTok · `Part7_YouTube.mp4` (son karede kapak) · `Part7_Cover.png`
 - Altın kural: açılış sorusu "Would you walk into a room you KNOW is a trap?" · Sesler: ElevenLabs v3
 - Oylama: **SHOW / WALK OUT** · Final: Part 8
 

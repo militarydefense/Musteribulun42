@@ -419,3 +419,6 @@ Uygulama (her bölüm, iki seri):
   open with a question (§31), bright first frame, no part number on frame 0.
 - 27 Oct correction (user): NCK is NOT proven either (ceiling ~1,500). Competitors hit millions on their first video by
   putting the viewer inside the story with a question in the first second. From now on §31 is the core of every episode.
+- 27 Oct (user): after the question hook the story must MOVE — viewers want the answer fast. Part 7 cut 52 s → 43.7 s:
+  pauses inside lines ≤0.22 s, gap between lines 0.12 s, voice tempo ×1.12, redundant line removed, a cut every ~1.4 s.
+  Rule: max 45 s; no line exists only to "explain"; every line moves the answer to the opening question closer.

@@ -49,31 +49,30 @@ const CHOICES = [['SHOW', 'Put the ticket on the table.'], ['WALK OUT', 'Leave w
 const SHOTS = {
   hook: beats([['y1', .5, .42, 1.05, { tr: 'crash', move: 'in', fx: 'pulse' }]],
     { after: t => question(t, E('hook') + .15) }),
-  why: beats([['y2', .5, .45, 1.05, { tr: 'dip', move: 'in' }], ['y5', .5, .3, 1.35, { tr: 'smash', move: 'crash' }], ['y5', .5, .3, 1.1, { tr: 'flash', move: 'out' }], ['y1', .5, .4, 1.3, { tr: 'impact', fx: 'pulse' }]],
-    { cuts: () => [at('why', 'your'), at('why', 'man'), at('why', 'they')],
+  why: beats([['y2', .5, .45, 1.05, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.35, { tr: 'impact', move: 'crash' }], ['y5', .2, .3, 1.7, { tr: 'whip' }], ['y5', .5, .3, 1.1, { tr: 'flash', move: 'out' }], ['y1', .5, .4, 1.3, { tr: 'impact', fx: 'pulse' }]],
+    { cuts: () => [at('why', 'your'), at('why', 'man'), at('why', 'ticket'), at('why', 'they')],
       after: t => { tag(t, at('why', 'your') - .05, at('why', 'man') + .4, 'GRANT · HR · ???', C.white, 1560);
         tag(t, at('why', 'man') + .4, at('why', 'they'), 'THE CASHIER', C.red, 1560); } }),
-  station: beats([['y3', .5, .45, 1.05, { tr: 'whip', move: 'right' }]],
-    { after: t => tag(t, S('station') + .2, E('station'), '1 HOUR EARLIER · POLICE', C.gold, 520) }),
-  det: beats([['y3', .7, .4, 1.5, { tr: 'dip', move: 'in' }], ['y4', .5, .55, 1.1, { tr: 'crash', move: 'in', fx: 'pulse' }]],
-    { cuts: () => [at('det', 'go')],
+  station: beats([['y3', .5, .45, 1.05, { tr: 'smash', move: 'right' }], ['y3', .3, .4, 1.5, { tr: 'whip', move: 'in' }]],
+    { cuts: () => [at('station', 'police')], after: t => tag(t, S('station') + .2, E('station'), '1 HOUR EARLIER · POLICE', C.gold, 520) }),
+  det: beats([['y3', .7, .4, 1.5, { tr: 'impact', move: 'in' }], ['y3', .72, .35, 1.9, { tr: 'smash' }], ['y4', .5, .55, 1.1, { tr: 'crash', move: 'in', fx: 'pulse' }]],
+    { cuts: () => [at('det', 'but'), at('det', 'go')],
       after: t => { overlayTag(t, S('det') + .05, 'REAL', 'Blackmail is a crime', 'in every U.S. state.', '', at('det', 'go'));
         tag(t, at('det', 'wearing'), E('det') + .2, 'HIDDEN MIC', C.red, 1560); } }),
   walk: beats([['y1', .55, .45, 1.2, { tr: 'smash', move: 'in' }], ['y5', .5, .3, 1.15, { tr: 'impact', move: 'crash' }]],
     { cuts: () => [at('walk', 'you', 1)], after: t => rec(t, at('walk', 'walk'), E('dead') + .3, t > S('dead') + .6) }),
-  g1: beats([['y5', .5, .25, 1.6, { tr: 'crash', fx: 'pulse' }], ['y5', .2, .25, 1.6, { tr: 'whip' }]],
-    { cuts: () => [at('g1', 'from')], after: t => rec(t, 0, 1e9, false) }),
-  hr: beats([['y5', .8, .25, 1.6, { tr: 'whip', move: 'in' }]], { after: t => rec(t, 0, 1e9, false) }),
+  g1: beats([['y5', .5, .25, 1.6, { tr: 'smash', fx: 'pulse' }], ['y5', .2, .25, 1.7, { tr: 'whip' }], ['y5', .5, .2, 2.0, { tr: 'impact' }]],
+    { cuts: () => [at('g1', 'stolen'), at('g1', 'his')], after: t => rec(t, 0, 1e9, false) }),
+  hr: beats([['y5', .8, .25, 1.6, { tr: 'whip', move: 'in' }], ['y8', .5, .6, 1.4, { tr: 'smash' }]], { cuts: () => [at('hr', 'on')], after: t => rec(t, 0, 1e9, false) }),
   inner: beats([['y8', .5, .42, 1.2, { tr: 'dip', move: 'in', fx: 'pulse' }]], { tint: ICE, after: t => rec(t, 0, 1e9, false) }),
   g2: beats([['y6', .5, .3, 1.25, { tr: 'impact', move: 'crash', rot: -3 }], ['y6', .5, .25, 1.55, { tr: 'smash', fx: 'pulse' }]],
     { cuts: () => [at('g2', 'or')], tint: RED, after: t => rec(t, 0, 1e9, false) }),
-  win: beats([['y8', .5, .4, 1.1, { tr: 'flash', move: 'out' }]], { after: t => rec(t, 0, 1e9, false) }),
   dead: beats([['y8', .5, .38, 1.3, { tr: 'glitch', move: 'crash', fx: 'flicker' }]],
     { tint: ICE, after: t => rec(t, 0, 1e9, t > S('dead') + .5) }),
   g3: beats([['y6', .5, .4, 1.15, { tr: 'impact', move: 'crash' }]],
     { after: t => { rec(t, 0, 1e9, true); tag(t, S('g3') + .1, E('g3') + .3, 'SIGNAL JAMMER', C.red, 1560); } }),
-  lock: beats([['y7', .5, .5, 1.1, { tr: 'smash', move: 'in', shake: .6 }], ['y8', .5, .4, 1.3, { tr: 'dip', move: 'crash', fx: 'pulse' }]],
-    { cuts: () => [at('lock', 'locked')], tint: RED,
+  lock: beats([['y6', .5, .3, 1.4, { tr: 'impact', move: 'crash' }], ['y7', .5, .5, 1.1, { tr: 'smash', move: 'in', shake: .6 }], ['y8', .5, .4, 1.3, { tr: 'dip', move: 'crash', fx: 'pulse' }]],
+    { cuts: () => [at('lock', 'and'), at('lock', 'locked') + .5], tint: RED,
       after: t => { rec(t, 0, 1e9, true); tag(t, at('lock', 'locked') + .1, E('lock') + .1, 'LOCKED IN', C.red, 1560); } }),
   choice: beats([['y8', .5, .42, 1.1, { tr: 'flash', move: 'in' }], ['y6', .5, .35, 1.2, { tr: 'whip' }]],
     { cuts: () => [at('choice', 'now')],
@@ -112,7 +111,6 @@ function SFX() {
   add('knock', S('hr') + .05, .4);
   add('heartbeat', S('inner'), .65, 2);
   add('hit', at('g2', 'half'), .7); add('drone', S('g2'), .5, 2.6);
-  add('fill', S('win') + .1, .4, .5);
   add('static', S('dead'), .7, 1.2); add('glitch', S('dead') + .3, .6); add('buzz', S('dead') + .4, .4, .5);
   add('hit', S('g3'), .8); add('beep', S('g3') + .2, .4);
   add('metal', at('lock', 'locked') - .05, .8); add('thud', at('lock', 'locked'), .8); add('silence', at('lock', 'locked') + .1, .5);
