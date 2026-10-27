@@ -408,3 +408,12 @@ Uygulama (her bölüm, iki seri):
 2. Kullanıcıya gönder ve BEKLE. Onay gelmeden görsel, ses veya render üretme (kredi harcama yok).
 3. Değişiklik istenirse birlikte düzenle, son hali tekrar göster.
 4. Onaydan sonra: İngilizce seslendirme metni → görseller → ses → render → paket (video, kapak, metinler).
+
+## 33. Titanic P3 data (~12 h IG) — series trend is down
+- P3: 347 views / 308 viewers, skip 49% (P1 33%, P2 41%), likes 0.6%, 0 comments, 0 shares/saves, avg 15 s / 41 s,
+  below typical. Retention: 100→~55% by 0:03, ~45% at 0:06, then FLAT ~38% to 0:38 → story holds, the opening loses.
+- Same 45 s format worked for NCK P6 (skip 21–30%). Difference = the opening promise: NCK frame 0 = universal fantasy
+  ("YOU WON $50,000,000"); Titanic P2/P3 frame 0 = a plot only returning viewers understand (bag, lady, bowler hat),
+  dark night images, "PART 3" text. Vote words CLIMB/GRAB also need backstory → 0 comments.
+- Conclusion: each Titanic part must work for someone who never saw Part 1 (self-contained dilemma + survival stakes),
+  open with a question (§31), bright first frame, no part number on frame 0.
