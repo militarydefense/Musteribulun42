@@ -5,13 +5,13 @@
 <style>
 html,body{margin:0;background:#000;overflow:hidden}
 #wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
-#shade{position:absolute;left:0;top:0;width:100%;height:760px;background:linear-gradient(rgba(10,6,2,.55),rgba(10,6,2,.25) 55%,rgba(10,6,2,0))}
+#shade{position:absolute;left:0;top:0;width:100%;height:980px;background:linear-gradient(rgba(12,8,4,.62),rgba(12,8,4,.38) 55%,rgba(12,8,4,0))}
 .num{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:.9;
   text-shadow:0 5px 24px rgba(0,0,0,.55),0 0 3px rgba(0,0,0,.7)}
 #top{top:150px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:68px;color:#FFC24A;letter-spacing:3px;margin-top:6px}
-#round{position:absolute;top:470px;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:800;font-size:36px;letter-spacing:5px;color:#fff;
+#round{position:absolute;top:478px;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:800;font-size:36px;letter-spacing:5px;color:#fff;
   text-shadow:0 3px 12px rgba(0,0,0,.75)}
-#bot{top:1560px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
+#bot{top:575px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
 </style>
 <script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
 </head><body><div id="wrap">
@@ -59,9 +59,11 @@ const r3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: tru
 r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap;
 r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.outputColorSpace = THREE.SRGBColorSpace;
 document.getElementById('wrap').prepend(r3.domElement);
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0xd8c8b4);
+const scene = new THREE.Scene();
+const kitchenTex = new THREE.TextureLoader().load('./assets/kitchen_sharp.png', () => { window.kitchenReady = true; });
+kitchenTex.colorSpace = THREE.SRGBColorSpace; scene.background = kitchenTex;   // the whole photo, full frame
 scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
-const cam = new THREE.PerspectiveCamera(36, W / H, .1, 200); cam.position.set(.6, 7.9, 13.6); cam.lookAt(0, 1.5, 0);
+const cam = new THREE.PerspectiveCamera(36, W / H, .1, 200); cam.position.set(.4, 4.6, 15.5); cam.lookAt(0, 3.7, 0);
 // bar + knife share a rig turned 35°: the handle stays on the far side in both cutting directions
 const rig = new THREE.Group(); rig.rotation.y = .61; scene.add(rig);
 
@@ -85,14 +87,9 @@ const marble = canvasTex(2048, 2048, (g, w, h) => {
   g.filter = 'none';
 });
 marble.wrapS = marble.wrapT = THREE.RepeatWrapping; marble.repeat.set(2, 2);
-// marble island top (in focus) + blurred kitchen photo behind it
-const island = new THREE.Mesh(new THREE.PlaneGeometry(60, 26), new THREE.MeshPhysicalMaterial({ map: marble, roughness: .28, clearcoat: .4, clearcoatRoughness: .25 }));
-island.rotation.x = -Math.PI / 2; island.position.set(0, -.36, -1); island.receiveShadow = true; scene.add(island);
-const kitchenTex = new THREE.TextureLoader().load('./assets/kitchen.png', () => { window.kitchenReady = true; });
-kitchenTex.colorSpace = THREE.SRGBColorSpace;
-kitchenTex.repeat.set(1, .66); kitchenTex.offset.set(0, .34);           // top two thirds: shelves, window, back counter
-const back = new THREE.Mesh(new THREE.PlaneGeometry(30, 30 * 1.778 * .66), new THREE.MeshBasicMaterial({ map: kitchenTex, toneMapped: false }));
-back.position.set(-.5, 8.2, -14); scene.add(back);
+// the photo's marble island: an invisible plane that only receives shadows
+const island = new THREE.Mesh(new THREE.PlaneGeometry(60, 40), new THREE.ShadowMaterial({ opacity: .32 }));
+island.rotation.x = -Math.PI / 2; island.position.set(0, -.36, 0); island.receiveShadow = true; scene.add(island);
 const board = new THREE.Mesh(new RoundedBoxGeometry(7.2, .36, 4.8, 4, .08), new THREE.MeshStandardMaterial({ map: wood, roughness: .6 }));
 board.position.set(0, -.18, .3); board.rotation.y = .12; board.castShadow = board.receiveShadow = true; scene.add(board);
 // window light from the left/back, warm
