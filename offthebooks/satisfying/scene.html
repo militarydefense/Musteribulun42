@@ -247,6 +247,25 @@ window.renderAt = t => {
   r3.render(scene, cam);
   return c;
 };
+// channel banner: one long board with three stages side by side, rendered natively at 2560x1440
+window.renderBanner = () => {
+  const BW = 2560, BH = 1440;
+  document.getElementById('wrap').style.cssText = `width:${BW}px;height:${BH}px`;
+  document.querySelectorAll('.num').forEach(e => e.style.display = 'none');
+  r3.setSize(BW, BH); cam.aspect = BW / BH; cam.fov = 24; cam.position.set(-.77, 20.1, 32.7); cam.lookAt(.9, .5, 0); cam.updateProjectionMatrix();
+  rig.rotation.y = .1;
+  board.scale.x = 1.86; board.position.set(4.9, -.18, .5); board.rotation.y = 0;
+  sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16 }); sun.shadow.camera.updateProjectionMatrix();
+  sun.shadow.map?.dispose(); sun.shadow.map = null;
+  const third = makeSet(), X = [0, 3.9, 7.8];
+  drawBar(sets[0], ROUNDS[0], -1, X[0]);
+  drawBar(sets[1], ROUNDS[0], ROUNDS[0].hold + .01, X[1]);
+  drawBar(third, ROUNDS[5], ROUNDS[5].hold + .01, X[2]);
+  ghosts.forEach(g => g.visible = false);
+  pose(knife, QA, X[0] + .35, .95, A_Z);                       // about to make the first cut
+  r3.render(scene, cam);
+  return X.map(x => { const v = rig.localToWorld(new THREE.Vector3(x, 0, SZ / 2 + .35)).project(cam); return [(v.x + 1) / 2 * BW, (1 - v.y) / 2 * BH]; });
+};
 window.hideKnife = () => { knife.visible = false; ghosts.forEach(g => g.scale.setScalar(0)); };   // brand stills only
 window.ready = true;
 </script></body></html>
