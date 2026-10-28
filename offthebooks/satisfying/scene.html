@@ -1,20 +1,24 @@
 <!doctype html><html><head><meta charset="utf-8">
-<!-- "Soap vs 1,000 cuts" — procedural three.js scene. window.renderAt(t) draws the frame at t seconds;
-     window.TIMELINE gives duration and every cut time (for the audio). Deterministic: same t → same frame. -->
+<!-- "Soap vs 1,000 cuts" v2 — procedural three.js scene. window.renderAt(t) draws the frame at t seconds;
+     window.TIMELINE gives the duration and every cut time (the knife touches the board exactly then: audio sync).
+     Only vertical cuts: lengthwise first, then crosswise. PIECES = (lengthwise cuts + 1) × (crosswise cuts + 1), exact. -->
 <style>
 html,body{margin:0;background:#000;overflow:hidden}
 #wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
+#shade{position:absolute;left:0;top:0;width:100%;height:760px;background:linear-gradient(rgba(10,6,2,.55),rgba(10,6,2,.25) 55%,rgba(10,6,2,0))}
 .num{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:.9;
-  text-shadow:0 6px 28px rgba(0,0,0,.65),0 0 2px rgba(0,0,0,.8)}
-#top{top:165px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:70px;color:#F2B33D;letter-spacing:3px;margin-top:6px}
-#bot{top:1500px}#bot b{display:block;font-size:118px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:56px;color:#F2B33D;letter-spacing:3px;margin-top:4px}
-#title{position:absolute;top:500px;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:6px;color:rgba(255,255,255,.75);text-shadow:0 3px 12px rgba(0,0,0,.7)}
+  text-shadow:0 5px 24px rgba(0,0,0,.55),0 0 3px rgba(0,0,0,.7)}
+#top{top:150px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:68px;color:#FFC24A;letter-spacing:3px;margin-top:6px}
+#round{position:absolute;top:470px;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:800;font-size:36px;letter-spacing:5px;color:#fff;
+  text-shadow:0 3px 12px rgba(0,0,0,.75)}
+#bot{top:1560px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
 </style>
 <script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
 </head><body><div id="wrap">
+<div id="shade"></div>
 <div id="top" class="num"><b id="cuts">0</b><i>CUTS</i></div>
-<div id="title">SOAP vs 1,000 CUTS</div>
-<div id="bot" class="num"><b id="cubes">0</b><i>CUBES</i></div>
+<div id="round">ROUND 1 · 10 CUTS</div>
+<div id="bot" class="num"><b id="pieces">1</b><i>PIECES</i></div>
 </div>
 <script type="module">
 import * as THREE from 'three';
@@ -22,222 +26,230 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const W = 1080, H = 1920, FPS = 30;
-const SX = 3.0, SY = 1.0, SZ = 1.9;                        // soap size: length (x), height (y), depth (z)
-const SOAP = new THREE.Color(0x9fe0c9), POWDER = new THREE.Color(0xd9f5ea);
-
-// ---------- timeline ----------
-const ROUNDS = [{ n: 10, d: 5.5 }, { n: 50, d: 6 }, { n: 100, d: 6.5 }, { n: 250, d: 7 }, { n: 500, d: 7.5 }, { n: 1000, d: 9.5 }];
-const PRE = .35, POST = .6, LAST_POST = 2.2;
-let acc = 0;
-for (const [i, r] of ROUNDS.entries()) {
-  r.t0 = acc; r.post = i === ROUNDS.length - 1 ? LAST_POST : POST;
-  r.c0 = r.t0 + PRE; r.c1 = r.t0 + r.d - r.post;               // cutting window
-  if (r.n <= 50) { r.A = r.n / 2; r.B = r.n / 2; r.C = 0; }
-  else { r.A = Math.ceil(r.n / 3); r.B = Math.ceil((r.n - r.A) / 2); r.C = r.n - r.A - r.B; }
-  r.pow = r.n <= 10 ? 1 : 1.5;                                 // big rounds start slow and accelerate
-  acc += r.d;
-}
-const DURATION = acc + .2;                                       // ends on a fresh bar = seamless loop
-const cutTime = (r, k) => r.c0 + (r.c1 - r.c0) * Math.pow(k / r.n, 1 / r.pow);
-function state(t) {
-  if (t >= acc) return { r: ROUNDS[0], k: 0, phi: 0, rate: 0, fresh: true };
-  const r = ROUNDS.find(q => t < q.t0 + q.d);
-  if (t < r.c0) return { r, k: 0, phi: 0, rate: 0 };
-  const u = Math.min(1, (t - r.c0) / (r.c1 - r.c0));
-  const x = r.n * Math.pow(u, r.pow);
-  const k = Math.min(r.n, Math.floor(x));
-  const rate = r.n * r.pow * Math.pow(Math.max(u, .02), r.pow - 1) / (r.c1 - r.c0);   // cuts per second
-  return { r, k, phi: x - Math.floor(x), rate, done: k >= r.n };
-}
-window.TIMELINE = { fps: FPS, duration: DURATION, rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n })),
-  cuts: ROUNDS.flatMap(r => Array.from({ length: r.n }, (_, i) => +cutTime(r, i + 1).toFixed(4))) };
-
-// deterministic noise per cell
+const SX = 3.0, SY = 1.0, SZ = 1.9;                 // soap: length (x), height (y), depth (z); bottom on the board (y = 0)
+const SOAP = 0xa6e3cc;
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 const hash = (a, b, c = 0) => { let h = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 1274126177); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 
-// ---------- renderer / scene ----------
+// ---------- timeline: idle → lengthwise cuts → knife turns → crosswise cuts → hold → slide to the next bar ----------
+const PLAN = [[10, 4.0], [50, 4.6], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6.6]];
+const IDLE = .3, TURN = .4, HOLD = .55, SLIDE = .5, LAST_HOLD = 1.9;
+const ROUNDS = []; let acc = 0;
+PLAN.forEach(([n, w], i) => {
+  const a = Math.round(n * SX / (SX + SZ)), b = n - a;            // split so the pieces are square from above
+  const r = { i, n, a, b, t0: acc };
+  r.p1 = acc + IDLE; r.p1e = r.p1 + w * a / n;                      // lengthwise window
+  r.p2 = r.p1e + TURN; r.p2e = r.p2 + w * b / n;                   // crosswise window
+  r.hold = r.p2e; r.slide = r.p2e + (i === PLAN.length - 1 ? LAST_HOLD : HOLD); r.t1 = r.slide + SLIDE;
+  r.pow = n <= 50 ? 1 : 1.25;                                       // big rounds speed up a little
+  r.big = n >= 500;                                                 // crosswise rows drawn as striped strips
+  ROUNDS.push(r); acc = r.t1;
+});
+const DURATION = acc;                                               // the last slide brings back round 1's bar: seamless loop
+const cutAt = (s, e, m, k, pow) => s + (e - s) * Math.pow(k / m, 1 / pow);   // time of cut k (1..m) inside a window
+const countAt = (t, s, e, m, pow) => t < s ? 0 : t >= e ? m : m * Math.pow((t - s) / (e - s), pow);
+window.TIMELINE = { fps: FPS, duration: DURATION, rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n, slide: r.slide })),
+  cuts: ROUNDS.flatMap(r => [...Array.from({ length: r.a }, (_, k) => cutAt(r.p1, r.p1e, r.a, k + 1, r.pow)),
+                             ...Array.from({ length: r.b }, (_, k) => cutAt(r.p2, r.p2e, r.b, k + 1, r.pow))]).map(x => +x.toFixed(4)) };
+
+// ---------- renderer, kitchen ----------
 const r3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap;
-r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.05; r3.outputColorSpace = THREE.SRGBColorSpace;
+r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.outputColorSpace = THREE.SRGBColorSpace;
 document.getElementById('wrap').prepend(r3.domElement);
-const scene = new THREE.Scene(); scene.background = new THREE.Color(0x120d0a);
-scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .5;
-const cam = new THREE.PerspectiveCamera(28, W / H, .1, 100); cam.position.set(3.4, 8.6, 12.2); cam.lookAt(0, 1.2, 0);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xd8c8b4);
+scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
+const cam = new THREE.PerspectiveCamera(36, W / H, .1, 200); cam.position.set(.6, 7.9, 13.6); cam.lookAt(0, 1.5, 0);
+// bar + knife share a rig turned 35°: the handle stays on the far side in both cutting directions
+const rig = new THREE.Group(); rig.rotation.y = .61; scene.add(rig);
 
-function canvasTex(w, h, draw, srgb = true) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
 let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const wood = canvasTex(2048, 1024, (g, w, h) => {
-  g.fillStyle = '#d29a5c'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 340; i++) { const y = rnd() * h; g.strokeStyle = `rgba(${120 + rnd() * 50},${66 + rnd() * 30},${24},${.06 + rnd() * .16})`; g.lineWidth = 1 + rnd() * 5;
+  g.fillStyle = '#c98f55'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 360; i++) { const y = rnd() * h; g.strokeStyle = `rgba(${118 + rnd() * 50},${66 + rnd() * 30},24,${.05 + rnd() * .15})`; g.lineWidth = 1 + rnd() * 5;
     g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x * .004 + i) * 9); g.stroke(); }
 });
-const brick = canvasTex(1024, 1024, (g, w, h) => {
-  g.fillStyle = '#17110d'; g.fillRect(0, 0, w, h);
-  for (let y = 0; y < h; y += 64) for (let x = -((y / 64) % 2) * 64; x < w; x += 128) { const v = 34 + rnd() * 14; g.fillStyle = `rgb(${v},${v * .78},${v * .62})`; g.fillRect(x + 4, y + 4, 120, 56); }
-});
-brick.wrapS = brick.wrapT = THREE.RepeatWrapping; brick.repeat.set(4, 2);
-const wall = new THREE.Mesh(new THREE.PlaneGeometry(50, 22), new THREE.MeshStandardMaterial({ map: brick, roughness: 1 })); wall.position.set(0, 5, -9); scene.add(wall);
-const counter = new THREE.Mesh(new THREE.BoxGeometry(60, 1, 30), new THREE.MeshStandardMaterial({ color: 0x2b221c, roughness: .85 })); counter.position.y = -.86; counter.receiveShadow = true; scene.add(counter);
-const board = new THREE.Mesh(new RoundedBoxGeometry(8.4, .36, 5.2, 4, .07), new THREE.MeshStandardMaterial({ map: wood, roughness: .62 }));
-board.position.set(.2, -.18, .1); board.rotation.y = -.04; board.castShadow = board.receiveShadow = true; scene.add(board);
-const key = new THREE.DirectionalLight(0xfff0d8, 2.7); key.position.set(-4, 9, 5); key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 }); key.shadow.bias = -.0004; key.shadow.radius = 5; scene.add(key);
-scene.add(new THREE.HemisphereLight(0xffe6c8, 0x2a1c14, .55));
-const rim = new THREE.DirectionalLight(0xbfe9ff, .6); rim.position.set(5, 3, -6); scene.add(rim);
-
-// ---------- soap pieces ----------
-const soapMat = new THREE.MeshPhysicalMaterial({ color: SOAP, roughness: .4, clearcoat: .3, clearcoatRoughness: .45, sheen: .4, sheenColor: new THREE.Color(0xffffff) });
-const pieceMat = soapMat.clone(); pieceMat.vertexColors = false;
-const grainMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .85 });
-const unitRound = new RoundedBoxGeometry(1, 1, 1, 2, .08);
-const unitBox = new THREE.BoxGeometry(1, 1, 1);
-const solid = new THREE.Mesh(new RoundedBoxGeometry(SX, SY, SZ, 6, .2), soapMat); solid.castShadow = solid.receiveShadow = true; scene.add(solid);
-const slabs = new THREE.InstancedMesh(unitRound, pieceMat, 4000); slabs.castShadow = slabs.receiveShadow = true; scene.add(slabs);
-const grains = new THREE.InstancedMesh(unitBox, grainMat, 42000); grains.castShadow = true; grains.receiveShadow = true; scene.add(grains);
-const coreMat = new THREE.MeshStandardMaterial({ color: SOAP, roughness: .9 });
-const core = new THREE.Mesh(new RoundedBoxGeometry(1, 1, 1, 4, .3), coreMat); core.receiveShadow = true; scene.add(core);
-grains.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(42000 * 3), 3);
-const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3(), col = new THREE.Color();
-let solidKey = '';
-function setSolid(x0, x1, z0, z1) {                // the uncut part of the bar, as one rounded block
-  const w = x1 - x0, d = z1 - z0;
-  if (w < .01 || d < .01) { solid.visible = false; return; }
-  solid.visible = true;
-  const key = `${w.toFixed(3)}_${d.toFixed(3)}`;
-  if (key !== solidKey) { solid.geometry.dispose(); solid.geometry = new RoundedBoxGeometry(w, SY, d, 6, Math.min(.2, w / 2.2, d / 2.2)); solidKey = key; }
-  solid.position.set((x0 + x1) / 2, SY / 2, (z0 + z1) / 2);
-}
-function piece(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0) {
-  E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M);
-}
-// mound height of the powder pile at (x,z) — a soft-edged loaf, a little lower than the bar
-function mound(x, z, lvl) {
-  const ex = Math.max(0, 1 - Math.pow(Math.abs(x) / (SX / 2 + .12), 6)), ez = Math.max(0, 1 - Math.pow(Math.abs(z) / (SZ / 2 + .14), 4));
-  return SY * lvl * Math.sqrt(ex * ez);
-}
-
-function buildSoap(st, t) {
-  const { r, k } = st;
-  const ka = Math.min(k, r.A), kb = Math.min(Math.max(k - r.A, 0), r.B), kc = Math.min(Math.max(k - r.A - r.B, 0), r.C);
-  const va = Math.max(1, Math.min(ka, 70));              // visual slab count (seams stay dense beyond this)
-  let ns = 0, ng = 0;
-  const finesse = Math.min(1, Math.log10(r.n) / 3);      // 10 cuts → .33, 1000 → 1
-  if (ka === 0) { setSolid(-SX / 2, SX / 2, -SZ / 2, SZ / 2); }
-  else if (kb === 0) {                                    // phase 1: slicing along the length
-    const xc = -SX / 2 + SX * ka / r.A, dx = (xc + SX / 2) / va, gap = Math.min(.03, dx * .12);
-    for (let i = 0; i < va; i++) piece(slabs, ns++, -SX / 2 + dx * (i + .5), SY / 2, 0, dx - gap, SY, SZ);
-    setSolid(xc, SX / 2, -SZ / 2, SZ / 2);
-  } else if (kc === 0) {                                  // phase 2: cross cuts from the front edge backwards
-    setSolid(0, 0, 0, 0);
-    const dx = SX / va, vb = Math.max(1, Math.min(kb, 36)), zc = SZ / 2 - SZ * kb / r.B, dz = (SZ / 2 - zc) / vb;
-    const jit = r.n <= 10 ? 1 : .35;
-    for (let i = 0; i < va; i++) {
-      for (let j = 0; j < vb; j++) {
-        const h1 = hash(i, j, r.n), h2 = hash(j, i, r.n + 1), h3 = hash(i + 7, j + 3, r.n);
-        piece(slabs, ns++, -SX / 2 + dx * (i + .5) + (h1 - .5) * dx * .35 * jit, SY / 2 - h3 * .04 * jit, SZ / 2 - dz * (j + .5) + (h2 - .5) * dz * .4 * jit,
-          dx * .9, SY, dz * .9, (h2 - .5) * .12 * jit, (h1 - .5) * .25 * jit, (h3 - .5) * .1 * jit);
-      }
-      if (zc > -SZ / 2 + .01) piece(slabs, ns++, -SX / 2 + dx * (i + .5), SY / 2, (zc - SZ / 2) / 2, dx * .9, SY, zc + SZ / 2);
-    }
-  } else {                                                // phase 3: horizontal cuts → the bar collapses into grains, left to right
-    setSolid(0, 0, 0, 0);
-    const xc = -SX / 2 + SX * kc / r.C, f = kc / r.C;
-    const dx = SX / va, vb = Math.min(r.B, 36), dz = SZ / vb;
-    // standing columns right of the collapse front
-    for (let i = 0; i < va; i++) {
-      const x = -SX / 2 + dx * (i + .5); if (x < xc) continue;
-      for (let j = 0; j < vb; j++) piece(slabs, ns++, x, SY / 2, -SZ / 2 + dz * (j + .5), dx * .9, SY, dz * .9);
-    }
-    // grains left of the front: a shell over the mound surface
-    const lvl = .9 - .12 * finesse;
-    const s = lerp(.11, .045, finesse);                  // grain size: coarse cubes → powder
-    const area = (xc + SX / 2) * SZ, target = Math.min(42000, Math.floor(area / (s * s) * 4.5));
-    const pale = finesse * Math.min(1, f * 1.4) * .55;
-    // a soft core under the grains so the board never shows through the pile
-    const cw = xc + SX / 2;
-    if (cw > .05) { core.visible = true; core.scale.set(cw + .05, SY * lvl * .82, SZ * .92); core.position.set(-SX / 2 + cw / 2, SY * lvl * .41, 0); coreMat.color.copy(SOAP).lerp(POWDER, pale); }
-    for (let n = 0; n < target; n++) {
-      const a = hash(n, 1, r.n), b = hash(n, 2, r.n), c = hash(n, 3, r.n);
-      const x = -SX / 2 - .1 + (xc + SX / 2 + .1) * a, z = (b - .5) * (SZ + .28);
-      const top = mound(x, z, lvl) * Math.min(1, (xc - x) / .25 + .55);
-      if (top <= s * .5) continue;
-      const y = Math.max(s / 2, top - c * s * 2.2);
-      piece(grains, ng, x, y, z, s, s, s, a * 3, b * 3, c * 3);
-      col.copy(SOAP).lerp(POWDER, pale + (c - .5) * .12); grains.setColorAt(ng, col); ng++;
-    }
+const marble = canvasTex(2048, 2048, (g, w, h) => {
+  g.fillStyle = '#efebe6'; g.fillRect(0, 0, w, h);
+  g.filter = 'blur(2px)';
+  for (let v = 0; v < 70; v++) {
+    let x = rnd() * w, y = rnd() * h, a = rnd() * 6.28; const len = 300 + rnd() * 1400;
+    g.strokeStyle = `rgba(${110 + rnd() * 40},${110 + rnd() * 40},${118 + rnd() * 40},${.08 + rnd() * .22})`; g.lineWidth = .6 + rnd() * 2.4;
+    g.beginPath(); g.moveTo(x, y);
+    for (let s = 0; s < len; s += 12) { a += (rnd() - .5) * .5; x += Math.cos(a) * 12; y += Math.sin(a) * 12; g.lineTo(x, y); }
+    g.stroke();
   }
-  if (kc === 0) core.visible = false;
-  slabs.count = ns; slabs.instanceMatrix.needsUpdate = true;
-  grains.count = ng; grains.instanceMatrix.needsUpdate = true; if (grains.instanceColor) grains.instanceColor.needsUpdate = true;
-  return { ka, kb, kc };
-}
-const lerp = (a, b, x) => a + (b - a) * x;
+  g.filter = 'none';
+});
+marble.wrapS = marble.wrapT = THREE.RepeatWrapping; marble.repeat.set(2, 2);
+// marble island top (in focus) + blurred kitchen photo behind it
+const island = new THREE.Mesh(new THREE.PlaneGeometry(60, 26), new THREE.MeshPhysicalMaterial({ map: marble, roughness: .28, clearcoat: .4, clearcoatRoughness: .25 }));
+island.rotation.x = -Math.PI / 2; island.position.set(0, -.36, -1); island.receiveShadow = true; scene.add(island);
+const kitchenTex = new THREE.TextureLoader().load('./assets/kitchen.png', () => { window.kitchenReady = true; });
+kitchenTex.colorSpace = THREE.SRGBColorSpace;
+kitchenTex.repeat.set(1, .66); kitchenTex.offset.set(0, .34);           // top two thirds: shelves, window, back counter
+const back = new THREE.Mesh(new THREE.PlaneGeometry(30, 30 * 1.778 * .66), new THREE.MeshBasicMaterial({ map: kitchenTex, toneMapped: false }));
+back.position.set(-.5, 8.2, -14); scene.add(back);
+const board = new THREE.Mesh(new RoundedBoxGeometry(7.2, .36, 4.8, 4, .08), new THREE.MeshStandardMaterial({ map: wood, roughness: .6 }));
+board.position.set(0, -.18, .3); board.rotation.y = .12; board.castShadow = board.receiveShadow = true; scene.add(board);
+// window light from the left/back, warm
+const sun = new THREE.DirectionalLight(0xffe7c4, 2.8); sun.position.set(-7, 9, -3); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 }); sun.shadow.bias = -.0004; sun.shadow.radius = 6; scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xfff1e0, 0x8a7560, .75));
+const fill = new THREE.DirectionalLight(0xffffff, .45); fill.position.set(5, 6, 8); scene.add(fill);
 
-// ---------- knife (+ ghost copies for motion blur) ----------
+// ---------- soap: two sets (outgoing + incoming bar during the slide) ----------
+const soapMat = new THREE.MeshPhysicalMaterial({ color: SOAP, roughness: .38, clearcoat: .3, clearcoatRoughness: .4, sheen: .35, sheenColor: new THREE.Color(0xffffff) });
+const seamTex = canvasTex(32, 4, (g, w, h) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); g.fillStyle = '#5f8f7e'; g.fillRect(0, 0, 3, h); });
+seamTex.wrapS = THREE.RepeatWrapping; seamTex.colorSpace = THREE.SRGBColorSpace;
+const unitRound = new RoundedBoxGeometry(1, 1, 1, 2, .07), unitBox = new THREE.BoxGeometry(1, 1, 1);
+const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3();
+function makeSet() {
+  const g = new THREE.Group(); rig.add(g);
+  const solid = new THREE.Mesh(new RoundedBoxGeometry(SX, SY, SZ, 6, .2), soapMat); solid.castShadow = solid.receiveShadow = true; g.add(solid);
+  const pieces = new THREE.InstancedMesh(unitRound, soapMat, 16000); pieces.castShadow = pieces.receiveShadow = true; g.add(pieces);
+  const stripMat = soapMat.clone(); stripMat.map = seamTex.clone(); stripMat.map.needsUpdate = true;
+  const strips = new THREE.InstancedMesh(unitBox, stripMat, 400); strips.castShadow = strips.receiveShadow = true; g.add(strips);
+  pieces.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(16000 * 3).fill(1), 3);
+  strips.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(400 * 3).fill(1), 3);
+  return { g, solid, pieces, strips, stripMat, key: '' };
+}
+const sets = [makeSet(), makeSet()];
+const shade = new THREE.Color();
+let VAR = 0;   // per-piece brightness spread: thin cuts read as fine lines instead of one flat block
+function put(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0, seedA = 0, seedB = 0) {
+  E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M);
+  const v = 1 - VAR * hash(seedA + 17, seedB + 29, 5); shade.setRGB(v, v, v); im.setColorAt(i, shade);
+}
+function setSolid(set, x0, x1, z0, z1) {
+  const w = x1 - x0, d = z1 - z0;
+  if (w < .005 || d < .005) { set.solid.visible = false; return; }
+  set.solid.visible = true;
+  const key = `${w.toFixed(3)}_${d.toFixed(3)}`;
+  if (key !== set.key) { set.solid.geometry.dispose(); set.solid.geometry = new RoundedBoxGeometry(w, SY, d, 6, Math.min(.2, w / 2.2, d / 2.2)); set.key = key; }
+  set.solid.position.set((x0 + x1) / 2, SY / 2, (z0 + z1) / 2);
+}
+// draw round r of the bar at time t into a set; returns how many cuts are done in each direction
+function drawBar(set, r, t, offset) {
+  set.g.visible = true; set.g.position.x = offset;
+  const ka = Math.floor(countAt(t, r.p1, r.p1e, r.a, r.pow) + 1e-6), kb = Math.floor(countAt(t, r.p2, r.p2e, r.b, r.pow) + 1e-6);
+  const w = SX / (r.a + 1), hz = SZ / (r.b + 1);
+  const loose = r.n <= 10 ? 1 : r.n <= 50 ? .55 : r.n <= 100 ? .3 : .15;        // big chunks wobble, thin ones barely move
+  const settle = k => easeOut((t - cutTimeOf(r, k)) / .14);                      // a freshly cut piece eases into place
+  VAR = r.n >= 500 ? .14 : r.n >= 250 ? .1 : r.n >= 100 ? .07 : .03;
+  let np = 0, ns = 0;
+  if (kb === 0) {                                     // lengthwise: slices left of the knife, solid bar right of it
+    for (let i = 0; i < ka; i++) {
+      const s = settle(i + 1), lean = (hash(i, 1, r.n) - .5) * .09 * loose * s - .02 * loose * s;
+      put(set.pieces, np++, -SX / 2 + w * (i + .5) - .012 * loose * s, SY / 2, 0, w * (1 - .05 * loose) - .004, SY, SZ, 0, 0, lean, i, 0);
+    }
+    setSolid(set, -SX / 2 + w * ka, SX / 2, -SZ / 2, SZ / 2);
+  } else {                                            // crosswise, back to front: cut rows behind the knife, slices in front
+    setSolid(set, 0, 0, 0, 0);
+    const zc = -SZ / 2 + hz * kb;
+    for (let j = 0; j < kb; j++) {
+      const s = settle(r.a + j + 1), z = -SZ / 2 + hz * (j + .5) - .02 * loose * s;
+      const hh = SY * (1 - .025 * hash(j, 4, r.n) * s);
+      if (r.big) put(set.strips, ns++, (hash(j, 9, r.n) - .5) * .02, hh / 2, z, SX - .01, hh, hz * .985 - .002, 0, (hash(j, 8, r.n) - .5) * .01, 0, 900, j);
+      else for (let i = 0; i <= r.a; i++) {
+        const h1 = hash(i, j, r.n), h2 = hash(j + 3, i, r.n), h3 = hash(i + 11, j + 5, r.n);
+        put(set.pieces, np++, -SX / 2 + w * (i + .5) + (h1 - .5) * w * .22 * loose * s, SY / 2, z + (h2 - .5) * hz * .22 * loose * s,
+          w * (1 - .06 * loose) - .003, SY, hz * (1 - .06 * loose) - .003, (h3 - .5) * .06 * loose * s, (h1 - .5) * .18 * loose * s, (h2 - .5) * .06 * loose * s, i, j + 1);
+      }
+    }
+    for (let i = 0; i <= r.a; i++) put(set.pieces, np++, -SX / 2 + w * (i + .5), SY / 2, (zc + SZ / 2) / 2, w * (1 - .05 * loose) - .004, SY, SZ / 2 - zc, 0, 0, 0, i, 0);
+    if (r.big) { set.stripMat.map.repeat.set(Math.min(r.a + 1, 170), 1); }
+  }
+  set.pieces.count = np; set.pieces.instanceMatrix.needsUpdate = true; set.pieces.instanceColor.needsUpdate = true;
+  set.strips.count = ns; set.strips.instanceMatrix.needsUpdate = true; set.strips.instanceColor.needsUpdate = true;
+  return { ka, kb };
+}
+const cutTimeOf = (r, k) => k <= r.a ? cutAt(r.p1, r.p1e, r.a, k, r.pow) : cutAt(r.p2, r.p2e, r.b, k - r.a, r.pow);
+
+// ---------- knife: from the far side (handle away from the camera), ghost copies for motion blur ----------
 function makeKnife(opacity) {
   const g = new THREE.Group();
   const s = new THREE.Shape();
-  s.moveTo(0, 0); s.lineTo(3.1, 0); s.bezierCurveTo(3.9, .02, 4.4, .25, 4.75, .62);   // edge with a belly up to the tip
-  s.bezierCurveTo(4.1, .78, 3.2, .92, 2.2, .98); s.lineTo(0, 1.0); s.lineTo(0, 0);      // spine back to the heel
-  const steel = new THREE.MeshStandardMaterial({ color: 0xe4e8ee, metalness: 1, roughness: .2, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 });
-  const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: .028, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 1 }), steel);
-  blade.position.z = -.014; blade.castShadow = opacity >= 1; g.add(blade);
-  const bolster = new THREE.Mesh(new RoundedBoxGeometry(.16, .62, .09, 2, .03), steel); bolster.position.set(-.06, .62, 0); g.add(bolster);
-  const handleMat = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: .38, metalness: .1, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 });
-  const handle = new THREE.Mesh(new RoundedBoxGeometry(1.95, .44, .2, 4, .09), handleMat); handle.position.set(-1.1, .64, 0); handle.castShadow = opacity >= 1; g.add(handle);
-  for (const x of [-.5, -1.1, -1.7]) { const rv = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .22, 16), steel); rv.rotation.x = Math.PI / 2; rv.position.set(x, .64, 0); g.add(rv); }
-  scene.add(g); return g;
+  s.moveTo(0, 0); s.lineTo(3.0, 0); s.bezierCurveTo(3.8, .02, 4.3, .25, 4.7, .62);
+  s.bezierCurveTo(4.0, .8, 3.1, .93, 2.1, .99); s.lineTo(0, 1.02); s.lineTo(0, 0);
+  const t = opacity < 1;
+  const steel = new THREE.MeshStandardMaterial({ color: 0xf0f2f5, metalness: 1, roughness: .14, envMapIntensity: 2.2, transparent: t, opacity, depthWrite: !t });
+  const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: .026, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 1 }), steel);
+  blade.position.z = -.013; blade.castShadow = !t; g.add(blade);
+  const bolster = new THREE.Mesh(new RoundedBoxGeometry(.16, .64, .09, 2, .03), steel); bolster.position.set(-.06, .64, 0); g.add(bolster);
+  const hm = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: .35, transparent: t, opacity, depthWrite: !t });
+  const handle = new THREE.Mesh(new RoundedBoxGeometry(1.95, .44, .2, 4, .09), hm); handle.position.set(-1.1, .66, 0); handle.castShadow = !t; g.add(handle);
+  for (const x of [-.5, -1.1, -1.7]) { const rv = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .22, 16), steel); rv.rotation.x = Math.PI / 2; rv.position.set(x, .66, 0); g.add(rv); }
+  rig.add(g); return g;
 }
-const knife = makeKnife(1), ghosts = [.32, .22, .15, .1].map(makeKnife);
-// orientations: 1 = blade across the length (moves along x), 2 = blade along the length (moves along z), 3 = flat, sliding in
-const qPhase = [
-  new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI / 2, 0)),
-  new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0)),
-  new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, Math.PI / 2, 0, 'YXZ')),
-];
-function knifePose(g, ph, pos, y) {
-  g.quaternion.copy(qPhase[ph]);
-  if (ph === 0) g.position.set(pos, y, SZ / 2 + .55);        // handle toward the camera, edge down across the bar
-  else if (ph === 1) g.position.set(SX / 2 + .55, y, pos);   // handle on the right
-  else g.position.set(pos, y, SZ / 2 + .55);
+const knife = makeKnife(1), ghosts = [.3, .2, .13, .08].map(makeKnife);
+// pose A: blade across the bar, handle at the back (−z), tip toward the front; pose B: blade along the bar, handle on the right
+const QA = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0));
+const QB = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0));
+const TILT = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), .03);   // tip slightly raised: the heel meets the board first
+function pose(g, q, x, y, z) { g.quaternion.copy(q).multiply(TILT); g.position.set(x, y, z); }
+const LIFT = 1.35, REST_Y = 2.0;
+const xCut = (r, k) => -SX / 2 + SX / (r.a + 1) * k;           // lengthwise cut k (1..a)
+const zCut = (r, k) => -SZ / 2 + SZ / (r.b + 1) * k;           // crosswise cut k (1..b)
+const A_Z = -SZ / 2 - .45, B_X = SX / 2 + .5;                  // heel just outside the bar
+// knife state for round r at time t: { q, x, y, z, phase info for ghosts }
+function knifeAt(r, t, off) {
+  const qa = QA, qb = QB;
+  if (t < r.p1) return { q: qa, x: xCut(r, 1) + off, y: REST_Y, z: A_Z };
+  if (t < r.p1e) {                                             // chop down onto cut k exactly at its time, rise, move to the next
+    const x = countAt(t, r.p1, r.p1e, r.a, r.pow), k = Math.floor(x), ph = x - k;
+    const from = xCut(r, Math.max(1, k)), to = xCut(r, Math.min(r.a, k + 1));
+    return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)) + off, y: k === 0 ? REST_Y * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, ph, k, dir: 'a' };
+  }
+  if (t < r.p2) {                                              // turn: lift, rotate 90°, move to the back edge
+    const u = easeInOut((t - r.p1e) / TURN), q = qa.clone().slerp(qb, u);
+    return { q, x: lerp(xCut(r, r.a), B_X, u) + off, y: LIFT * u + .6 * Math.sin(Math.PI * u), z: lerp(A_Z, zCut(r, 1), u) };
+  }
+  if (t < r.p2e) {
+    const x = countAt(t, r.p2, r.p2e, r.b, r.pow), k = Math.floor(x), ph = x - k;
+    const from = zCut(r, Math.max(1, k)), to = zCut(r, Math.min(r.b, k + 1));
+    return { q: qb, x: B_X + off, y: k === 0 ? LIFT * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: lerp(from, to, easeInOut((ph - .25) / .5)), ph, k, dir: 'b' };
+  }
+  const u = easeInOut((t - r.p2e) / .45);                      // done: back to rest, ready for the next bar
+  const q = qb.clone().slerp(qa, u);
+  return { q, x: lerp(B_X, xCut(ROUNDS[(r.i + 1) % ROUNDS.length], 1), u), y: lerp(0, REST_Y, u), z: lerp(zCut(r, r.b), A_Z, u) };
 }
-function placeKnife(st, c) {
-  const { r, k, phi, rate } = st;
-  const lift = rate < 4 ? 1.35 : rate < 12 ? .8 : .45;
-  const chop = st.done || k === 0 && st.rate === 0 ? 1.6 : lift * Math.abs(Math.cos(Math.PI * phi));   // down on each cut, back up
-  let ph = 0, pos = -SX / 2, y = chop;
-  if (c.kb === 0) { ph = 0; pos = -SX / 2 + SX * Math.min(1, (c.ka + phi * (c.ka < r.A)) / r.A); }
-  else if (c.kc === 0) { ph = 1; pos = SZ / 2 - SZ * Math.min(1, (c.kb + phi) / r.B); }
-  else { ph = 2; pos = -SX / 2 + SX * Math.min(1, (c.kc + phi) / r.C); y = SY * (.85 - .7 * Math.abs(Math.cos(Math.PI * phi * 3))); }
-  if (st.done) { ph = 0; pos = SX / 2 + .9; y = 1.8; }
-  if (k === 0) { ph = 0; pos = -SX / 2 + .05; y = 1.6; }
-  knifePose(knife, ph, pos, y);
-  // ghosts only when the knife is too fast to see
-  const fast = !st.done && k > 0 && rate > 9;
+function placeKnife(r, t) {
+  const k = knifeAt(r, t, 0);
+  pose(knife, k.q, k.x, k.y, k.z);
+  const win = k.dir === 'a' ? [r.p1, r.p1e, r.a] : k.dir === 'b' ? [r.p2, r.p2e, r.b] : null;
+  const rate = win ? win[2] * r.pow * Math.pow(clamp((t - win[0]) / (win[1] - win[0]), .03, 1), r.pow - 1) / (win[1] - win[0]) : 0;
+  const fast = rate > 9;
   ghosts.forEach((g, i) => {
-    g.visible = fast;
-    if (!fast) return;
-    const back = (i + 1) * Math.min(.9, 9 / rate) * .5;          // earlier positions in the stroke
-    const yy = ph === 2 ? SY * (.2 + .65 * hash(i, k)) : lift * Math.abs(Math.cos(Math.PI * (phi - back)));
-    const pp = ph === 0 ? pos - SX / r.A * back : ph === 1 ? pos + SZ / r.B * back : pos - SX / r.C * back;
-    knifePose(g, ph, pp, yy);
+    g.visible = fast; if (!fast) return;
+    const kk = knifeAt(r, t - (i + 1) / FPS / 4, 0);            // sub-frame positions inside this frame's exposure
+    pose(g, kk.q, kk.x, kk.y, kk.z);
   });
 }
 
-// ---------- counters ----------
+// ---------- frame ----------
 const fmt = n => n.toLocaleString('en-US');
-function counters(st, c) {
-  document.getElementById('cuts').textContent = fmt(st.k);
-  let cubes = c.kb > 0 ? (c.ka + 1) * (c.kb + 1) * (c.kc + 1) : 0;
-  document.getElementById('cubes').textContent = cubes >= 100000 ? '≈ ' + fmt(Math.round(cubes / 1000) * 1000) : fmt(cubes);
-}
-
+const roundAt = t => ROUNDS.find(q => t < q.t1) || ROUNDS[ROUNDS.length - 1];
 window.renderAt = t => {
-  const st = state(t);
-  const c = buildSoap(st, t);
-  placeKnife(st, c); counters(st, c);
+  t = Math.min(t, DURATION - 1e-6);
+  const r = roundAt(t), nxt = ROUNDS[(r.i + 1) % ROUNDS.length];
+  let c;
+  if (t >= r.slide) {                                          // the cut bar slides out left, a fresh one slides in from the right
+    const u = (t - r.slide) / SLIDE;
+    c = drawBar(sets[0], r, t, -easeIn(u) * 10);
+    drawBar(sets[1], nxt, nxt.t0 - 1, (1 - easeOut(u)) * 10);
+  } else { c = drawBar(sets[0], r, t, 0); sets[1].g.visible = false; }
+  placeKnife(r, t);
+  const fresh = t >= r.slide + SLIDE * .5;
+  const showR = fresh ? nxt : r;
+  document.getElementById('cuts').textContent = fresh ? '0' : fmt(c.ka + c.kb);
+  document.getElementById('pieces').textContent = fresh ? '1' : fmt((c.ka + 1) * (c.kb + 1));
+  document.getElementById('round').textContent = `ROUND ${showR.i + 1} · ${fmt(showR.n)} CUTS`;
   r3.render(scene, cam);
-  return st.k;
+  return c;
 };
 window.ready = true;
 </script></body></html>

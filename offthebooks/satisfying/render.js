@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => console.log('PAGE ERROR', e.message));
   await page.goto(`http://127.0.0.1:${port}/scene.html`);
-  await page.waitForFunction(() => window.ready, null, { timeout: 120000 });
+  await page.waitForFunction(() => window.ready && (window.kitchenReady || !document.querySelector('#shade')), null, { timeout: 120000 });
   await page.evaluate(() => document.fonts.ready);
   const [mode, a, b] = process.argv.slice(2);
   const tl = await page.evaluate(() => window.TIMELINE);
