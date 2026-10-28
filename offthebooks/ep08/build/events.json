@@ -1,0 +1,197 @@
+[
+ {
+  "name": "hit",
+  "t": 0,
+  "gain": 0.7
+ },
+ {
+  "name": "money_count",
+  "t": 0,
+  "gain": 0.7,
+  "d": 0.5
+ },
+ {
+  "name": "thump",
+  "t": 0.594,
+  "gain": 0.7
+ },
+ {
+  "name": "door",
+  "t": 2.44,
+  "gain": 0.5
+ },
+ {
+  "name": "thump",
+  "t": 4.99,
+  "gain": 0.6
+ },
+ {
+  "name": "hit",
+  "t": 6.09,
+  "gain": 0.7
+ },
+ {
+  "name": "drone",
+  "t": 6.09,
+  "gain": 0.45,
+  "d": 3
+ },
+ {
+  "name": "metal",
+  "t": 9.39,
+  "gain": 0.8
+ },
+ {
+  "name": "thud",
+  "t": 9.44,
+  "gain": 0.6
+ },
+ {
+  "name": "paper",
+  "t": 10.17,
+  "gain": 0.5
+ },
+ {
+  "name": "paper",
+  "t": 11.63,
+  "gain": 0.6
+ },
+ {
+  "name": "silence",
+  "t": 12.46,
+  "gain": 0.8
+ },
+ {
+  "name": "stamp",
+  "t": 12.56,
+  "gain": 0.9
+ },
+ {
+  "name": "glitch",
+  "t": 14.35,
+  "gain": 0.4
+ },
+ {
+  "name": "fill",
+  "t": 16.53,
+  "gain": 0.5,
+  "d": 0.6
+ },
+ {
+  "name": "static",
+  "t": 17.32,
+  "gain": 0.25
+ },
+ {
+  "name": "heartbeat",
+  "t": 17.32,
+  "gain": 0.5,
+  "d": 2.5
+ },
+ {
+  "name": "click",
+  "t": 20.31,
+  "gain": 0.6
+ },
+ {
+  "name": "rec_beep",
+  "t": 22.09,
+  "gain": 0.7
+ },
+ {
+  "name": "static",
+  "t": 23.84,
+  "gain": 0.3
+ },
+ {
+  "name": "fill",
+  "t": 24.14,
+  "gain": 0.6,
+  "d": 1.2
+ },
+ {
+  "name": "hit",
+  "t": 24.494,
+  "gain": 0.9
+ },
+ {
+  "name": "knock",
+  "t": 26.29,
+  "gain": 0.9
+ },
+ {
+  "name": "knock",
+  "t": 26.59,
+  "gain": 0.9
+ },
+ {
+  "name": "door",
+  "t": 27.31,
+  "gain": 0.7
+ },
+ {
+  "name": "stamp",
+  "t": 28.99,
+  "gain": 0.6
+ },
+ {
+  "name": "step",
+  "t": 30.87,
+  "gain": 0.5
+ },
+ {
+  "name": "step",
+  "t": 31.27,
+  "gain": 0.5
+ },
+ {
+  "name": "bell3",
+  "t": 33.49,
+  "gain": 0.4
+ },
+ {
+  "name": "click",
+  "t": 34.96,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.13,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.3,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.47,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.64,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.81,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 35.98,
+  "gain": 0.45
+ },
+ {
+  "name": "click",
+  "t": 38.21,
+  "gain": 0.8
+ },
+ {
+  "name": "hit",
+  "t": 39.56,
+  "gain": 0.7
+ }
+]

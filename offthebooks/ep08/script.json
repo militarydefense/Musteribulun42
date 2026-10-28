@@ -1,0 +1,17 @@
+[
+ {"shot": "hook", "say": "Fifty million dollars. Would you give him half?", "show": "$50 million. Would you give him half?"},
+ {"shot": "ctx", "say": "You won fifty million. Your boss found out. Now he wants half.", "show": "You won $50 million. Your boss found out. Now he wants half."},
+ {"shot": "g", "say": "Half. Or you're finished."},
+ {"shot": "walk", "say": "You try to walk out. Locked. So you put the ticket on the table."},
+ {"shot": "grab", "say": "He grabs it... and freezes."},
+ {"shot": "lucky", "say": "That's a copy. The real one was claimed at nine a.m. Through a trust.", "show": "That's a copy. The real one was claimed at 9 a.m. Through a trust."},
+ {"shot": "grant2", "say": "No recording. Your word against mine."},
+ {"shot": "hr", "say": "Actually... every HR meeting is recorded. Company policy."},
+ {"shot": "play", "say": "Half. Or you're finished.", "show": "▶ \"Half. Or you're finished.\""},
+ {"shot": "knock", "say": "Then someone knocks."},
+ {"shot": "sec", "say": "Lottery security. We're here for the cashier. He's done this before."},
+ {"shot": "out", "say": "You walk out. Nobody knows your name. And that's exactly how it should be."},
+ {"shot": "rules", "card": 2.6},
+ {"shot": "ask", "say": "Would you stay anonymous... or tell everyone?"},
+ {"shot": "end", "card": 0.8}
+]
