@@ -248,6 +248,28 @@ window.renderAt = t => {
   return c;
 };
 // channel banner: one long board with three stages side by side, rendered natively at 2560x1440
+// channel logo: the cut bar + knife as an icon on a plain dark ground (ring and gradient are added afterwards)
+window.renderLogo = () => {
+  const S2 = 1600;
+  document.getElementById('wrap').style.cssText = `width:${S2}px;height:${S2}px`;
+  document.querySelectorAll('.num').forEach(e => e.style.display = 'none');
+  r3.setSize(S2, S2); cam.aspect = 1; cam.fov = 25.5; cam.position.set(-3.2, 8.4, 8.0); cam.lookAt(.35, .75, .1); cam.updateProjectionMatrix();
+  scene.background = new THREE.Color(0x1d1511); wall.visible = false; board.visible = false;
+  counter.material.color.set(0x1d1511); counter.position.y = -.5;
+  rig.rotation.y = .62;
+  const R = ROUNDS[0];
+  drawBar(sets[0], R, R.p2 + (R.p2e - R.p2) * .55, 0);           // mid cross-cut: chunky slices + cubes read at icon size
+  sets[1].g.visible = false; ghosts.forEach(g => g.visible = false);
+  pose(knife, QB, B_X - .6, .5, zCut(R, 3) + .03);
+  r3.render(scene, cam);
+};
+// knife-only white silhouette of the logo frame (call after renderLogo): lets the knife overlap the ring
+window.renderLogoMask = () => {
+  const white = new THREE.MeshBasicMaterial({ color: 0xffffff }), black = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  scene.traverse(o => { if (o.isMesh || o.isInstancedMesh) { let k = o; while (k && k !== knife) k = k.parent; o.material = k === knife ? white : black; } });   // occluders stay, in black
+  scene.background = new THREE.Color(0x000000); r3.toneMapping = THREE.NoToneMapping; r3.shadowMap.enabled = false;
+  r3.render(scene, cam);
+};
 window.renderBanner = () => {
   const BW = 2560, BH = 1440;
   document.getElementById('wrap').style.cssText = `width:${BW}px;height:${BH}px`;
