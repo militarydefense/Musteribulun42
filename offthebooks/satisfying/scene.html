@@ -5,19 +5,14 @@
 <style>
 html,body{margin:0;background:#000;overflow:hidden}
 #wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
-#shade{position:absolute;left:0;top:0;width:100%;height:980px;background:linear-gradient(rgba(12,8,4,.62),rgba(12,8,4,.38) 55%,rgba(12,8,4,0))}
 .num{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:.9;
   text-shadow:0 5px 24px rgba(0,0,0,.55),0 0 3px rgba(0,0,0,.7)}
 #top{top:150px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:68px;color:#FFC24A;letter-spacing:3px;margin-top:6px}
-#round{position:absolute;top:478px;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:800;font-size:36px;letter-spacing:5px;color:#fff;
-  text-shadow:0 3px 12px rgba(0,0,0,.75)}
-#bot{top:575px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
+#bot{top:1500px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
 </style>
 <script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
 </head><body><div id="wrap">
-<div id="shade"></div>
 <div id="top" class="num"><b id="cuts">0</b><i>CUTS</i></div>
-<div id="round">ROUND 1 · 10 CUTS</div>
 <div id="bot" class="num"><b id="pieces">1</b><i>PIECES</i></div>
 </div>
 <script type="module">
@@ -27,7 +22,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const W = 1080, H = 1920, FPS = 30;
 const SX = 3.0, SY = 1.0, SZ = 1.9;                 // soap: length (x), height (y), depth (z); bottom on the board (y = 0)
-const SOAP = 0xa6e3cc;
+const SOAP = 0xbca8ea;
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, x) => a + (b - a) * x;
 const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -60,12 +55,12 @@ r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoft
 r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.outputColorSpace = THREE.SRGBColorSpace;
 document.getElementById('wrap').prepend(r3.domElement);
 const scene = new THREE.Scene();
-const kitchenTex = new THREE.TextureLoader().load('./assets/kitchen_sharp.png', () => { window.kitchenReady = true; });
-kitchenTex.colorSpace = THREE.SRGBColorSpace; scene.background = kitchenTex;   // the whole photo, full frame
+scene.background = new THREE.Color(0x15100c); window.kitchenReady = true;
 scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
-const cam = new THREE.PerspectiveCamera(36, W / H, .1, 200); cam.position.set(.4, 4.6, 15.5); cam.lookAt(0, 3.7, 0);
+const cam = new THREE.PerspectiveCamera(34, W / H, .1, 200); cam.position.set(-3.2, 9.4, 9.6); cam.lookAt(.3, .3, 0);   // high angle: every piece visible from above
 // bar + knife share a rig turned 35°: the handle stays on the far side in both cutting directions
-const rig = new THREE.Group(); rig.rotation.y = .61; scene.add(rig);
+// 25°: the bar reads as a 45° diagonal from the camera and both handle directions (−z, +x) point away from it
+const rig = new THREE.Group(); rig.rotation.y = .44; scene.add(rig);
 
 function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
 let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -87,15 +82,20 @@ const marble = canvasTex(2048, 2048, (g, w, h) => {
   g.filter = 'none';
 });
 marble.wrapS = marble.wrapT = THREE.RepeatWrapping; marble.repeat.set(2, 2);
-// the photo's marble island: an invisible plane that only receives shadows
-const island = new THREE.Mesh(new THREE.PlaneGeometry(60, 40), new THREE.ShadowMaterial({ opacity: .32 }));
-island.rotation.x = -Math.PI / 2; island.position.set(0, -.36, 0); island.receiveShadow = true; scene.add(island);
+const brick = canvasTex(1024, 1024, (g, w, h) => {
+  g.fillStyle = '#16110d'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 64) for (let x = -((y / 64) % 2) * 64; x < w; x += 128) { const v = 36 + rnd() * 14; g.fillStyle = `rgb(${v},${v * .8},${v * .64})`; g.fillRect(x + 4, y + 4, 120, 56); }
+});
+brick.wrapS = brick.wrapT = THREE.RepeatWrapping; brick.repeat.set(5, 2.5);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 25), new THREE.MeshStandardMaterial({ map: brick, roughness: 1 })); wall.position.set(0, 6, -10); scene.add(wall);
+const counter = new THREE.Mesh(new THREE.BoxGeometry(80, 1, 40), new THREE.MeshStandardMaterial({ color: 0x2a2420, roughness: .9 }));
+counter.position.y = -.86; counter.receiveShadow = true; scene.add(counter);
 const board = new THREE.Mesh(new RoundedBoxGeometry(7.2, .36, 4.8, 4, .08), new THREE.MeshStandardMaterial({ map: wood, roughness: .6 }));
-board.position.set(0, -.18, .3); board.rotation.y = .12; board.castShadow = board.receiveShadow = true; scene.add(board);
+board.position.set(-.2, -.18, .4); board.rotation.y = -.04; board.castShadow = board.receiveShadow = true; rig.add(board);
 // window light from the left/back, warm
-const sun = new THREE.DirectionalLight(0xffe7c4, 2.8); sun.position.set(-7, 9, -3); sun.castShadow = true;
+const sun = new THREE.DirectionalLight(0xfff0dc, 2.9); sun.position.set(-5, 10, -1.5); sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 }); sun.shadow.bias = -.0004; sun.shadow.radius = 6; scene.add(sun);
-scene.add(new THREE.HemisphereLight(0xfff1e0, 0x8a7560, .75));
+scene.add(new THREE.HemisphereLight(0xffeedd, 0x3a2a20, .6));
 const fill = new THREE.DirectionalLight(0xffffff, .45); fill.position.set(5, 6, 8); scene.add(fill);
 
 // ---------- soap: two sets (outgoing + incoming bar during the slide) ----------
@@ -177,7 +177,7 @@ function makeKnife(opacity) {
   const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: .026, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 1 }), steel);
   blade.position.z = -.013; blade.castShadow = !t; g.add(blade);
   const bolster = new THREE.Mesh(new RoundedBoxGeometry(.16, .64, .09, 2, .03), steel); bolster.position.set(-.06, .64, 0); g.add(bolster);
-  const hm = new THREE.MeshStandardMaterial({ color: 0x15161a, roughness: .35, transparent: t, opacity, depthWrite: !t });
+  const hm = new THREE.MeshStandardMaterial({ color: 0x6a3a1e, roughness: .55, transparent: t, opacity, depthWrite: !t });
   const handle = new THREE.Mesh(new RoundedBoxGeometry(1.95, .44, .2, 4, .09), hm); handle.position.set(-1.1, .66, 0); handle.castShadow = !t; g.add(handle);
   for (const x of [-.5, -1.1, -1.7]) { const rv = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .22, 16), steel); rv.rotation.x = Math.PI / 2; rv.position.set(x, .66, 0); g.add(rv); }
   rig.add(g); return g;
@@ -185,11 +185,11 @@ function makeKnife(opacity) {
 const knife = makeKnife(1), ghosts = [.3, .2, .13, .08].map(makeKnife);
 // pose A: blade across the bar, handle at the back (−z), tip toward the front; pose B: blade along the bar, handle on the right
 const QA = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0));
-const QB = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0));
+const QB = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0));   // blade along the bar, handle on the right
 const TILT = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), .03);   // tip slightly raised: the heel meets the board first
 function pose(g, q, x, y, z) { g.quaternion.copy(q).multiply(TILT); g.position.set(x, y, z); }
 const LIFT = 1.35, REST_Y = 2.0;
-const xCut = (r, k) => -SX / 2 + SX / (r.a + 1) * k;           // lengthwise cut k (1..a)
+const xCut = (r, k) => -SX / 2 + SX / (r.a + 1) * k;           // lengthwise cut k (1..a), left to right
 const zCut = (r, k) => -SZ / 2 + SZ / (r.b + 1) * k;           // crosswise cut k (1..b)
 const A_Z = -SZ / 2 - .45, B_X = SX / 2 + .5;                  // heel just outside the bar
 // knife state for round r at time t: { q, x, y, z, phase info for ghosts }
@@ -244,7 +244,6 @@ window.renderAt = t => {
   const showR = fresh ? nxt : r;
   document.getElementById('cuts').textContent = fresh ? '0' : fmt(c.ka + c.kb);
   document.getElementById('pieces').textContent = fresh ? '1' : fmt((c.ka + 1) * (c.kb + 1));
-  document.getElementById('round').textContent = `ROUND ${showR.i + 1} · ${fmt(showR.n)} CUTS`;
   r3.render(scene, cam);
   return c;
 };
