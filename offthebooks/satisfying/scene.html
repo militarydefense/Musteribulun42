@@ -247,5 +247,6 @@ window.renderAt = t => {
   r3.render(scene, cam);
   return c;
 };
+window.hideKnife = () => { knife.visible = false; ghosts.forEach(g => g.scale.setScalar(0)); };   // brand stills only
 window.ready = true;
 </script></body></html>
