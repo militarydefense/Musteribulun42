@@ -29,13 +29,13 @@ const server = http.createServer((req, res) => {
   if (mode === 'timeline') fs.writeFileSync(path.join(OUT, 'timeline.json'), JSON.stringify(tl));
   if (mode === 'stills') for (const t of a.split(',').map(Number)) {
     await page.evaluate(t => window.renderAt(t), t);
-    await page.screenshot({ path: path.join(OUT, `still_${t.toFixed(2)}.jpg`), type: 'jpeg', quality: 90 });
+    await page.screenshot({ path: path.join(OUT, `still_${t.toFixed(2)}.jpg`), type: 'jpeg', quality: 90, timeout: 180000 });
   }
   if (mode === 'frames') {
     const from = +a, to = Math.min(+b, Math.ceil(tl.duration * tl.fps)), t0 = Date.now();
     for (let n = from; n < to; n++) {
       await page.evaluate(t => window.renderAt(t), n / tl.fps);
-      await page.screenshot({ path: path.join(OUT, `f_${String(n).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 92 });
+      await page.screenshot({ path: path.join(OUT, `f_${String(n).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 92, timeout: 180000 });
       if ((n - from) % 60 === 0) console.log(`frame ${n}/${to} ${((Date.now() - t0) / (n - from + 1) / 1000).toFixed(2)} s/frame`);
     }
   }
