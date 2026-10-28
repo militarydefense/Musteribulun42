@@ -430,3 +430,16 @@ Uygulama (her bölüm, iki seri):
 - RULES from now on: spoken question ≤2 s (no slow whisper), on-screen question ≤2 lines and fully visible at 0.0 s,
   motion in frame 0 (shake/rope/light, not a still door), present tense only (no "an hour ago"), vote words that need
   no backstory.
+
+## 35. Titanic P4 data (22 h IG) — the hook problem is NOT solved, and my predictions were wrong
+- P4: 182 views / 154 viewers, skip 55.2% (series: P1 33% → P2 41% → P3 49% → P4 55%), avg 9 s / 27 s, 0 comments.
+  Retention 100 → ~38% by 0:04, then flat ~33% to 0:22. The 1.7 s question did not hold people; the middle holds again.
+- IG 30-day views: NCK P6 1.5K, Titanic P1 1.4K, P2 962, P3 396, NCK P7 262, Titanic P4 182. Both series fall each part.
+- What is consistent: (1) every curve is flat after 0:05 → story/pacing is fine; (2) all the loss is in 0–4 s;
+  (3) NCK frames with visible money keep skip 21–30%; Titanic skip rises every part as the premise gets more tangled
+  (stolen bag → fake diamonds → woman's glove → second lifeboat). An abstract question ("your life or the diamonds?")
+  over a cartoon on a rope does not tell a stranger what is going on.
+- My "would I watch" percentages were guesses, consistently too high (P7 said 53%, real ~25%). Stop using them.
+- Next: decide by real tests, not opinions — same video, 2 different first 2 seconds, posted as Instagram Trial Reels
+  (shown to non-followers only); keep the winner. Standalone episodes (full payoff inside the video), frame 0 shows
+  the stakes visually (money/danger readable with sound off), no "Part N" dependence.
