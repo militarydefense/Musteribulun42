@@ -457,3 +457,6 @@ Uygulama (her bölüm, iki seri):
 - Views rose fast for ~25 min, then flattened at ~350.
 - Comparison (same platform): NCK Part 5 kept 58.3% and took ~9 h to start rising. Soap: faster start, lower kept rate.
 - Next lever to test: the first second (soap: 0.3 s idle, first cut at 0.7 s, 10 slow cuts in the first 4 s).
+- Instagram (new @cut.counter account, ~30 min, 15:35 TR): 468 views / 82 viewers (5.7 views per viewer → loops/rewatches),
+  avg 10 s of 43 s, skip 8.3% (best ever; story channel best was 22.2%), likes 1, comments 1, shares/saves/reposts 0, follows 0.
+  → The opening is not the problem on Instagram; YouTube's 32.6% kept is platform-specific. Weak spot on both: no follows, no saves/shares.
