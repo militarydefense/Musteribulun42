@@ -465,3 +465,8 @@ Uygulama (her bölüm, iki seri):
   Retention curve (read off the chart): 100% → ~65% at 2 s → ~50% at 6 s → ~36% at 8 s → ~30% at 13 s → ~22% at 15 s → ~13% at 22 s → flat ~10–12% to the end.
   Soap round changes (slide + counter back to 0) are at 5.75 s, 12.1 s and 18.85 s: the three steep drops after 2 s come right after them.
   → Each reset looks like an ending. Next object: test a format without the reset (or a much shorter, forward-looking transition). Show stills first.
+- Instagram ~2 h (17:20 TR): 1,295 views / 1,141 viewers, avg 11 s of 43 s, skip 42.4%, likes 2, comments 1, saves 1, shares 0, follows 0;
+  Reels tab 86.6%, Explore 13.2%, Feed 0.1%. Growth flattened after ~70 min.
+  NOTE: viewers were revised by Instagram (393 → 1,141 while views went 1,011 → 1,295): the earlier "5.7 / 2.6 views per viewer" was a preliminary figure, not real rewatching.
+  Curve (read off the chart): ~71% at 2 s, ~50% at 6 s, ~42% at 7 s, ~32% at 13 s, ~27% at 15 s, ~19% at 22 s, ~15% at 29 s, ~10% at 42 s.
+  Drops again follow the round resets (5.75 / 12.1 / 18.85 / 26.0 s) → confirmed on 1,141 viewers. Biggest single loss: first 2 s (−29 pts).
