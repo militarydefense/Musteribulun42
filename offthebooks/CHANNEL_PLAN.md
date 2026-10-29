@@ -450,3 +450,10 @@ Uygulama (her bölüm, iki seri):
 - Nothing may stay uncut: the last cut also frees the back row.
 - Sound: only sounds that match the motion (no board knock on horizontal cuts); fixed loudness gain (two-pass linear loudnorm), never dynamic loudnorm that pumps between rounds.
 - Times to the user are always in Türkiye time (UTC+3).
+
+## §37 @cut.counter — Soap vs 1,000 Cuts, YouTube ~41 min (29 Oct, 15:15 TR)
+- 350 views, 0 subs; 97.7% Shorts feed, 2.0% search, 0.3% channel page.
+- Engaged views 112 (32% of views); stayed 32.6% / swiped 67.4%. Retention curve not available yet (up to 2 days).
+- Views rose fast for ~25 min, then flattened at ~350.
+- Comparison (same platform): NCK Part 5 kept 58.3% and took ~9 h to start rising. Soap: faster start, lower kept rate.
+- Next lever to test: the first second (soap: 0.3 s idle, first cut at 0.7 s, 10 slow cuts in the first 4 s).
