@@ -460,3 +460,8 @@ Uygulama (her bölüm, iki seri):
 - Instagram (new @cut.counter account, ~30 min, 15:35 TR): 468 views / 82 viewers (5.7 views per viewer → loops/rewatches),
   avg 10 s of 43 s, skip 8.3% (best ever; story channel best was 22.2%), likes 1, comments 1, shares/saves/reposts 0, follows 0.
   → The opening is not the problem on Instagram; YouTube's 32.6% kept is platform-specific. Weak spot on both: no follows, no saves/shares.
+- Instagram ~45 min (15:48 TR): 1,011 views / 393 viewers (2.6 per viewer), avg 9 s, skip 20.3% (8.3% at 30 min, wider audience now),
+  likes 1, comments 1, saves 1, shares 0, follows 0; Reels tab 87.6%, Explore 12.4%.
+  Retention curve (read off the chart): 100% → ~65% at 2 s → ~50% at 6 s → ~36% at 8 s → ~30% at 13 s → ~22% at 15 s → ~13% at 22 s → flat ~10–12% to the end.
+  Soap round changes (slide + counter back to 0) are at 5.75 s, 12.1 s and 18.85 s: the three steep drops after 2 s come right after them.
+  → Each reset looks like an ending. Next object: test a format without the reset (or a much shorter, forward-looking transition). Show stills first.
