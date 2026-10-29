@@ -1,9 +1,9 @@
 # Dragon Fruit vs 1,000 Cuts — @cut.counter video 3 (new format)
 
-- File: DragonFruit_1000_Cuts.mp4 (25.5 s, 1080x1920, 30 fps, -14.0 LUFS fixed gain). TikTok copy: offthebooks/releases/tiktok/TikTok_DragonFruit_1000_Cuts.mp4
-- Format test: ONE fruit, the counter never resets; milestone row 10 · 50 · 100 · 250 · 500 · 1,000; knife moving in the first frame
-  (10 cuts 0.6 s, 100 cuts 1.75 s), cubes falling from 5.4 s, 1,000 cuts at 22.9 s → 8,863,513 pieces.
-- Compare with soap (round resets): retention at 2 s / 6 s / 15 s, skip rate, avg watch.
+- File: DragonFruit_1000_Cuts.mp4 (v2: 46.1 s, watermelon format — rounds 10/50/100/250/500/1,000, slide transitions,
+  camera push every round; cubes start at half of each round's cuts; pieces pour into a tall cone; -14.4 LUFS fixed gain;
+  0.3 s idle start trimmed). 1,000 cuts → 15,556,753 pieces. TikTok copy: offthebooks/releases/tiktok/TikTok_DragonFruit_1000_Cuts.mp4
+- v1 (one fruit, no reset, 25.5 s) was replaced at the user's request.
 
 ## Title (YouTube)
 Dragon Fruit vs 1,000 Cuts 🐉🔪 #satisfying #shorts
