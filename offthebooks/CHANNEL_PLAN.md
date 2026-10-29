@@ -443,3 +443,10 @@ Uygulama (her bölüm, iki seri):
 - Next: decide by real tests, not opinions — same video, 2 different first 2 seconds, posted as Instagram Trial Reels
   (shown to non-followers only); keep the winner. Standalone episodes (full payoff inside the video), frame 0 shows
   the stakes visually (money/danger readable with sound off), no "Part N" dependence.
+
+## §36 @cut.counter production rules (from the user, 29 Oct)
+- Before EVERY render: show the user stills of every scene (round start, each cut direction, round end, transition) and start the render only after their approval.
+- Every round: a clearly visible camera push-in from the first cut; the camera returns to the wide shot as the next object slides in.
+- Nothing may stay uncut: the last cut also frees the back row.
+- Sound: only sounds that match the motion (no board knock on horizontal cuts); fixed loudness gain (two-pass linear loudnorm), never dynamic loudnorm that pumps between rounds.
+- Times to the user are always in Türkiye time (UTC+3).

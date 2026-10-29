@@ -51,6 +51,7 @@ const cutAt = (s, e, m, k, pow) => s + (e - s) * Math.pow(k / m, 1 / pow);
 const countAt = (t, s, e, m, pow) => t < s ? 0 : t >= e ? m : m * Math.pow((t - s) / (e - s), pow);
 const cutsOf = (s, e, m, pow) => Array.from({ length: m }, (_, k) => cutAt(s, e, m, k + 1, pow));
 window.TIMELINE = { fps: FPS, duration: DURATION, rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n, slide: r.slide })),
+  flat: ROUNDS.flatMap(r => cutsOf(r.p3, r.p3e, r.c, r.pow)).map(x => +x.toFixed(4)),
   cuts: ROUNDS.flatMap(r => [...cutsOf(r.p1, r.p1e, r.a, r.pow), ...cutsOf(r.p3, r.p3e, r.c, r.pow), ...cutsOf(r.p2, r.p2e, r.b, r.pow)]).map(x => +x.toFixed(4)) };
 
 // real piece count. Slices i (x), layers l from the top (y), rows j from the front (z). A cell is a piece when it overlaps
@@ -204,7 +205,7 @@ function prepCells(r) {
   r.cells = [];
   for (let j = 0; j < r.VB; j++) {
     const row = [], z0 = RZ - hv * (j + 1), z1 = z0 + hv;
-    row.tc = cutTimeB(r, Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6)));   // the cut that frees this row
+    row.tc = cutTimeB(r, Math.max(1, Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6))));   // the cut that frees this row
     for (let l = 0; l < r.VC; l++) for (let v = 0; v < r.VA; v++) {
       const x0 = -RX + wv * v, x1 = x0 + wv, y1 = 2 * RY - hcv * l, y0 = y1 - hcv;
       const dx = near(x0, x1, 0) / RX, dy = near(y0, y1, RY) / RY, dz = near(z0, z1, 0) / RZ;
@@ -250,7 +251,7 @@ function drawMelon(set, r, t, offset) {
     set.cap.visible = false;
   } else {                                                          // crosswise, front to back: each freed row of cubes tumbles forward
     if (!r.cells) prepCells(r);
-    const nr = Math.min(r.VB, Math.floor(hz * kb / hv + 1e-6)), zr = RZ - hv * nr;
+    const nr = kb === r.b ? r.VB : Math.min(r.VB, Math.floor(hz * kb / hv + 1e-6)), zr = RZ - hv * nr;   // the last cut frees the back row too
     setClip(set, set.clipZ, 0, -1, zr);                             // the uncut back part stays whole
     const kz = Math.sqrt(Math.max(0, 1 - (zr / RZ) ** 2));
     set.cap.visible = kz > .03;
@@ -338,8 +339,9 @@ function knifeAt(r, t) {
     const from = zCut(r, Math.max(1, k)), to = zCut(r, Math.min(r.b, k + 1));
     return { q: qb, x: B_X, y: k === 0 ? LIFT * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: lerp(from, to, easeInOut((ph - .25) / .5)), dir: 'b' };
   }
-  const u = easeInOut((t - r.p2e) / .45), q = qb.clone().slerp(qa, u);
-  return { q, x: lerp(B_X, xCut(ROUNDS[(r.i + 1) % ROUNDS.length], 1), u), y: lerp(0, REST_Y, u), z: lerp(zCut(r, r.b), A_Z, u) };
+  // after the last cut the knife lifts high and back so the pile stays in view, then settles at the rest pose during the slide
+  const u = easeInOut((t - r.p2e) / .45), q = qb.clone().slerp(qa, u), d = 1 - easeInOut((t - r.slide) / SLIDE);
+  return { q, x: lerp(B_X, xCut(ROUNDS[(r.i + 1) % ROUNDS.length], 1), u), y: lerp(0, REST_Y + 2.2 * d, u), z: lerp(zCut(r, r.b), A_Z - 1.4 * d, u) };
 }
 function placeKnife(r, t) {
   const k = knifeAt(r, t);
@@ -351,12 +353,14 @@ function placeKnife(r, t) {
 }
 
 // ---------- camera: a slow push-in while a round is cut, back to the start while the next melon slides in ----------
-const PUSH = .16;
+const PUSH = .3, PILE = new THREE.Vector3(.55, .45, .8);
 function placeCamera(r, t) {
-  let z = easeInOut((t - r.p1) / (r.p2e - r.p1)) * PUSH;
+  const u = clamp((t - r.p1) / (r.p2e - r.p1));
+  let z = (1 - (1 - u) * (1 - u)) * PUSH;                           // starts moving with the first cut, slows towards the end
   if (t >= r.slide) z *= 1 - easeInOut((t - r.slide) / SLIDE);
-  cam.position.copy(LOOK).addScaledVector(CAM.clone().sub(LOOK), 1 - z);
-  cam.lookAt(LOOK);
+  const look = LOOK.clone().lerp(PILE, z / PUSH);                   // the aim drifts to the pile in front of the melon
+  cam.position.copy(look).addScaledVector(CAM.clone().sub(LOOK), 1 - z);
+  cam.lookAt(look);
 }
 
 const fmt = n => n.toLocaleString('en-US');

@@ -104,12 +104,25 @@ def build():
     cuts = np.array(tl["cuts"])
     nxt = np.append(np.diff(cuts), 1.0)
     prev = np.insert(np.diff(cuts), 0, 1.0)
+    flat = set(tl.get("flat", []))                                # horizontal cuts: the blade never reaches the board
     for i, t in enumerate(cuts):
         pool = chops[0] if prev[i] >= .3 else chops[1]
         c = pool[rng.integers(len(pool))]
         pitch = rng.uniform(.95, 1.05)
         c = np.interp(np.arange(0, len(c) - 1, pitch), np.arange(len(c)), c)
         knock = int(PRE / pitch * SR)                             # where the board knock sits in this sample
+        if round(float(t), 4) in flat:                            # only the blade sliding through: the part before the knock
+            s0 = chops[0][rng.integers(len(chops[0]))]
+            s0 = np.interp(np.arange(0, len(s0) - 1, pitch), np.arange(len(s0)), s0)[: knock - int(.008 * SR)]
+            ln = int(min(PRE, max(.04, prev[i] * .8)) / pitch * SR)
+            c = s0[-ln:].copy()
+            fi = min(len(c), int(.02 * SR)); c[:fi] *= np.linspace(0, 1, fi)
+            fo = min(len(c), int(.03 * SR)); c[-fo:] *= np.linspace(1, 0, fo)
+            rate = 1 / max(min(prev[i], nxt[i]), 1e-3)
+            s = int(t * SR) - len(c)
+            if 0 <= s < N:
+                e = min(N, s + len(c)); mix[s:e] += c[: e - s] * min(1.0, 4.0 / rate) ** .5 * .9
+            continue
         pre = int(min(PRE, max(.012, prev[i] * .6)) / pitch * SR)    # slow cuts: the whole slide; fast: just the hit
         post = int(min(.16, max(.03, nxt[i] * 1.2)) * SR)
         c = c[max(0, knock - pre): knock + post].copy()
