@@ -124,7 +124,7 @@ const fill = new THREE.DirectionalLight(0xffffff, .45); fill.position.set(5, 6, 
 // other end, tiny pale dots (lenticels)
 const RIND = canvasTex(2048, 1024, (g, w, h) => {
   const base = g.createLinearGradient(0, 0, 0, h);
-  base.addColorStop(0, '#d9431f'); base.addColorStop(.25, '#ef7d22'); base.addColorStop(.5, '#f6b92e'); base.addColorStop(.75, '#b9c33a'); base.addColorStop(1, '#5f9a2c');
+  base.addColorStop(0, '#c2261a'); base.addColorStop(.3, '#e2521c'); base.addColorStop(.52, '#f08f1c'); base.addColorStop(.72, '#d8a826'); base.addColorStop(1, '#4f8a22');
   g.fillStyle = base; g.fillRect(0, 0, w, h);
   for (let i = 0; i < 60; i++) {                                    // soft blotches so the colours do not look painted in bands
     const x = rnd() * w, y = rnd() * h, r = 60 + rnd() * 160, gr = g.createRadialGradient(x, y, 0, x, y, r);
@@ -140,14 +140,14 @@ const fibres = (g, w, h, n, a) => { for (let i = 0; i < n; i++) { g.strokeStyle 
 const FLESH_DISC = canvasTex(1024, 1024, (g, w, h) => {
   const c = w / 2;
   const ring = (r, col) => { g.beginPath(); g.arc(c, c, r * c, 0, 7); g.fillStyle = col; g.fill(); };
-  ring(1, '#c9561e'); ring(.965, '#ffc94d');
-  const grad = g.createRadialGradient(c, c, 0, c, c, .95 * c); grad.addColorStop(0, '#f7d98a'); grad.addColorStop(.28, '#ffb52a'); grad.addColorStop(.85, '#ffa412'); grad.addColorStop(1, '#ffbd3d');
+  ring(1, '#b8401a'); ring(.965, '#f9b233');
+  const grad = g.createRadialGradient(c, c, 0, c, c, .95 * c); grad.addColorStop(0, '#f6c35a'); grad.addColorStop(.28, '#f7940a'); grad.addColorStop(.85, '#f28400'); grad.addColorStop(1, '#f9a326');
   g.beginPath(); g.arc(c, c, .955 * c, 0, 7); g.fillStyle = grad; g.fill();
   fibres(g, w, h, 900, .18);
 });
 // flesh inside a cube: orange with fibres
 const FLESH = canvasTex(512, 512, (g, w, h) => {
-  g.fillStyle = '#ffab1c'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#f58a00'; g.fillRect(0, 0, w, h);
   fibres(g, w, h, 260, .25);
 });
 const rindMat = () => new THREE.MeshStandardMaterial({ map: RIND, roughness: .33, metalness: 0 });
