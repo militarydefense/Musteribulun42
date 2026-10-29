@@ -93,7 +93,7 @@ r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.o
 document.getElementById('wrap').prepend(r3.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0x15100c);
 scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
-const BASE_FOV = 34, CAM = new THREE.Vector3(-3.9, 11.2, 11.4), LOOK = new THREE.Vector3(.3, .8, 0);
+const BASE_FOV = 41, CAM = new THREE.Vector3(-3.9, 11.2, 11.4), LOOK = new THREE.Vector3(.3, .8, 0);
 const cam = new THREE.PerspectiveCamera(BASE_FOV, W / H, .1, 200); cam.position.copy(CAM); cam.lookAt(LOOK);
 const rig = new THREE.Group(); rig.rotation.y = .44; scene.add(rig);
 
