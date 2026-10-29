@@ -51,3 +51,15 @@ Diğer ayarlar:
 - Yorumlar: Tüm yorumlara izin ver
 - Shorts remiksleme: Video ve sese izin ver (başkalarının remiksleri yeni izleyici getirir)
 - Lisans: Standart YouTube lisansı
+
+## Instagram profili (29 Ekim)
+- Ad (aramada çıkar): `Cut Counter | Satisfying Cuts`
+- Biyografi:
+```
+10 cuts vs 1,000 cuts 🔪
+How many pieces can one object become?
+New cut every day · Comment what we cut next 👇
+```
+- Bağlantı: YouTube kanalı (@cut.counter)
+- Hesap: herkese açık · Profesyonel hesap → İçerik üreticisi → kategori "Video İçerik Üreticisi" (kategoriyi profilde gösterme kapalı)
+- Reels paylaşırken: kapak = videonun son karesi (1,000 CUTS + parça sayısı), "Facebook'ta da öner" açık, Remix açık
