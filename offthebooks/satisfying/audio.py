@@ -14,7 +14,8 @@ import numpy as np
 
 SR = 48000
 HERE = Path(__file__).parent
-OUT, CHOPS = HERE / "out", HERE / "assets" / "chops"
+import os
+OUT, CHOPS = HERE / os.environ.get("OUTDIR", "out"), HERE / "assets" / "chops"
 rng = np.random.default_rng(23)
 
 

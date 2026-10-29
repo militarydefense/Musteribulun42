@@ -1,0 +1,316 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- "Watermelon vs 1,000 cuts" — same stage, knife, timeline and transitions as scene.html (soap), with a real melon:
+     striped rind, red flesh with seeds on every cut face. Only vertical cuts: lengthwise slices first, then crosswise;
+     pieces freed by a crosswise cut fall over and spread (the melon loses its shape). PIECES counts only cells that
+     really contain melon (the melon is oval, so corner cells of the grid are empty). The camera pushes in slowly while
+     a round is cut and returns while the next melon slides in. -->
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
+.num{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:.9;
+  text-shadow:0 5px 24px rgba(0,0,0,.55),0 0 3px rgba(0,0,0,.7)}
+#top{top:150px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:68px;color:#FFC24A;letter-spacing:3px;margin-top:6px}
+#bot{top:1500px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
+</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body><div id="wrap">
+<div id="top" class="num"><b id="cuts">0</b><i>CUTS</i></div>
+<div id="bot" class="num"><b id="pieces">1</b><i>PIECES</i></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const W = 1080, H = 1920, FPS = 30;
+const RX = 1.9, RY = 1.15, RZ = 1.25;               // melon: half length (x), half height (y), half depth (z); rests on y = 0
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (a, b, c = 0) => { let h = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 1274126177); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+const half = (x, z) => RY * Math.sqrt(Math.max(0, 1 - (x / RX) ** 2 - (z / RZ) ** 2));      // half thickness of the melon at (x, z)
+const inside = (x0, x1, z0, z1) => { const x = clamp(0, x0, x1), z = clamp(0, z0, z1); return (x / RX) ** 2 + (z / RZ) ** 2 < 1; };   // cell overlaps the melon
+
+// ---------- timeline (same as the soap video): idle → lengthwise cuts → knife turns → crosswise cuts → hold → slide ----------
+const PLAN = [[10, 4.0], [50, 4.6], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6.6]];
+const IDLE = .3, TURN = .4, HOLD = .75, SLIDE = .5, LAST_HOLD = 1.9;
+const ROUNDS = []; let acc = 0;
+PLAN.forEach(([n, w], i) => {
+  const a = Math.round(n * RX / (RX + RZ)), b = n - a;            // square cells seen from above
+  const r = { i, n, a, b, t0: acc };
+  r.p1 = acc + IDLE; r.p1e = r.p1 + w * a / n;
+  r.p2 = r.p1e + TURN; r.p2e = r.p2 + w * b / n;
+  r.hold = r.p2e; r.slide = r.p2e + (i === PLAN.length - 1 ? LAST_HOLD : HOLD); r.t1 = r.slide + SLIDE;
+  r.pow = n <= 50 ? 1 : 1.25;
+  r.VA = Math.min(r.a + 1, 120); r.VB = Math.min(r.b + 1, 80);     // drawn grid (the counter always uses the real one)
+  ROUNDS.push(r); acc = r.t1;
+});
+const DURATION = acc;
+const cutAt = (s, e, m, k, pow) => s + (e - s) * Math.pow(k / m, 1 / pow);
+const countAt = (t, s, e, m, pow) => t < s ? 0 : t >= e ? m : m * Math.pow((t - s) / (e - s), pow);
+window.TIMELINE = { fps: FPS, duration: DURATION, rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n, slide: r.slide })),
+  cuts: ROUNDS.flatMap(r => [...Array.from({ length: r.a }, (_, k) => cutAt(r.p1, r.p1e, r.a, k + 1, r.pow)),
+                             ...Array.from({ length: r.b }, (_, k) => cutAt(r.p2, r.p2e, r.b, k + 1, r.pow))]).map(x => +x.toFixed(4)) };
+// real piece count: cells of finished crosswise rows that contain melon + the remaining part of every slice
+function pieceCount(r, ka, kb) {
+  if (kb === 0) return ka + 1;
+  if (!r.rows) {
+    const w = 2 * RX / (r.a + 1), hz = 2 * RZ / (r.b + 1);
+    r.rows = [0];
+    for (let j = 0; j < r.b; j++) {
+      let c = 0;
+      for (let i = 0; i <= r.a; i++) if (inside(-RX + w * i, -RX + w * (i + 1), -RZ + hz * j, -RZ + hz * (j + 1))) c++;
+      r.rows.push(r.rows[j] + c);
+    }
+  }
+  const w = 2 * RX / (r.a + 1), zc = -RZ + 2 * RZ / (r.b + 1) * kb;
+  let rest = 0;
+  for (let i = 0; i <= r.a; i++) if (inside(-RX + w * i, -RX + w * (i + 1), zc, RZ)) rest++;
+  return r.rows[kb] + rest;
+}
+
+// ---------- renderer, stage (identical to the soap video) ----------
+const r3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap; r3.localClippingEnabled = true;
+r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.outputColorSpace = THREE.SRGBColorSpace;
+document.getElementById('wrap').prepend(r3.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x15100c);
+scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
+const BASE_FOV = 34, CAM = new THREE.Vector3(-3.9, 11.2, 11.4), LOOK = new THREE.Vector3(.3, .8, 0);
+const cam = new THREE.PerspectiveCamera(BASE_FOV, W / H, .1, 200); cam.position.copy(CAM); cam.lookAt(LOOK);
+const rig = new THREE.Group(); rig.rotation.y = .44; scene.add(rig);
+
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const wood = canvasTex(2048, 1024, (g, w, h) => {
+  g.fillStyle = '#c98f55'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 360; i++) { const y = rnd() * h; g.strokeStyle = `rgba(${118 + rnd() * 50},${66 + rnd() * 30},24,${.05 + rnd() * .15})`; g.lineWidth = 1 + rnd() * 5;
+    g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x * .004 + i) * 9); g.stroke(); }
+});
+const brick = canvasTex(1024, 1024, (g, w, h) => {
+  g.fillStyle = '#16110d'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 64) for (let x = -((y / 64) % 2) * 64; x < w; x += 128) { const v = 36 + rnd() * 14; g.fillStyle = `rgb(${v},${v * .8},${v * .64})`; g.fillRect(x + 4, y + 4, 120, 56); }
+});
+brick.wrapS = brick.wrapT = THREE.RepeatWrapping; brick.repeat.set(5, 2.5);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 25), new THREE.MeshStandardMaterial({ map: brick, roughness: 1 })); wall.position.set(0, 6, -10); scene.add(wall);
+const counter = new THREE.Mesh(new THREE.BoxGeometry(80, 1, 40), new THREE.MeshStandardMaterial({ color: 0x2a2420, roughness: .9 }));
+counter.position.y = -.86; counter.receiveShadow = true; scene.add(counter);
+const board = new THREE.Mesh(new RoundedBoxGeometry(8.8, .36, 6.0, 4, .08), new THREE.MeshStandardMaterial({ map: wood, roughness: .6 }));
+board.position.set(-.2, -.18, .4); board.rotation.y = -.04; board.castShadow = board.receiveShadow = true; rig.add(board);
+const sun = new THREE.DirectionalLight(0xfff0dc, 2.9); sun.position.set(-5, 10, -1.5); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8 }); sun.shadow.bias = -.0004; sun.shadow.radius = 6; scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xffeedd, 0x3a2a20, .6));
+const fill = new THREE.DirectionalLight(0xffffff, .45); fill.position.set(5, 6, 8); scene.add(fill);
+
+// ---------- watermelon textures ----------
+// rind: u = angle around the long axis, v = along it; 12 wavy light stripes
+const RIND = canvasTex(2048, 1024, (g, w, h) => {
+  g.fillStyle = '#1f4a1d'; g.fillRect(0, 0, w, h);
+  for (let k = 0; k < 12; k++) {                                  // stripes as filled wavy bands
+    const pts = [];
+    for (let y = 0; y <= h; y += 8) { const v = y / h; pts.push([(k + .5) / 12 * w + Math.sin(v * Math.PI * 7 + k * 1.7) * w * .012 + Math.sin(v * Math.PI * 17 + k) * w * .005, y, w * .024 * (.75 + .5 * Math.abs(Math.sin(v * 11 + k)))]); }
+    g.beginPath(); pts.forEach(([c, y, d], n) => n ? g.lineTo(c - d, y) : g.moveTo(c - d, y)); [...pts].reverse().forEach(([c, y, d]) => g.lineTo(c + d, y)); g.closePath();
+    g.fillStyle = '#86b64f'; g.fill();
+    g.strokeStyle = 'rgba(40,80,30,.55)'; g.lineWidth = 6; g.stroke();
+  }
+  for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(${rnd() < .5 ? '10,40,10' : '150,190,100'},${.05 + rnd() * .12})`; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 5, 2 + rnd() * 5); }
+});
+RIND.wrapS = RIND.wrapT = THREE.RepeatWrapping;
+// flesh on a round cut face: dark rind ring, pale rind, red flesh with a ring of seeds
+const FLESH_DISC = canvasTex(1024, 1024, (g, w, h) => {
+  const c = w / 2;
+  const ring = (r, col) => { g.beginPath(); g.arc(c, c, r * c, 0, 7); g.fillStyle = col; g.fill(); };
+  ring(1, '#1d4a1b'); ring(.965, '#5f9a3c'); ring(.93, '#dfeec0'); ring(.885, '#f2a7a0');
+  const grad = g.createRadialGradient(c, c, 0, c, c, .875 * c); grad.addColorStop(0, '#f23c43'); grad.addColorStop(.8, '#e8343c'); grad.addColorStop(1, '#f06a6a');
+  g.beginPath(); g.arc(c, c, .875 * c, 0, 7); g.fillStyle = grad; g.fill();
+  for (let i = 0; i < 4000; i++) { const a = rnd() * 6.28, r = Math.sqrt(rnd()) * .86 * c; g.fillStyle = `rgba(255,${120 + rnd() * 80},${120 + rnd() * 60},${.08 + rnd() * .12})`; g.fillRect(c + Math.cos(a) * r, c + Math.sin(a) * r, 2 + rnd() * 4, 2 + rnd() * 4); }
+  for (let i = 0; i < 46; i++) {
+    const a = rnd() * 6.28, r = (.45 + rnd() * .3) * c, x = c + Math.cos(a) * r, y = c + Math.sin(a) * r;
+    g.save(); g.translate(x, y); g.rotate(a); g.beginPath(); g.ellipse(0, 0, 13, 7, 0, 0, 7); g.fillStyle = '#1a120e'; g.fill();
+    g.beginPath(); g.ellipse(-3, -2, 4, 2, 0, 0, 7); g.fillStyle = 'rgba(255,255,255,.35)'; g.fill(); g.restore();
+  }
+});
+// flesh on the side of a column: rind band at the top and bottom (the skin), red flesh with seeds between
+const FLESH_SIDE = canvasTex(512, 1024, (g, w, h) => {
+  g.fillStyle = '#e9353d'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(255,${120 + rnd() * 80},${120 + rnd() * 60},${.08 + rnd() * .14})`; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 5, 2 + rnd() * 5); }
+  for (let i = 0; i < 10; i++) { const x = rnd() * w, y = h * (.3 + rnd() * .4); g.beginPath(); g.ellipse(x, y, 12, 7, rnd() * 3, 0, 7); g.fillStyle = '#1a120e'; g.fill(); }
+  for (const [y0, y1, col] of [[0, .05, '#1d4a1b'], [.05, .08, '#5f9a3c'], [.08, .13, '#dfeec0'], [.95, 1, '#1d4a1b'], [.92, .95, '#5f9a3c'], [.87, .92, '#dfeec0']]) { g.fillStyle = col; g.fillRect(0, y0 * h, w, (y1 - y0) * h); }
+});
+const rindMat = () => new THREE.MeshStandardMaterial({ map: RIND, roughness: .42, metalness: 0 });
+const fleshMat = map => new THREE.MeshStandardMaterial({ map, roughness: .55 });
+
+// geometry: ellipsoid with its poles on the x axis (u around the axis), slab = elliptic cylinder along x
+const melonGeo = new THREE.SphereGeometry(1, 128, 72); melonGeo.rotateZ(-Math.PI / 2);
+const slabGeo = new THREE.CylinderGeometry(1, 1, 1, 96, 1); slabGeo.rotateZ(-Math.PI / 2);
+const capGeo = new THREE.CircleGeometry(1, 96); capGeo.rotateY(-Math.PI / 2);            // facing −x
+const colGeo = new THREE.BoxGeometry(1, 1, 1);
+const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), Q2 = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3();
+const AX = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+function makeSet() {
+  const g = new THREE.Group(); rig.add(g);
+  const clipX = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0), clipZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const whole = new THREE.Mesh(melonGeo, Object.assign(rindMat(), { clippingPlanes: [clipX], clipShadows: true }));
+  whole.scale.set(RX, RY, RZ); whole.position.y = RY; whole.castShadow = whole.receiveShadow = true; g.add(whole);
+  const cap = new THREE.Mesh(capGeo, fleshMat(FLESH_DISC)); cap.castShadow = true; g.add(cap);
+  const slabSide = rindMat(); slabSide.map = RIND.clone(); slabSide.map.offset.set(.25, .5); slabSide.map.repeat.set(1, .02); slabSide.map.needsUpdate = true;   // a thin band of the rind: straight stripes on a slice   // stripes line up with the whole melon
+  const slabMats = [slabSide, fleshMat(FLESH_DISC), fleshMat(FLESH_DISC)]; slabMats.forEach(m => m.clipShadows = true);
+  const slabs = new THREE.InstancedMesh(slabGeo, slabMats, 130); slabs.castShadow = slabs.receiveShadow = true; g.add(slabs);
+  const side = fleshMat(FLESH_SIDE), top = rindMat(); top.map = RIND.clone(); top.map.repeat.set(.05, .05); top.map.offset.set(.02, .3); top.map.needsUpdate = true;   // skin on the ends of a piece
+  const cols = new THREE.InstancedMesh(colGeo, [side, side, top, top, side, side], 10000); cols.castShadow = cols.receiveShadow = true; g.add(cols);
+  return { g, whole, cap, slabs, slabMats, cols, clipX, clipZ };
+}
+const sets = [makeSet(), makeSet()];
+function put(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0) { E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M); }
+// world-space clipping plane from a plane given in the set's local space
+function setClip(set, plane, nx, nz, c) {
+  plane.set(new THREE.Vector3(nx, 0, nz), c);
+  set.g.updateMatrixWorld(true);
+  plane.applyMatrix4(set.g.matrixWorld);
+}
+const cutTimeOf = (r, k) => k <= r.a ? cutAt(r.p1, r.p1e, r.a, k, r.pow) : cutAt(r.p2, r.p2e, r.b, k - r.a, r.pow);
+
+function drawMelon(set, r, t, offset) {
+  set.g.visible = true; set.g.position.x = offset;
+  const ka = Math.floor(countAt(t, r.p1, r.p1e, r.a, r.pow) + 1e-6), kb = Math.floor(countAt(t, r.p2, r.p2e, r.b, r.pow) + 1e-6);
+  const w = 2 * RX / (r.a + 1), hz = 2 * RZ / (r.b + 1), wv = 2 * RX / r.VA, hv = 2 * RZ / r.VB;
+  const loose = r.n <= 10 ? 1 : r.n <= 50 ? .6 : r.n <= 100 ? .35 : .2;
+  let ns = 0, nc = 0;
+  const slab = (v, s, lean) => {                                    // slice v of the drawn grid, s = how far it has separated
+    const x0 = -RX + wv * v, xm = x0 + wv / 2, k = Math.sqrt(Math.max(.02, 1 - (xm / RX) ** 2));
+    put(set.slabs, ns++, xm - .025 * loose * s, RY, 0, wv * (1 - .07 * loose) - .003, RY * k, RZ * k, 0, 0, lean);
+  };
+  if (kb === 0) {                                                   // lengthwise: slices left of the knife, the melon right of it
+    const xc = -RX + w * ka, nv = Math.min(r.VA, Math.floor((xc + RX) / wv + 1e-6)), xr = -RX + wv * nv;
+    for (let v = 0; v < nv; v++) {
+      const kCut = Math.min(r.a, Math.ceil((v + 1) * wv / w - 1e-6)), s = easeOut((t - cutTimeOf(r, kCut)) / .16);
+      slab(v, s, ((hash(v, 1, r.n) - .5) * .1 - .03) * loose * s);
+    }
+    set.whole.visible = xr < RX - .01;
+    setClip(set, set.clipX, 1, 0, -xr);
+    const k = Math.sqrt(Math.max(0, 1 - (xr / RX) ** 2));
+    set.cap.visible = set.whole.visible && nv > 0 && k > .02;
+    set.cap.position.set(xr + .002, RY, 0); set.cap.scale.set(1, RY * k, RZ * k);
+    set.slabMats.forEach(m => m.clippingPlanes = []);
+  } else {                                                          // crosswise, front to back: freed pieces fall toward the camera and spread
+    set.whole.visible = false; set.cap.visible = false;
+    const nr = Math.min(r.VB, Math.floor(hz * kb / hv + 1e-6)), zr = RZ - hv * nr;
+    for (let v = 0; v < r.VA; v++) slab(v, 1, ((hash(v, 1, r.n) - .5) * .1 - .03) * loose);
+    setClip(set, set.clipZ, 0, -1, zr);                             // slices keep only the part behind the cut rows
+    set.slabMats.forEach(m => m.clippingPlanes = [set.clipZ]);
+    for (let j = 0; j < nr; j++) {
+      const kCut = Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6)), u = clamp((t - cutTimeOf(r, r.a + kCut)) / .34);
+      const z0 = RZ - hv * (j + 1), zm = z0 + hv / 2;
+      for (let v = 0; v < r.VA; v++) {
+        const x0 = -RX + wv * v, xm = x0 + wv / 2;
+        if (!inside(x0, x0 + wv, z0, z0 + hv)) continue;
+        const hh = 2 * Math.max(half(clamp(0, x0, x0 + wv), clamp(0, z0, z0 + hv)) * .985, .04);
+        const h1 = hash(v, j, r.n), h2 = hash(j + 3, v, r.n), h3 = hash(v + 11, j + 5, r.n);
+        // final pose: tall thin pieces fall flat, chunky ones only tip; each falls roughly outward, in its own direction
+        const slim = clamp(hh / Math.max(wv, hv) / 3);
+        const th = (Math.PI / 2) * clamp(.2 + .8 * slim) * (.55 + .45 * h2);
+        // chunky pieces tip outward; thin sticks slump where they stand, in any direction, into a heap
+        const heading = slim > .6 ? h1 * 6.283 : Math.atan2(zm + 1e-4, xm + 1e-4) + (h1 - .5) * 2.2;
+        const fall = easeIn(u * 1.15) * (1 + .06 * Math.sin(clamp(u * 1.15 - 1, 0, 1) * Math.PI * 3));   // accelerates, tiny bounce
+        const ang = th * clamp(fall);
+        const hx = Math.cos(heading), hzz = Math.sin(heading);
+        const thick = Math.abs(wv * hx) + Math.abs(hv * hzz);
+        const push = (hh / 2) * Math.sin(ang) * (slim > .6 ? .45 : 1) + .12 * loose * h3 * clamp(fall);
+        const y = lerp(RY, .5 * (hh * Math.cos(ang) + thick * Math.sin(ang)), clamp(fall));
+        AX.set(hzz, 0, -hx);                                          // horizontal axis perpendicular to the heading
+        Q.setFromAxisAngle(AX, ang); Q2.setFromAxisAngle(UP, (h3 - .5) * .6 * u); Q.premultiply(Q2);
+        P.set(xm + hx * push, y, zm + hzz * push); S.set(wv * .96, hh, hv * .96); M.compose(P, Q, S); set.cols.setMatrixAt(nc++, M);
+        if (nc >= 10000) break;
+      }
+    }
+  }
+  set.slabs.count = ns; set.slabs.instanceMatrix.needsUpdate = true;
+  set.cols.count = nc; set.cols.instanceMatrix.needsUpdate = true;
+  return { ka, kb };
+}
+
+// ---------- knife (same as the soap video, scaled for the bigger melon) ----------
+function makeKnife(opacity) {
+  const g = new THREE.Group();
+  const s = new THREE.Shape();
+  s.moveTo(0, 0); s.lineTo(3.0, 0); s.bezierCurveTo(3.8, .02, 4.3, .25, 4.7, .62);
+  s.bezierCurveTo(4.0, .8, 3.1, .93, 2.1, .99); s.lineTo(0, 1.02); s.lineTo(0, 0);
+  const t = opacity < 1;
+  const steel = new THREE.MeshStandardMaterial({ color: 0xf0f2f5, metalness: 1, roughness: .14, envMapIntensity: 2.2, transparent: t, opacity, depthWrite: !t });
+  const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: .026, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 1 }), steel);
+  blade.position.z = -.013; blade.castShadow = !t; g.add(blade);
+  const bolster = new THREE.Mesh(new RoundedBoxGeometry(.16, .64, .09, 2, .03), steel); bolster.position.set(-.06, .64, 0); g.add(bolster);
+  const hm = new THREE.MeshStandardMaterial({ color: 0x6a3a1e, roughness: .55, transparent: t, opacity, depthWrite: !t });
+  const handle = new THREE.Mesh(new RoundedBoxGeometry(1.95, .44, .2, 4, .09), hm); handle.position.set(-1.1, .66, 0); handle.castShadow = !t; g.add(handle);
+  for (const x of [-.5, -1.1, -1.7]) { const rv = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .22, 16), steel); rv.rotation.x = Math.PI / 2; rv.position.set(x, .66, 0); g.add(rv); }
+  g.scale.setScalar(1.3);
+  rig.add(g); return g;
+}
+const knife = makeKnife(1), ghosts = [.3, .2, .13, .08].map(makeKnife);
+const QA = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0));
+const QB = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0));
+const TILT = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), .03);
+function pose(g, q, x, y, z) { g.quaternion.copy(q).multiply(TILT); g.position.set(x, y, z); }
+const LIFT = 2 * RY + .45, REST_Y = 2 * RY + .9;
+const xCut = (r, k) => -RX + 2 * RX / (r.a + 1) * k;
+const zCut = (r, k) => RZ - 2 * RZ / (r.b + 1) * k;             // crosswise cuts go front to back: the falling pieces face the camera
+const A_Z = -RZ - .5, B_X = RX + .55;
+function knifeAt(r, t) {
+  const qa = QA, qb = QB;
+  if (t < r.p1) return { q: qa, x: xCut(r, 1), y: REST_Y, z: A_Z };
+  if (t < r.p1e) {
+    const x = countAt(t, r.p1, r.p1e, r.a, r.pow), k = Math.floor(x), ph = x - k;
+    const from = xCut(r, Math.max(1, k)), to = xCut(r, Math.min(r.a, k + 1));
+    return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)), y: k === 0 ? REST_Y * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, dir: 'a' };
+  }
+  if (t < r.p2) {
+    const u = easeInOut((t - r.p1e) / TURN), q = qa.clone().slerp(qb, u);
+    return { q, x: lerp(xCut(r, r.a), B_X, u), y: LIFT * u + .6 * Math.sin(Math.PI * u), z: lerp(A_Z, zCut(r, 1), u) };
+  }
+  if (t < r.p2e) {
+    const x = countAt(t, r.p2, r.p2e, r.b, r.pow), k = Math.floor(x), ph = x - k;
+    const from = zCut(r, Math.max(1, k)), to = zCut(r, Math.min(r.b, k + 1));
+    return { q: qb, x: B_X, y: k === 0 ? LIFT * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: lerp(from, to, easeInOut((ph - .25) / .5)), dir: 'b' };
+  }
+  const u = easeInOut((t - r.p2e) / .45), q = qb.clone().slerp(qa, u);
+  return { q, x: lerp(B_X, xCut(ROUNDS[(r.i + 1) % ROUNDS.length], 1), u), y: lerp(0, REST_Y, u), z: lerp(zCut(r, r.b), A_Z, u) };
+}
+function placeKnife(r, t) {
+  const k = knifeAt(r, t);
+  pose(knife, k.q, k.x, k.y, k.z);
+  const win = k.dir === 'a' ? [r.p1, r.p1e, r.a] : k.dir === 'b' ? [r.p2, r.p2e, r.b] : null;
+  const rate = win ? win[2] * r.pow * Math.pow(clamp((t - win[0]) / (win[1] - win[0]), .03, 1), r.pow - 1) / (win[1] - win[0]) : 0;
+  const fast = rate > 9;
+  ghosts.forEach((g, i) => { g.visible = fast; if (!fast) return; const kk = knifeAt(r, t - (i + 1) / FPS / 4); pose(g, kk.q, kk.x, kk.y, kk.z); });
+}
+
+// ---------- camera: a slow push-in while a round is cut, back to the start while the next melon slides in ----------
+const PUSH = .16;
+function placeCamera(r, t) {
+  let z = easeInOut((t - r.p1) / (r.p2e - r.p1)) * PUSH;
+  if (t >= r.slide) z *= 1 - easeInOut((t - r.slide) / SLIDE);
+  cam.position.copy(LOOK).addScaledVector(CAM.clone().sub(LOOK), 1 - z);
+  cam.lookAt(LOOK);
+}
+
+const fmt = n => n.toLocaleString('en-US');
+const roundAt = t => ROUNDS.find(q => t < q.t1) || ROUNDS[ROUNDS.length - 1];
+window.renderAt = t => {
+  t = Math.min(t, DURATION - 1e-6);
+  const r = roundAt(t), nxt = ROUNDS[(r.i + 1) % ROUNDS.length];
+  let c;
+  if (t >= r.slide) {
+    const u = (t - r.slide) / SLIDE;
+    c = drawMelon(sets[0], r, t, -easeIn(u) * 12);
+    drawMelon(sets[1], nxt, nxt.t0 - 1, (1 - easeOut(u)) * 12);
+  } else { c = drawMelon(sets[0], r, t, 0); sets[1].g.visible = false; }
+  placeKnife(r, t); placeCamera(r, t);
+  const fresh = t >= r.slide + SLIDE * .5;
+  document.getElementById('cuts').textContent = fresh ? '0' : fmt(c.ka + c.kb);
+  document.getElementById('pieces').textContent = fresh ? '1' : fmt(pieceCount(r, c.ka, c.kb));
+  r3.render(scene, cam);
+  return c;
+};
+window.kitchenReady = true;
+window.ready = true;
+</script></body></html>

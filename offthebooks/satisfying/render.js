@@ -5,7 +5,7 @@
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 
-const ROOT = __dirname, OUT = path.join(ROOT, 'out');
+const ROOT = __dirname, OUT = path.join(ROOT, process.env.OUTDIR || 'out'), PAGE = process.env.SCENE || 'scene.html';
 fs.mkdirSync(OUT, { recursive: true });
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript' };
 const server = http.createServer((req, res) => {
@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => console.log('PAGE ERROR', e.message));
-  await page.goto(`http://127.0.0.1:${port}/scene.html`);
+  await page.goto(`http://127.0.0.1:${port}/${PAGE}`);
   await page.waitForFunction(() => window.ready && (window.kitchenReady || !document.querySelector('#shade')), null, { timeout: 120000 });
   await page.evaluate(() => document.fonts.ready);
   const [mode, a, b] = process.argv.slice(2);
