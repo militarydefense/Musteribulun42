@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8">
 <!-- "Watermelon vs 1,000 cuts" — same stage, knife, timeline and transitions as scene.html (soap), with a real melon:
-     striped rind, red flesh with seeds on every cut face. Only vertical cuts: lengthwise slices first, then crosswise;
-     pieces freed by a crosswise cut fall over and spread (the melon loses its shape). PIECES counts only cells that
+     striped rind, red flesh with seeds on every cut face. Only vertical cuts: lengthwise slices first (the melon keeps its
+     shape, only cut lines show), then crosswise; pieces freed by a crosswise cut fall over and spread (the melon loses its shape). PIECES counts only cells that
      really contain melon (the melon is oval, so corner cells of the grid are empty). The camera pushes in slowly while
      a round is cut and returns while the next melon slides in. -->
 <style>
@@ -143,22 +143,26 @@ const fleshMat = map => new THREE.MeshStandardMaterial({ map, roughness: .55 });
 // geometry: ellipsoid with its poles on the x axis (u around the axis), slab = elliptic cylinder along x
 const melonGeo = new THREE.SphereGeometry(1, 128, 72); melonGeo.rotateZ(-Math.PI / 2);
 const slabGeo = new THREE.CylinderGeometry(1, 1, 1, 96, 1); slabGeo.rotateZ(-Math.PI / 2);
-const capGeo = new THREE.CircleGeometry(1, 96); capGeo.rotateY(-Math.PI / 2);            // facing −x
+const capGeo = new THREE.CircleGeometry(1, 96);                                           // facing +z (the front cut face)
+const ringGeo = new THREE.CylinderGeometry(1, 1, 1, 128, 1, true); ringGeo.rotateZ(-Math.PI / 2);   // a cut line around the melon
 const colGeo = new THREE.BoxGeometry(1, 1, 1);
 const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), Q2 = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3();
 const AX = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
 function makeSet() {
   const g = new THREE.Group(); rig.add(g);
   const clipX = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0), clipZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const whole = new THREE.Mesh(melonGeo, Object.assign(rindMat(), { clippingPlanes: [clipX], clipShadows: true }));
+  const whole = new THREE.Mesh(melonGeo, Object.assign(rindMat(), { clippingPlanes: [clipZ], clipShadows: true }));
   whole.scale.set(RX, RY, RZ); whole.position.y = RY; whole.castShadow = whole.receiveShadow = true; g.add(whole);
   const cap = new THREE.Mesh(capGeo, fleshMat(FLESH_DISC)); cap.castShadow = true; g.add(cap);
+  const lineMat = new THREE.MeshStandardMaterial({ color: 0x0b1c0a, roughness: .7, clippingPlanes: [clipZ], clipShadows: true });
+  const rings = new THREE.InstancedMesh(ringGeo, lineMat, 130); g.add(rings);
+  const capLines = new THREE.InstancedMesh(colGeo, new THREE.MeshStandardMaterial({ color: 0x7a1218, roughness: .7 }), 130); g.add(capLines);
   const slabSide = rindMat(); slabSide.map = RIND.clone(); slabSide.map.offset.set(.25, .5); slabSide.map.repeat.set(1, .02); slabSide.map.needsUpdate = true;   // a thin band of the rind: straight stripes on a slice   // stripes line up with the whole melon
   const slabMats = [slabSide, fleshMat(FLESH_DISC), fleshMat(FLESH_DISC)]; slabMats.forEach(m => m.clipShadows = true);
   const slabs = new THREE.InstancedMesh(slabGeo, slabMats, 130); slabs.castShadow = slabs.receiveShadow = true; g.add(slabs);
   const side = fleshMat(FLESH_SIDE), top = rindMat(); top.map = RIND.clone(); top.map.repeat.set(.05, .05); top.map.offset.set(.02, .3); top.map.needsUpdate = true;   // skin on the ends of a piece
   const cols = new THREE.InstancedMesh(colGeo, [side, side, top, top, side, side], 10000); cols.castShadow = cols.receiveShadow = true; g.add(cols);
-  return { g, whole, cap, slabs, slabMats, cols, clipX, clipZ };
+  return { g, whole, cap, slabs, slabMats, cols, clipX, clipZ, rings, lineMat, capLines };
 }
 const sets = [makeSet(), makeSet()];
 function put(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0) { E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M); }
@@ -175,29 +179,29 @@ function drawMelon(set, r, t, offset) {
   const ka = Math.floor(countAt(t, r.p1, r.p1e, r.a, r.pow) + 1e-6), kb = Math.floor(countAt(t, r.p2, r.p2e, r.b, r.pow) + 1e-6);
   const w = 2 * RX / (r.a + 1), hz = 2 * RZ / (r.b + 1), wv = 2 * RX / r.VA, hv = 2 * RZ / r.VB;
   const loose = r.n <= 10 ? 1 : r.n <= 50 ? .6 : r.n <= 100 ? .35 : .2;
-  let ns = 0, nc = 0;
-  const slab = (v, s, lean) => {                                    // slice v of the drawn grid, s = how far it has separated
-    const x0 = -RX + wv * v, xm = x0 + wv / 2, k = Math.sqrt(Math.max(.02, 1 - (xm / RX) ** 2));
-    put(set.slabs, ns++, xm - .025 * loose * s, RY, 0, wv * (1 - .07 * loose) - .003, RY * k, RZ * k, 0, 0, lean);
+  let ns = 0, nc = 0, nl = 0, ncl = 0;
+  const line = (x, scale = 1.004) => {                              // a thin dark cut line around the melon at x
+    const k = Math.sqrt(Math.max(0, 1 - (x / RX) ** 2)); if (k < .03) return;
+    put(set.rings, nl++, x, RY, 0, Math.max(.006, Math.min(.014, wv * .12)), RY * k * scale, RZ * k * scale);
   };
-  if (kb === 0) {                                                   // lengthwise: slices left of the knife, the melon right of it
-    const xc = -RX + w * ka, nv = Math.min(r.VA, Math.floor((xc + RX) / wv + 1e-6)), xr = -RX + wv * nv;
-    for (let v = 0; v < nv; v++) {
-      const kCut = Math.min(r.a, Math.ceil((v + 1) * wv / w - 1e-6)), s = easeOut((t - cutTimeOf(r, kCut)) / .16);
-      slab(v, s, ((hash(v, 1, r.n) - .5) * .1 - .03) * loose * s);
-    }
-    set.whole.visible = xr < RX - .01;
-    setClip(set, set.clipX, 1, 0, -xr);
-    const k = Math.sqrt(Math.max(0, 1 - (xr / RX) ** 2));
-    set.cap.visible = set.whole.visible && nv > 0 && k > .02;
-    set.cap.position.set(xr + .002, RY, 0); set.cap.scale.set(1, RY * k, RZ * k);
-    set.slabMats.forEach(m => m.clippingPlanes = []);
+  set.whole.visible = true;
+  if (kb === 0) {                                                   // lengthwise: the melon keeps its shape, cut lines appear
+    const xc = -RX + w * ka, nv = Math.min(r.VA, Math.floor((xc + RX) / wv + 1e-6));
+    for (let v = 0; v < nv && v < r.VA - 1; v++) line(-RX + wv * (v + 1));
+    setClip(set, set.clipZ, 0, -1, RZ + 1);                         // plane parked behind nothing: keeps the whole melon
+    set.cap.visible = false;
   } else {                                                          // crosswise, front to back: freed pieces fall toward the camera and spread
-    set.whole.visible = false; set.cap.visible = false;
     const nr = Math.min(r.VB, Math.floor(hz * kb / hv + 1e-6)), zr = RZ - hv * nr;
-    for (let v = 0; v < r.VA; v++) slab(v, 1, ((hash(v, 1, r.n) - .5) * .1 - .03) * loose);
-    setClip(set, set.clipZ, 0, -1, zr);                             // slices keep only the part behind the cut rows
-    set.slabMats.forEach(m => m.clippingPlanes = [set.clipZ]);
+    setClip(set, set.clipZ, 0, -1, zr);                             // the uncut back part stays whole
+    for (let v = 0; v < r.VA - 1; v++) line(-RX + wv * (v + 1));
+    // the front cut face of the remaining part: flesh, with the lengthwise cut lines across it
+    const kz = Math.sqrt(Math.max(0, 1 - (zr / RZ) ** 2));
+    set.cap.visible = kz > .03;
+    set.cap.position.set(0, RY, zr + .002); set.cap.scale.set(RX * kz, RY * kz, 1);
+    for (let v = 0; v < r.VA - 1; v++) {
+      const x = -RX + wv * (v + 1), q = 1 - (x / (RX * kz)) ** 2; if (q <= 0) continue;
+      put(set.capLines, ncl++, x, RY, zr + .004, Math.max(.006, Math.min(.012, wv * .1)), 2 * RY * kz * Math.sqrt(q) * .97, .004);
+    }
     for (let j = 0; j < nr; j++) {
       const kCut = Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6)), u = clamp((t - cutTimeOf(r, r.a + kCut)) / .34);
       const z0 = RZ - hv * (j + 1), zm = z0 + hv / 2;
@@ -224,7 +228,9 @@ function drawMelon(set, r, t, offset) {
       }
     }
   }
-  set.slabs.count = ns; set.slabs.instanceMatrix.needsUpdate = true;
+  set.slabs.count = 0;
+  set.rings.count = nl; set.rings.instanceMatrix.needsUpdate = true;
+  set.capLines.count = ncl; set.capLines.instanceMatrix.needsUpdate = true;
   set.cols.count = nc; set.cols.instanceMatrix.needsUpdate = true;
   return { ka, kb };
 }
