@@ -36,7 +36,7 @@ const PLAN = [[10, 4.0], [50, 4.6], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6
 const IDLE = .3, TURN = .38, HOLD = .75, SLIDE = .5, LAST_HOLD = 1.9;
 const ROUNDS = []; let acc = 0;
 PLAN.forEach(([n, w], i) => {
-  const a = Math.round(n * RX / (RX + RY + RZ)), c = Math.round(n * RY / (RX + RY + RZ)), b = n - a - c;   // roughly cubic cells
+  const ac = Math.round(n / 2), a = Math.round(ac * RX / (RX + RY)), c = ac - a, b = n - ac;   // like the reference: cubes start at half of the cuts
   const r = { i, n, a, c, b, t0: acc };
   r.p1 = acc + IDLE; r.p1e = r.p1 + w * a / n;                     // A: lengthwise (x)
   r.p3 = r.p1e + TURN; r.p3e = r.p3 + w * c / n;                   // C: horizontal (y), top to bottom
@@ -244,6 +244,23 @@ function prepCells(r) {
     }
     r.cells.push(row);
   }
+  // the pile: pieces pour into a tall cone in front of the fruit that grows as more land (like sand). The k-th piece lands on
+  // the surface of the cone holding the first k pieces; within a row the higher pieces land nearer the tip, the lower ones
+  // further out, so nothing has to fly upwards much.
+  const all = r.cells.flat(), N = all.length;
+  const vol = all.reduce((v, c) => v + c.sx * c.sy * c.sz, 0) / .7;
+  const H = 2 * RY * 1.4, R = Math.min(2.4, Math.sqrt(3 * vol / (Math.PI * H))), CZ = .85;
+  let k = 0;
+  for (const row of r.cells) {
+    const order = [...row].sort((p, q) => q.y - p.y);
+    order.forEach((c, rank) => {
+      const f = Math.cbrt((k + 1) / N), rk = R * f, hk = H * f; k++;
+      const u = Math.sqrt((rank + .2 + .6 * hash(rank, k, 7)) / order.length), th = hash(k, rank, 3) * 6.283;
+      const rho = rk * u, smin = Math.min(c.sx, c.sy, c.sz);
+      c.fx = rho * Math.cos(th); c.fz = CZ + rho * Math.sin(th); c.fy = hk * (1 - u) + smin * .45;
+      c.dur = .3 + .22 * Math.sqrt(Math.hypot(c.fx - c.x, c.fy - c.y, c.fz - c.z));
+    });
+  }
 }
 
 function drawMelon(set, r, t, offset) {
@@ -370,7 +387,7 @@ function placeKnife(r, t) {
 }
 
 // ---------- camera: a slow push-in while a round is cut, back to the start while the next melon slides in ----------
-const PUSH = .3, PILE = new THREE.Vector3(.55, .45, .8);
+const PUSH = .3, PILE = new THREE.Vector3(.45, .9, .8);
 function placeCamera(r, t) {
   const u = clamp((t - r.p1) / (r.p2e - r.p1));
   let z = (1 - (1 - u) * (1 - u)) * PUSH;                           // starts moving with the first cut, slows towards the end
