@@ -187,6 +187,9 @@ function makeSet() {
   const cubes = [[fl, fl, fl, fl, fl, fl], [sk, sk, fl, fl, fl, fl], [fl, fl, sk, sk, fl, fl], [fl, fl, fl, fl, sk, sk]].map(m => {
     const im = new THREE.InstancedMesh(boxGeo, m, CUBES); im.castShadow = im.receiveShadow = true; g.add(im); return im;
   });
+  // instanced pieces move far from where they started (they fall into the pile and slide away with the set): never cull
+  // them by a stale bounding sphere, or the pile vanishes mid-slide while its shadow stays
+  g.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; });
   return { g, whole, cap, clipZ, rings, ringsH, lineMat, capLines, cubes };
 }
 const sets = [makeSet(), makeSet()];
