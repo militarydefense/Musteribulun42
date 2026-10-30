@@ -1,0 +1,437 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- "Gingerbread Man vs 1,000 cuts" — the onion video with a flat gingerbread cookie (outline from a signed-distance shape, every count read from its raster mask). Was: "Watermelon vs 1,000 cuts" — same stage, knife, timeline and transitions as scene.html (soap), with a real melon:
+     striped rind, red flesh with seeds on every cut face. Three cut directions like the reference: lengthwise slices
+     (the melon keeps its shape, only cut lines show), horizontal slices with the knife lying flat (still whole), then
+     crosswise front to back; every crosswise cut frees a row of cubes that tumble forward and pile up. PIECES counts
+     only the 3D cells that really contain melon (the melon is an ellipsoid, so corner cells are empty). The camera
+     pushes in slowly while a round is cut and returns while the next melon slides in. -->
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
+.num{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:.9;
+  text-shadow:0 5px 24px rgba(0,0,0,.55),0 0 3px rgba(0,0,0,.7)}
+#top{top:150px}#top b{display:block;font-size:200px;letter-spacing:-4px}#top i{display:block;font-style:normal;font-size:68px;color:#FFC24A;letter-spacing:3px;margin-top:6px}
+#bot{top:1500px}#bot b{display:block;font-size:120px;letter-spacing:-2px}#bot i{display:block;font-style:normal;font-size:54px;color:#FFC24A;letter-spacing:3px;margin-top:4px}
+</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body><div id="wrap">
+<div id="top" class="num"><b id="cuts">0</b><i>CUTS</i></div>
+<div id="bot" class="num"><b id="pieces">1</b><i>PIECES</i></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const W = 1080, H = 1920, FPS = 30;
+const RX = 2.18, RY = .26, RZ = 2.32, SC = 1.25;              // gingerbread man: half width (x), half thickness (y), half length (z); lies flat on y = 0
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (a, b, c = 0) => { let h = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 1274126177); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+const near = (a0, a1, c) => c < a0 ? a0 - c : c > a1 ? c - a1 : 0;     // distance from c to the range [a0, a1]
+
+// ---------- timeline: idle → lengthwise cuts → turn → horizontal cuts → turn → crosswise cuts → hold → slide ----------
+const PLAN = [[10, 4.0], [50, 4.6], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6.6]];
+const IDLE = .3, TURN = .38, HOLD = .75, SLIDE = .5, LAST_HOLD = 1.9;
+const ROUNDS = []; let acc = 0;
+PLAN.forEach(([n, w], i) => {
+  const ac = Math.round(n / 2), a = Math.round(ac * RX / (RX + RY)), c = ac - a, b = n - ac;   // like the reference: cubes start at half of the cuts
+  const r = { i, n, a, c, b, t0: acc };
+  r.p1 = acc + IDLE; r.p1e = r.p1 + w * a / n;                     // A: lengthwise (x)
+  r.p3 = r.p1e + TURN; r.p3e = r.p3 + w * c / n;                   // C: horizontal (y), top to bottom
+  r.p2 = r.p3e + TURN; r.p2e = r.p2 + w * b / n;                   // B: crosswise (z), front to back
+  r.hold = r.p2e; r.slide = r.p2e + (i === PLAN.length - 1 ? LAST_HOLD : HOLD); r.t1 = r.slide + SLIDE;
+  r.pow = n <= 50 ? 1 : 1.25;
+  r.VA = Math.min(a + 1, 60); r.VC = Math.min(c + 1, 7); r.VB = Math.min(b + 1, 64);   // drawn grid (the counter always uses the real one)
+  ROUNDS.push(r); acc = r.t1;
+});
+const DURATION = acc;
+const cutAt = (s, e, m, k, pow) => s + (e - s) * Math.pow(k / m, 1 / pow);
+const countAt = (t, s, e, m, pow) => t < s ? 0 : t >= e ? m : m * Math.pow((t - s) / (e - s), pow);
+const cutsOf = (s, e, m, pow) => Array.from({ length: m }, (_, k) => cutAt(s, e, m, k + 1, pow));
+window.TIMELINE = { fps: FPS, duration: DURATION, rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n, slide: r.slide })),
+  flat: ROUNDS.flatMap(r => cutsOf(r.p3, r.p3e, r.c, r.pow)).map(x => +x.toFixed(4)),
+  cuts: ROUNDS.flatMap(r => [...cutsOf(r.p1, r.p1e, r.a, r.pow), ...cutsOf(r.p3, r.p3e, r.c, r.pow), ...cutsOf(r.p2, r.p2e, r.b, r.pow)]).map(x => +x.toFixed(4)) };
+
+
+// ---------- renderer, stage (identical to the soap video) ----------
+const r3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap; r3.localClippingEnabled = true;
+r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.outputColorSpace = THREE.SRGBColorSpace;
+document.getElementById('wrap').prepend(r3.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x15100c);
+scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
+const BASE_FOV = 41, CAM = new THREE.Vector3(-3.9, 11.2, 11.4), LOOK = new THREE.Vector3(.3, .8, 0);
+const cam = new THREE.PerspectiveCamera(BASE_FOV, W / H, .1, 200); cam.position.copy(CAM); cam.lookAt(LOOK);
+const rig = new THREE.Group(); rig.rotation.y = .44; scene.add(rig);
+
+function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const wood = canvasTex(2048, 1024, (g, w, h) => {
+  g.fillStyle = '#c98f55'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 360; i++) { const y = rnd() * h; g.strokeStyle = `rgba(${118 + rnd() * 50},${66 + rnd() * 30},24,${.05 + rnd() * .15})`; g.lineWidth = 1 + rnd() * 5;
+    g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x * .004 + i) * 9); g.stroke(); }
+});
+const brick = canvasTex(1024, 1024, (g, w, h) => {
+  g.fillStyle = '#16110d'; g.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 64) for (let x = -((y / 64) % 2) * 64; x < w; x += 128) { const v = 36 + rnd() * 14; g.fillStyle = `rgb(${v},${v * .8},${v * .64})`; g.fillRect(x + 4, y + 4, 120, 56); }
+});
+brick.wrapS = brick.wrapT = THREE.RepeatWrapping; brick.repeat.set(5, 2.5);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 25), new THREE.MeshStandardMaterial({ map: brick, roughness: 1 })); wall.position.set(0, 6, -10); scene.add(wall);
+const counter = new THREE.Mesh(new THREE.BoxGeometry(80, 1, 40), new THREE.MeshStandardMaterial({ color: 0x2a2420, roughness: .9 }));
+counter.position.y = -.86; counter.receiveShadow = true; scene.add(counter);
+const board = new THREE.Mesh(new RoundedBoxGeometry(8.8, .36, 6.0, 4, .08), new THREE.MeshStandardMaterial({ map: wood, roughness: .6 }));
+board.position.set(-.2, -.18, .4); board.rotation.y = -.04; board.castShadow = board.receiveShadow = true; rig.add(board);
+const sun = new THREE.DirectionalLight(0xfff0dc, 2.9); sun.position.set(-5, 10, -1.5); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8 }); sun.shadow.bias = -.0004; sun.shadow.radius = 6; scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xffeedd, 0x3a2a20, .6));
+const fill = new THREE.DirectionalLight(0xffffff, .45); fill.position.set(5, 6, 8); scene.add(fill);
+
+// ---------- the cookie's outline: a gingerbread man lying flat (head at the back, feet toward the camera) ----------
+const sdCirc = (x, z, cx, cz, r) => Math.hypot(x - cx, z - cz) - r;
+const sdCaps = (x, z, ax, az, bx, bz, r) => { const px = x - ax, pz = z - az, dx = bx - ax, dz = bz - az, h = clamp((px * dx + pz * dz) / (dx * dx + dz * dz)); return Math.hypot(px - dx * h, pz - dz * h) - r; };
+const sdBox = (x, z, cx, cz, hx, hz, r) => { const qx = Math.abs(x - cx) - hx + r, qz = Math.abs(z - cz) - hz + r; return Math.hypot(Math.max(qx, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qz), 0) - r; };
+const sdMan = (x, z) => { x /= SC; z /= SC; const ax = Math.abs(x); return SC * Math.min(
+  sdCirc(x, z, 0, -1.22, .62), sdBox(x, z, 0, -.08, .62, .64, .26), sdCaps(ax, z, .45, -.52, 1.4, -.22, .31), sdCaps(ax, z, .3, .42, .62, 1.5, .33)); };
+// raster mask of the outline (x across, z from the back); every count and every drawn piece is read from it
+const MX = 1200, MZ = 1270, PX = 2 * RX / MX, PZ = 2 * RZ / MZ;
+const MASK = new Uint8Array(MX * MZ);
+for (let iz = 0; iz < MZ; iz++) for (let ix = 0; ix < MX; ix++) MASK[iz * MX + ix] = sdMan(-RX + (ix + .5) * PX, -RZ + (iz + .5) * PZ) < 0 ? 1 : 0;
+const colOf = x => clamp(Math.round((x + RX) / PX), 0, MX), rowOf = z => clamp(Math.round((z + RZ) / PZ), 0, MZ);
+// number of separate pieces of the outline inside the pixel rectangle [ix0, ix1) x [iz0, iz1)
+const LBL = new Int32Array(MX * MZ), STACK = new Int32Array(MX * MZ); let stamp = 0;
+function comps(ix0, ix1, iz0, iz1) {
+  if (ix1 <= ix0 || iz1 <= iz0) return 0;
+  stamp++; let n = 0;
+  for (let iz = iz0; iz < iz1; iz++) for (let ix = ix0; ix < ix1; ix++) {
+    const p = iz * MX + ix; if (!MASK[p] || LBL[p] === stamp) continue;
+    n++; let sp = 0; STACK[sp++] = p; LBL[p] = stamp;
+    while (sp) {
+      const q = STACK[--sp], qx = q % MX, qz = (q - qx) / MX;
+      if (qx > ix0 && MASK[q - 1] && LBL[q - 1] !== stamp) { LBL[q - 1] = stamp; STACK[sp++] = q - 1; }
+      if (qx < ix1 - 1 && MASK[q + 1] && LBL[q + 1] !== stamp) { LBL[q + 1] = stamp; STACK[sp++] = q + 1; }
+      if (qz > iz0 && MASK[q - MX] && LBL[q - MX] !== stamp) { LBL[q - MX] = stamp; STACK[sp++] = q - MX; }
+      if (qz < iz1 - 1 && MASK[q + MX] && LBL[q + MX] !== stamp) { LBL[q + MX] = stamp; STACK[sp++] = q + MX; }
+    }
+  }
+  return n;
+}
+// real piece count: slices across x, layers through the thickness, rows from the front. The cookie is equally thick
+// everywhere, so every horizontal layer is a copy of the pieces above it.
+function prepCount(r) {
+  const w = 2 * RX / (r.a + 1), hz = 2 * RZ / (r.b + 1);
+  r.cx = Array.from({ length: r.a + 2 }, (_, i) => colOf(-RX + w * i));
+  r.strip = Array.from({ length: r.a + 1 }, (_, i) => comps(r.cx[i], r.cx[i + 1], 0, MZ));
+  r.rest = Array.from({ length: r.a + 1 }, (_, k) => comps(r.cx[k], MX, 0, MZ));          // the uncut part right of cut k
+  r.stripSum = r.strip.reduce((a, b) => a + b, 0);
+  r.rz = Array.from({ length: r.b + 2 }, (_, j) => rowOf(RZ - hz * j));                     // rows from the front
+  r.rows = [0];
+  for (let j = 0; j < r.b; j++) { let n = 0; for (let i = 0; i <= r.a; i++) n += comps(r.cx[i], r.cx[i + 1], r.rz[j + 1], r.rz[j]); r.rows.push(r.rows[j] + n); }
+}
+function pieceCount(r, ka, kc, kb) {
+  if (!r.rows) prepCount(r);
+  if (kc === 0 && kb === 0) { let n = r.rest[ka]; for (let i = 0; i < ka; i++) n += r.strip[i]; return Math.max(1, n); }
+  if (kb === 0) return r.stripSum * (kc + 1);
+  let rest = 0; const zc = r.rz[kb];
+  for (let i = 0; i <= r.a; i++) rest += comps(r.cx[i], r.cx[i + 1], 0, zc);
+  return (r.rows[kb] + rest) * (r.c + 1);
+}
+// outline polygon (world x, z) traced from the mask, for the extruded cookie and the horizontal cut lines
+function traceOutline() {
+  const inside = (x, z) => x >= 0 && z >= 0 && x < MX && z < MZ && MASK[z * MX + x];
+  let sx = -1, sz = -1;
+  for (let z = 0; z < MZ && sx < 0; z++) for (let x = 0; x < MX; x++) if (inside(x, z)) { sx = x; sz = z; break; }
+  const D = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]];
+  const pts = []; let x = sx, z = sz, d = 6, guard = 0;
+  do {
+    pts.push([x, z]);
+    let k = 0; d = (d + 6) % 8;
+    while (k < 8 && !inside(x + D[d][0], z + D[d][1])) { d = (d + 1) % 8; k++; }
+    if (k === 8) break;
+    x += D[d][0]; z += D[d][1];
+  } while ((x !== sx || z !== sz) && ++guard < 200000);
+  const out = [];
+  for (let i = 0; i < pts.length; i += 6) out.push([-RX + (pts[i][0] + .5) * PX, -RZ + (pts[i][1] + .5) * PZ]);
+  return out;
+}
+const OUTLINE = traceOutline();
+
+// ---------- gingerbread textures ----------
+// top of the cookie, drawn over the whole x/z box: baked brown, darker toward the edge, white icing and candy buttons
+const TOPW = 1400, TOPH = 1480;
+const tx = x => (x * SC + RX) / (2 * RX) * TOPW, tz = z => (RZ - z * SC) / (2 * RZ) * TOPH;
+const TOP = canvasTex(TOPW, TOPH, (g, w, h) => {
+  const img = g.createImageData(w, h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const wx = -RX + (x + .5) / w * 2 * RX, wz = RZ - (y + .5) / h * 2 * RZ, d = sdMan(wx, wz);
+    const e = clamp(-d / .22), n = (hash(x >> 2, y >> 2) - .5) * 18;                     // edges baked darker
+    const p = (y * w + x) * 4;
+    img.data[p] = 120 + 62 * e + n; img.data[p + 1] = 62 + 40 * e + n * .7; img.data[p + 2] = 24 + 18 * e + n * .4; img.data[p + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(${rnd() < .6 ? '70,35,12' : '230,170,110'},${.08 + rnd() * .15})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, .8 + rnd() * 2.2, 0, 7); g.fill(); }
+  const icing = (pts, lw) => { g.lineCap = g.lineJoin = 'round';
+    for (const [col, off, wd] of [['rgba(80,50,30,.35)', 3, lw + 4], ['#fbf7ef', 0, lw]]) { g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); pts.forEach(([x, z], i) => i ? g.lineTo(tx(x) + off, tz(z) + off) : g.moveTo(tx(x) + off, tz(z) + off)); g.stroke(); } };
+  const zig = (x0, z0, x1, z1, n, amp) => { const pts = []; const dx = x1 - x0, dz = z1 - z0, l = Math.hypot(dx, dz), nx = -dz / l, nz = dx / l;
+    for (let i = 0; i <= n * 2; i++) { const t = i / (n * 2), s = Math.sin(t * n * Math.PI * 2) * amp; pts.push([x0 + dx * t + nx * s, z0 + dz * t + nz * s]); } return pts; };
+  for (const s of [-1, 1]) {
+    icing(zig(s * 1.18, -.5, s * 1.32, .0, 3, .05), 13);                                  // wrists
+    icing(zig(s * .32, 1.28, s * .86, 1.12, 3, .05), 13);                                 // ankles
+    g.fillStyle = '#fbf7ef'; g.beginPath(); g.arc(tx(s * .21), tz(-1.36), 22, 0, 7); g.fill();          // eyes
+    g.fillStyle = '#2a160c'; g.beginPath(); g.arc(tx(s * .21), tz(-1.33), 10, 0, 7); g.fill();
+  }
+  const smile = []; for (let i = 0; i <= 16; i++) { const a = Math.PI * (.15 + .7 * i / 16); smile.push([Math.cos(a) * .3, -1.18 + Math.sin(a) * .2]); }
+  icing(smile, 13);
+  [['#d9262c', -.5], ['#2f9e44', -.12], ['#d9262c', .26]].forEach(([c, z]) => {           // candy buttons
+    const X = tx(0), Z = tz(z), r = 30, gr = g.createRadialGradient(X - 9, Z - 9, 3, X, Z, r);
+    gr.addColorStop(0, '#ffffff'); gr.addColorStop(.25, c); gr.addColorStop(1, c); g.fillStyle = 'rgba(60,30,15,.35)'; g.beginPath(); g.arc(X + 3, Z + 4, r, 0, 7); g.fill();
+    g.fillStyle = gr; g.beginPath(); g.arc(X, Z, r, 0, 7); g.fill();
+  });
+});
+TOP.repeat.set(1 / (2 * RX), 1 / (2 * RZ)); TOP.offset.set(.5, .5);
+// sides and crust: darker baked brown with crumbs
+const RIND = canvasTex(512, 512, (g, w, h) => { g.fillStyle = '#8a4a1e'; g.fillRect(0, 0, w, h); for (let i = 0; i < 2500; i++) { g.fillStyle = `rgba(${rnd() < .5 ? '60,28,8' : '190,120,60'},${.1 + rnd() * .2})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 3, 1 + rnd() * 3); } });
+RIND.wrapS = RIND.wrapT = THREE.RepeatWrapping; RIND.repeat.set(3, 3);
+// the inside: light crumb with small holes, a thin crust band on top and bottom
+const crumb = (g, w, h, bands) => {
+  g.fillStyle = '#d08a45'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 1600; i++) { g.fillStyle = `rgba(${rnd() < .55 ? '120,64,26' : '230,175,115'},${.15 + rnd() * .3})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, 1 + rnd() * 3.5, 0, 7); g.fill(); }
+  if (bands) { g.fillStyle = '#8a4a1e'; g.fillRect(0, 0, w, h * .1); g.fillRect(0, h * .9, w, h * .1); }
+};
+const FLESH_DISC = canvasTex(512, 256, (g, w, h) => crumb(g, w, h, true));
+const FLESH = canvasTex(256, 256, (g, w, h) => crumb(g, w, h, false));
+const rindMat = () => new THREE.MeshStandardMaterial({ map: RIND, roughness: .75 });
+const fleshMat = map => new THREE.MeshStandardMaterial({ map, roughness: .85 });
+
+// geometry: the outline extruded to the cookie's thickness, lying flat (top at y = 2RY, bottom at 0)
+const shape = new THREE.Shape(OUTLINE.map(([x, z]) => new THREE.Vector2(x, z)));
+const cookieGeo = new THREE.ExtrudeGeometry(shape, { depth: 2 * RY - .1, bevelEnabled: true, bevelThickness: .05, bevelSize: .035, bevelSegments: 3, curveSegments: 4 });
+cookieGeo.rotateX(Math.PI / 2); cookieGeo.translate(0, 2 * RY - .05, 0);
+const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), Q2 = new THREE.Quaternion(), E = new THREE.Euler(), P = new THREE.Vector3(), S = new THREE.Vector3();
+const AX = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+const CUBES = 36000;
+function makeSet() {
+  const g = new THREE.Group(); rig.add(g);
+  const clipZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const top = new THREE.MeshStandardMaterial({ map: TOP, roughness: .62, clippingPlanes: [clipZ], clipShadows: true });
+  const side = Object.assign(rindMat(), { clippingPlanes: [clipZ], clipShadows: true });
+  const whole = new THREE.Mesh(cookieGeo, [top, side]); whole.castShadow = whole.receiveShadow = true; g.add(whole);
+  const cap = new THREE.InstancedMesh(boxGeo, fleshMat(FLESH_DISC), 40); cap.castShadow = true; g.add(cap);      // the front cut face: one box per run
+  const lineMat = new THREE.MeshStandardMaterial({ color: 0x3b1c08, roughness: .7, clippingPlanes: [clipZ], clipShadows: true });
+  const rings = new THREE.InstancedMesh(boxGeo, lineMat, 600); g.add(rings);            // lengthwise cut lines on the top
+  const ringsH = new THREE.InstancedMesh(boxGeo, lineMat, 2400); g.add(ringsH);         // horizontal cut lines around the edge
+  const capLines = new THREE.InstancedMesh(boxGeo, new THREE.MeshStandardMaterial({ color: 0x7a4019, roughness: .7 }), 600); g.add(capLines);
+  const crust = fleshMat(RIND), fl = fleshMat(FLESH), topFace = new THREE.MeshStandardMaterial({ map: TOP.clone(), roughness: .62 });
+  topFace.map.repeat.set(.035, .035); topFace.map.offset.set(.76, .4); topFace.map.needsUpdate = true;
+  const cubes = [[fl, fl, fl, fl, fl, fl], [fl, fl, topFace, crust, fl, fl], [fl, fl, crust, crust, fl, fl], [fl, fl, fl, crust, fl, fl]].map(m => {
+    const im = new THREE.InstancedMesh(boxGeo, m, CUBES); im.castShadow = im.receiveShadow = true; g.add(im); return im;
+  });
+  g.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; });
+  return { g, whole, cap, clipZ, rings, ringsH, lineMat, capLines, cubes, bracts: { visible: true } };
+}
+const sets = [makeSet(), makeSet()];
+function put(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0) { E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M); }
+function setClip(set, plane, nx, nz, c) {
+  plane.set(new THREE.Vector3(nx, 0, nz), c);
+  set.g.updateMatrixWorld(true);
+  plane.applyMatrix4(set.g.matrixWorld);
+}
+const cutTimeB = (r, k) => cutAt(r.p2, r.p2e, r.b, k, r.pow);
+// mask runs: along z at a column (for the lines on the top), along x at a row (for the front cut face)
+function runsZ(x) { const ix = clamp(Math.floor((x + RX) / PX), 0, MX - 1), out = []; let s = -1;
+  for (let iz = 0; iz <= MZ; iz++) { const m = iz < MZ && MASK[iz * MX + ix]; if (m && s < 0) s = iz; if (!m && s >= 0) { out.push([-RZ + s * PZ, -RZ + iz * PZ]); s = -1; } } return out; }
+function runsX(z) { const iz = clamp(Math.floor((z + RZ) / PZ), 0, MZ - 1), out = []; let s = -1;
+  for (let ix = 0; ix <= MX; ix++) { const m = ix < MX && MASK[iz * MX + ix]; if (m && s < 0) s = ix; if (!m && s >= 0) { out.push([-RX + s * PX, -RX + ix * PX]); s = -1; } } return out; }
+// segments of the outline, pushed out a little, for the horizontal lines
+const EDGE = OUTLINE.map(([x, z], i) => { const [x2, z2] = OUTLINE[(i + 1) % OUTLINE.length], dx = x2 - x, dz = z2 - z, l = Math.hypot(dx, dz) || 1;
+  return { x: (x + x2) / 2 - dz / l * .03, z: (z + z2) / 2 + dx / l * .03, l, a: Math.atan2(-dz, dx) }; });
+
+// the drawn cubes of every crosswise row (front to back): grid cells that hold enough cookie, with their landing spot
+function prepCells(r) {
+  const wv = 2 * RX / r.VA, hcv = 2 * RY / r.VC, hv = 2 * RZ / r.VB, hz = 2 * RZ / (r.b + 1);
+  r.cells = [];
+  for (let j = 0; j < r.VB; j++) {
+    const row = [], z0 = RZ - hv * (j + 1), z1 = z0 + hv;
+    row.tc = cutTimeB(r, Math.max(1, Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6))));
+    for (let v = 0; v < r.VA; v++) {
+      const x0 = -RX + wv * v, ix0 = colOf(x0), ix1 = colOf(x0 + wv), iz0 = rowOf(z0), iz1 = rowOf(z1);
+      let n = 0, sx = 0, sz = 0;
+      for (let iz = iz0; iz < iz1; iz++) for (let ix = ix0; ix < ix1; ix++) if (MASK[iz * MX + ix]) { n++; sx += ix; sz += iz; }
+      const cov = n / Math.max(1, (ix1 - ix0) * (iz1 - iz0)); if (cov < .15) continue;
+      const x = -RX + (sx / n + .5) * PX, z = -RZ + (sz / n + .5) * PZ, f = Math.sqrt(cov);
+      for (let l = 0; l < r.VC; l++) {
+        const y = 2 * RY - hcv * (l + .5), kind = r.VC === 1 ? 1 : l === 0 ? 1 : l === r.VC - 1 ? 3 : 0;
+        const h1 = hash(v, j, l + 31 * r.n), h2 = hash(l + 3, v, j + r.n), h3 = hash(j + 11, l + 5, v + r.n);
+        const ang = (Math.PI / 2) * (.3 + .7 * h3);
+        AX.set(1, 0, (h1 - .5) * 1.2).normalize();
+        const qf = new THREE.Quaternion().setFromAxisAngle(AX, ang).premultiply(Q2.setFromAxisAngle(UP, (h2 - .5) * 2));
+        row.push({ x, y, z, sx: wv * f * .98, sy: hcv * .98, sz: hv * f * .98, kind, qf, h1 });
+      }
+    }
+    r.cells.push(row);
+  }
+  // the pile: a low mound in front of the cookie that grows as more pieces land
+  const all = r.cells.flat(), N = all.length;
+  const vol = all.reduce((v, c) => v + c.sx * c.sy * c.sz, 0) / .6;
+  const H = .8, R = Math.min(2.4, Math.sqrt(3 * vol / (Math.PI * H))), CZ = 1.1;
+  let k = 0;
+  for (const row of r.cells) {
+    const order = [...row].sort((p, q) => q.y - p.y);
+    order.forEach((c, rank) => {
+      const f = Math.cbrt((k + 1) / N), rk = R * f, hk = H * f; k++;
+      const u = Math.sqrt((rank + .2 + .6 * hash(rank, k, 7)) / order.length), th = hash(k, rank, 3) * 6.283;
+      const rho = rk * u, smin = Math.min(c.sx, c.sy, c.sz);
+      c.fx = rho * Math.cos(th); c.fz = CZ + rho * Math.sin(th); c.fy = hk * (1 - u) + smin * .45;
+      c.dur = .3 + .22 * Math.sqrt(Math.hypot(c.fx - c.x, c.fy - c.y, c.fz - c.z));
+    });
+  }
+}
+
+function drawMelon(set, r, t, offset) {
+  set.g.visible = true; set.g.position.x = offset;
+  const ka = Math.floor(countAt(t, r.p1, r.p1e, r.a, r.pow) + 1e-6), kc = Math.floor(countAt(t, r.p3, r.p3e, r.c, r.pow) + 1e-6),
+        kb = Math.floor(countAt(t, r.p2, r.p2e, r.b, r.pow) + 1e-6);
+  const w = 2 * RX / (r.a + 1), hc = 2 * RY / (r.c + 1), hz = 2 * RZ / (r.b + 1), wv = 2 * RX / r.VA, hcv = 2 * RY / r.VC, hv = 2 * RZ / r.VB;
+  const nn = [0, 0, 0, 0]; let nl = 0, nh = 0, ncl = 0, ncap = 0;
+  const lineW = Math.max(.008, Math.min(.016, wv * .14));
+  const vline = x => { for (const [z0, z1] of runsZ(x)) if (nl < 600) put(set.rings, nl++, x, 2 * RY + .004, (z0 + z1) / 2, lineW, .008, z1 - z0); };
+  const hline = y => { for (const e of EDGE) if (nh < 2400) put(set.ringsH, nh++, e.x, y, e.z, e.l * 1.05, lineW * .8, .01, 0, e.a, 0); };
+  const nva = Math.min(r.VA - 1, Math.floor((w * ka) / wv + 1e-6));
+  for (let v = 0; v < nva; v++) vline(-RX + wv * (v + 1));
+  const nvc = Math.min(r.VC - 1, Math.floor((hc * kc) / hcv + 1e-6));
+  for (let l = 0; l < nvc; l++) hline(2 * RY - hcv * (l + 1));
+  set.whole.visible = true;
+  if (kb === 0) {
+    setClip(set, set.clipZ, 0, -1, RZ + 1);
+  } else {
+    if (!r.cells) prepCells(r);
+    const nr = kb === r.b ? r.VB : Math.min(r.VB, Math.floor(hz * kb / hv + 1e-6)), zr = RZ - hv * nr;
+    setClip(set, set.clipZ, 0, -1, zr);
+    if (nr < r.VB) for (const [x0, x1] of runsX(zr - 1e-4)) {                 // the front cut face of the uncut part, with its grid
+      if (ncap < 40) put(set.cap, ncap++, (x0 + x1) / 2, RY, zr - .003, x1 - x0, 2 * RY - .02, .006);
+      for (let v = 0; v < r.VA - 1; v++) { const x = -RX + wv * (v + 1); if (x > x0 && x < x1 && ncl < 600) put(set.capLines, ncl++, x, RY, zr + .002, lineW * .8, 2 * RY * .9, .004); }
+      for (let l = 0; l < r.VC - 1; l++) if (ncl < 600) put(set.capLines, ncl++, (x0 + x1) / 2, 2 * RY - hcv * (l + 1), zr + .002, (x1 - x0) * .98, lineW * .8, .004);
+    }
+    for (let j = 0; j < nr; j++) for (const c of r.cells[j]) {
+      const s = (t - r.cells[j].tc) / c.dur, u = clamp(s * 1.12);
+      const fall = u * u, side = 1 - (1 - u) * (1 - u);
+      const bounce = .05 * Math.sin(clamp((s * 1.12 - 1) / .14) * Math.PI) * Math.min(c.sx, c.sy, c.sz);
+      Q.identity().slerp(c.qf, easeInOut(u));
+      P.set(lerp(c.x, c.fx, side), lerp(c.y, c.fy, fall) + bounce + Math.sin(Math.PI * u) * .35, lerp(c.z, c.fz, side));
+      S.set(c.sx, c.sy, c.sz); M.compose(P, Q, S);
+      const im = set.cubes[c.kind]; if (nn[c.kind] < CUBES) im.setMatrixAt(nn[c.kind]++, M);
+    }
+  }
+  set.cap.count = ncap; set.cap.instanceMatrix.needsUpdate = true;
+  set.rings.count = nl; set.rings.instanceMatrix.needsUpdate = true;
+  set.ringsH.count = nh; set.ringsH.instanceMatrix.needsUpdate = true;
+  set.capLines.count = ncl; set.capLines.instanceMatrix.needsUpdate = true;
+  set.cubes.forEach((im, i) => { im.count = nn[i]; im.instanceMatrix.needsUpdate = true; });
+  return { ka, kc, kb };
+}
+
+// ---------- knife (same as the soap video, scaled for the bigger melon) ----------
+function makeKnife(opacity) {
+  const g = new THREE.Group();
+  const s = new THREE.Shape();
+  s.moveTo(0, 0); s.lineTo(3.0, 0); s.bezierCurveTo(3.8, .02, 4.3, .25, 4.7, .62);
+  s.bezierCurveTo(4.0, .8, 3.1, .93, 2.1, .99); s.lineTo(0, 1.02); s.lineTo(0, 0);
+  const t = opacity < 1;
+  const steel = new THREE.MeshStandardMaterial({ color: 0xf0f2f5, metalness: 1, roughness: .14, envMapIntensity: 2.2, transparent: t, opacity, depthWrite: !t });
+  const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: .026, bevelEnabled: true, bevelThickness: .008, bevelSize: .008, bevelSegments: 1 }), steel);
+  blade.position.z = -.013; blade.castShadow = !t; g.add(blade);
+  const bolster = new THREE.Mesh(new RoundedBoxGeometry(.16, .64, .09, 2, .03), steel); bolster.position.set(-.06, .64, 0); g.add(bolster);
+  const hm = new THREE.MeshStandardMaterial({ color: 0x6a3a1e, roughness: .55, transparent: t, opacity, depthWrite: !t });
+  const handle = new THREE.Mesh(new RoundedBoxGeometry(1.95, .44, .2, 4, .09), hm); handle.position.set(-1.1, .66, 0); handle.castShadow = !t; g.add(handle);
+  for (const x of [-.5, -1.1, -1.7]) { const rv = new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, .22, 16), steel); rv.rotation.x = Math.PI / 2; rv.position.set(x, .66, 0); g.add(rv); }
+  g.scale.setScalar(1.3);
+  rig.add(g); return g;
+}
+const knife = makeKnife(1), ghosts = [.3, .2, .13, .08].map(makeKnife);
+const QA = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0));
+const QB = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, Math.PI, 0));
+const TILT = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), .03);
+function pose(g, q, x, y, z) { g.quaternion.copy(q).multiply(TILT); g.position.set(x, y, z); }
+const LIFT = 2 * RY + .45, REST_Y = 2 * RY + 2.2;
+const xCut = (r, k) => -RX + 2 * RX / (r.a + 1) * k;
+const yCut = (r, k) => 2 * RY - 2 * RY / (r.c + 1) * k;         // horizontal cuts go top to bottom
+const zCut = (r, k) => RZ - 2 * RZ / (r.b + 1) * k;             // crosswise cuts go front to back: the falling pieces face the camera
+const A_Z = -RZ - .5, B_X = RX + .55;
+// horizontal: the knife lies flat, edge facing the back, handle on the right; it slides in from the front and the cut
+// is done when the edge leaves the back of the melon
+const QC = QB.clone().premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2));
+const C_Z0 = RZ + .2, C_Z1 = -RZ - .15;
+function knifeAt(r, t) {
+  const qa = QA, qb = QB;
+  if (t < r.p1) return { q: qa, x: xCut(r, 1), y: REST_Y, z: A_Z };
+  if (t < r.p1e) {
+    const x = countAt(t, r.p1, r.p1e, r.a, r.pow), k = Math.floor(x), ph = x - k;
+    const from = xCut(r, Math.max(1, k)), to = xCut(r, Math.min(r.a, k + 1));
+    return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)), y: k === 0 ? REST_Y * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, dir: 'a' };
+  }
+  if (t < r.p3) {                                                  // lift out, swing round and lie flat in front of the melon
+    const u = easeInOut((t - r.p1e) / TURN), q = qa.clone().slerp(QC, u);
+    return { q, x: lerp(xCut(r, r.a), B_X, u), y: lerp(0, yCut(r, 1), u) + (2 * RY + .6) * Math.sin(Math.PI * u), z: lerp(A_Z, C_Z0, u) };
+  }
+  if (t < r.p3e) {
+    const x = countAt(t, r.p3, r.p3e, r.c, r.pow), k = Math.floor(x), ph = x - k;
+    const back = k === 0 ? 1 : easeInOut(ph / .35), push = easeInOut((ph - .35) / .65);
+    const y = k === 0 ? yCut(r, 1) : lerp(yCut(r, k), yCut(r, Math.min(r.c, k + 1)), back);
+    return { q: QC, x: B_X, y, z: ph < .35 && k > 0 ? lerp(C_Z1, C_Z0, back) : lerp(C_Z0, C_Z1, push), dir: 'c' };
+  }
+  if (t < r.p2) {                                                  // pull out the back, stand up for the crosswise cuts
+    const u = easeInOut((t - r.p3e) / TURN), q = QC.clone().slerp(qb, u);
+    return { q, x: B_X, y: lerp(yCut(r, r.c), LIFT, u) + (2 * RY - yCut(r, r.c) + .4) * Math.sin(Math.PI * u), z: lerp(C_Z1, zCut(r, 1), u) };
+  }
+  if (t < r.p2e) {
+    const x = countAt(t, r.p2, r.p2e, r.b, r.pow), k = Math.floor(x), ph = x - k;
+    const from = zCut(r, Math.max(1, k)), to = zCut(r, Math.min(r.b, k + 1));
+    return { q: qb, x: B_X, y: k === 0 ? LIFT * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: lerp(from, to, easeInOut((ph - .25) / .5)), dir: 'b' };
+  }
+  // after the last cut the knife lifts high and back so the pile stays in view, then settles at the rest pose during the slide
+  const u = easeInOut((t - r.p2e) / .45), q = qb.clone().slerp(qa, u), d = 1 - easeInOut((t - r.slide) / SLIDE);
+  return { q, x: lerp(B_X, xCut(ROUNDS[(r.i + 1) % ROUNDS.length], 1), u), y: lerp(0, REST_Y + 2.2 * d, u), z: lerp(zCut(r, r.b), A_Z - 1.4 * d, u) };
+}
+function placeKnife(r, t) {
+  const k = knifeAt(r, t);
+  pose(knife, k.q, k.x, k.y, k.z);
+  const win = { a: [r.p1, r.p1e, r.a], c: [r.p3, r.p3e, r.c], b: [r.p2, r.p2e, r.b] }[k.dir];
+  const rate = win ? win[2] * r.pow * Math.pow(clamp((t - win[0]) / (win[1] - win[0]), .03, 1), r.pow - 1) / (win[1] - win[0]) : 0;
+  const fast = rate > 9;
+  ghosts.forEach((g, i) => { g.visible = fast; if (!fast) return; const kk = knifeAt(r, t - (i + 1) / FPS / 4); pose(g, kk.q, kk.x, kk.y, kk.z); });
+}
+
+// ---------- camera: a slow push-in while a round is cut, back to the start while the next melon slides in ----------
+const PUSH = .3, PILE = new THREE.Vector3(.45, .35, .9);
+function placeCamera(r, t) {
+  const u = clamp((t - r.p1) / (r.p2e - r.p1));
+  let z = (1 - (1 - u) * (1 - u)) * PUSH;                           // starts moving with the first cut, slows towards the end
+  if (t >= r.slide) z *= 1 - easeInOut((t - r.slide) / SLIDE);
+  const look = LOOK.clone().lerp(PILE, z / PUSH);                   // the aim drifts to the pile in front of the melon
+  cam.position.copy(look).addScaledVector(CAM.clone().sub(LOOK), 1 - z);
+  cam.lookAt(look);
+}
+
+const fmt = n => n.toLocaleString('en-US');
+const roundAt = t => ROUNDS.find(q => t < q.t1) || ROUNDS[ROUNDS.length - 1];
+window.renderAt = t => {
+  t = Math.min(t, DURATION - 1e-6);
+  const r = roundAt(t), nxt = ROUNDS[(r.i + 1) % ROUNDS.length];
+  let c;
+  if (t >= r.slide) {
+    const u = (t - r.slide) / SLIDE;
+    c = drawMelon(sets[0], r, t, -easeIn(u) * 12);
+    drawMelon(sets[1], nxt, nxt.t0 - 1, (1 - easeOut(u)) * 12);
+  } else { c = drawMelon(sets[0], r, t, 0); sets[1].g.visible = false; }
+  placeKnife(r, t); placeCamera(r, t);
+  const fresh = t >= r.slide + SLIDE * .75;   // counters reset once the old pile has mostly left the frame
+  document.getElementById('cuts').textContent = fresh ? '0' : fmt(c.ka + c.kc + c.kb);
+  document.getElementById('pieces').textContent = fresh ? '1' : fmt(pieceCount(r, c.ka, c.kc, c.kb));
+  r3.render(scene, cam);
+  return c;
+};
+window.kitchenReady = true;
+window.ready = true;
+</script></body></html>
