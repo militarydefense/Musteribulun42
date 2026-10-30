@@ -470,3 +470,13 @@ Uygulama (her bölüm, iki seri):
   NOTE: viewers were revised by Instagram (393 → 1,141 while views went 1,011 → 1,295): the earlier "5.7 / 2.6 views per viewer" was a preliminary figure, not real rewatching.
   Curve (read off the chart): ~71% at 2 s, ~50% at 6 s, ~42% at 7 s, ~32% at 13 s, ~27% at 15 s, ~19% at 22 s, ~15% at 29 s, ~10% at 42 s.
   Drops again follow the round resets (5.75 / 12.1 / 18.85 / 26.0 s) → confirmed on 1,141 viewers. Biggest single loss: first 2 s (−29 pts).
+
+## §38 @cut.counter — Onion vs 1,000 Cuts, Instagram ~10 h (30 Oct, 20:48 TR)
+- 20,073 views / 17,744 viewers, avg 16 s of 46 s, skip 23.1% (soap at 2 h: 42.4%), likes 86 (0.5%), comments 0,
+  reposts 1, saves 8, follows 11 (soap: 0). Reels tab 87.9%, Explore 11.9%. Views still climbing steeply at 10 h,
+  far above the "typical Reels" line.
+- Curve (read off the chart, approx.): ~85% at 2 s, ~80% at 4 s, ~50% at 8 s, ~45% at 11 s, ~38% at 15 s, ~31% at 22 s,
+  ~28% at 30 s, ~22% at 38 s, ~20% at 44 s.
+  Soap at 2 h: 50% at 6 s, 27% at 15 s, 19% at 22 s, 10% at 42 s → onion keeps about twice as many viewers to the end.
+- Biggest single loss: ~80% → ~50% between 4 and 8 s = the end of the 10-cut round and the first slide (5.5 s after the trim).
+  Later transitions cost little. Next test (one change only): make the first round end later / stronger.
