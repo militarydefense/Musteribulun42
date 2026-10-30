@@ -1,0 +1,366 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- "1 Cut vs 40 Cuts: Pomegranate" in the style of the Slizzy reference: the fruit floats above a branded board, fast
+     knife strokes leave cut lines, then it drops and bursts. Rounds 1, 3, 7 break into real wedges (the sphere clipped by
+     the cut planes, seeds on every cut face); 13, 25, 40 and the BONUS 100 break into cubes. Hook card first, "What should
+     we cut next?" at the end. Deterministic: window.renderAt(t). -->
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#wrap{position:relative;width:1080px;height:1920px}canvas{display:block}
+.t{position:absolute;width:100%;text-align:center;font-family:Inter,Arial,sans-serif;font-weight:900;color:#fff;line-height:1;
+  text-shadow:0 4px 18px rgba(0,0,0,.7)}
+#label{top:150px;font-size:96px;letter-spacing:-1px}
+#bonus{top:120px;font-size:64px;display:none}
+#bonus b{display:block;color:#ff2a2a;font-size:112px;margin-top:6px}
+#hook{top:150px;display:none}
+#hook .a{font-size:104px}#hook .v{font-size:56px;margin:6px 0}#hook .b{font-size:132px;color:#ff2a2a}#hook .c{font-size:58px;margin-top:22px}
+#end{top:620px;display:none}
+#end .a{font-size:80px}#end .b{font-size:70px;color:#ff2a2a;margin-top:18px}
+</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body><div id="wrap">
+<div id="label" class="t">1 Cut</div>
+<div id="bonus" class="t">BONUS<b>100 Cuts</b></div>
+<div id="hook" class="t"><div class="a">1 Cut</div><div class="v">vs</div><div class="b">40 Cuts</div><div class="c">Wait for 100 Cuts</div></div>
+<div id="end" class="t"><div class="a">What should we cut next?</div><div class="b">Comment below &#8595;</div></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const W = 1080, H = 1920, FPS = 30;
+const R = 1.15, FLOAT_Y = 3.0;                                     // fruit radius, centre height while floating (board top = 0)
+const BX = 3.2, BZ = 1.8, FLOOR = -.32;                            // board half size, floor height
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const ease = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const hash = (a, b, c = 0) => { let h = Math.imul(a | 0, 374761393) ^ Math.imul(b | 0, 668265263) ^ Math.imul(c | 0, 1274126177); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+const near = (a0, a1, c) => c < a0 ? a0 - c : c > a1 ? c - a1 : 0;
+const ground = (x, z) => Math.abs(x) < BX && Math.abs(z) < BZ ? 0 : FLOOR;
+
+// ---------- timeline ----------
+const HOOK = 1.7, END = 2.6;
+const PLAN = [1, 3, 7, 13, 25, 40, 100];
+const ROUNDS = []; let acc = HOOK;
+PLAN.forEach((n, i) => {
+  const bonus = n === 100;
+  const r = { i, n, bonus, t0: acc };
+  r.s0 = acc + (i === 0 ? .45 : bonus ? 1.0 : .75);                // floating, then strokes
+  r.s1 = r.s0 + (bonus ? 3.0 : Math.min(1.5, .12 + n * .035));
+  r.drop = r.s1 + .18; r.hit = r.drop + .33;                        // falls, hits the board
+  r.t1 = r.hit + (bonus ? 1.6 + END : n <= 7 ? 1.25 : 1.45);
+  ROUNDS.push(r); acc = r.t1;
+});
+const DURATION = acc;
+const strokeAt = (r, k) => r.s0 + (r.s1 - r.s0) * Math.pow(k / r.n, 1 / 1.25);
+const strokesDone = (r, t) => t < r.s0 ? 0 : t >= r.s1 ? r.n : Math.floor(r.n * Math.pow((t - r.s0) / (r.s1 - r.s0), 1.25) + 1e-6);
+window.TIMELINE = { fps: FPS, duration: DURATION,
+  cuts: ROUNDS.flatMap(r => Array.from({ length: r.n }, (_, k) => +strokeAt(r, k + 1).toFixed(4))),
+  impacts: ROUNDS.map(r => ({ t: +r.hit.toFixed(4), n: r.n })), rounds: ROUNDS.map(r => ({ t0: r.t0, n: r.n })) };
+
+// ---------- the cut planes of every round (fruit-local, centre at the origin) ----------
+// a plane = { n: unit normal, d } (points with n·p = d). Wedge rounds: radial / layered planes; cube rounds: a grid.
+function planesOf(r) {
+  const P = [], v = (x, y, z) => new THREE.Vector3(x, y, z).normalize();
+  if (r.n === 1) P.push({ n: v(Math.cos(.26), 0, Math.sin(.26)), d: 0 });
+  else if (r.n === 3) for (let k = 0; k < 3; k++) { const a = .26 + k * Math.PI / 3; P.push({ n: v(Math.cos(a), 0, Math.sin(a)), d: 0 }); }
+  else if (r.n === 7) {
+    for (let k = 0; k < 4; k++) { const a = .26 + k * Math.PI / 4; P.push({ n: v(Math.cos(a), 0, Math.sin(a)), d: 0 }); }
+    for (const y of [-.48, 0, .48]) P.push({ n: v(0, 1, 0), d: y * R });
+  } else {
+    const ax = Math.round(r.n * .36), ay = Math.round(r.n * .32), az = r.n - ax - ay;
+    r.grid = [ax, ay, az];
+    for (let k = 1; k <= ax; k++) P.push({ n: v(1, 0, 0), d: -R + 2 * R / (ax + 1) * k });
+    for (let k = 1; k <= ay; k++) P.push({ n: v(0, 1, 0), d: R - 2 * R / (ay + 1) * k });
+    for (let k = 1; k <= az; k++) P.push({ n: v(0, 0, 1), d: R - 2 * R / (az + 1) * k });
+  }
+  return P;
+}
+ROUNDS.forEach(r => r.planes = planesOf(r));
+
+// ---------- renderer and stage ----------
+const r3 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r3.setSize(W, H); r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap; r3.localClippingEnabled = true;
+r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = .92; r3.outputColorSpace = THREE.SRGBColorSpace;
+document.getElementById('wrap').prepend(r3.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000000); scene.fog = new THREE.Fog(0x000000, 17, 34);
+scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .35;
+const cam = new THREE.PerspectiveCamera(36, W / H, .1, 200);
+
+function canvasTex(w, h, draw, srgb = true) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; }
+let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+// dark granite floor
+const stone = canvasTex(1024, 1024, (g, w, h) => {
+  g.fillStyle = '#3a3a3c'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 60000; i++) { const v = 30 + rnd() * 60; g.fillStyle = `rgba(${v},${v},${v + 2},${.25 + rnd() * .5})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 3, 1 + rnd() * 3); }
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(200,200,205,${.05 + rnd() * .12})`; g.fillRect(rnd() * w, rnd() * h, 1, 1); }
+});
+stone.wrapS = stone.wrapT = THREE.RepeatWrapping; stone.repeat.set(6, 6);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ map: stone, roughness: .85 }));
+floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR; floor.receiveShadow = true; scene.add(floor);
+// light wooden board with the brand burnt in
+const brand = (g, x, y, s, a) => { g.save(); g.translate(x, y); g.font = `800 ${s}px Inter, Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = `rgba(70,38,14,${a})`; g.fillText('cut.counter', 0, 0); g.restore(); };
+const woodTop = canvasTex(2048, 1152, (g, w, h) => {
+  g.fillStyle = '#b98a52'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 420; i++) { const y = rnd() * h; g.strokeStyle = `rgba(${150 + rnd() * 40},${100 + rnd() * 30},50,${.06 + rnd() * .16})`; g.lineWidth = 1 + rnd() * 4;
+    g.beginPath(); g.moveTo(0, y); for (let x = 0; x <= w; x += 32) g.lineTo(x, y + Math.sin(x * .003 + i) * 12); g.stroke(); }
+  brand(g, w * .79, h * .72, 74, .78);
+  g.beginPath(); g.arc(w * .09, h * .5, 26, 0, 7); g.fillStyle = 'rgba(60,35,15,.55)'; g.fill();          // hanging hole
+});
+const woodSide = canvasTex(1024, 96, (g, w, h) => { g.fillStyle = '#a87a45'; g.fillRect(0, 0, w, h); for (let i = 0; i < 40; i++) { g.fillStyle = `rgba(120,80,40,${.1 + rnd() * .15})`; g.fillRect(0, rnd() * h, w, 1 + rnd() * 2); } brand(g, w / 2, h / 2, 46, .75); });
+const sideMat = new THREE.MeshStandardMaterial({ map: woodSide, roughness: .6 }), topMat = new THREE.MeshStandardMaterial({ map: woodTop, roughness: .55 });
+const board = new THREE.Mesh(new THREE.BoxGeometry(2 * BX, .32, 2 * BZ), [sideMat, sideMat, topMat, topMat, sideMat, sideMat]);
+board.position.y = -.16; board.castShadow = board.receiveShadow = true; scene.add(board);
+// one strong spot from above, a weak fill
+const spot = new THREE.SpotLight(0xfff2e4, 300, 40, .5, .8, 1.6); spot.position.set(-.8, 13, 3.2); spot.target.position.set(0, 0, 0);
+spot.castShadow = true; spot.shadow.mapSize.set(2048, 2048); spot.shadow.bias = -.0003; spot.shadow.radius = 5; scene.add(spot, spot.target);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x202020, .25));
+const rim = new THREE.DirectionalLight(0xffe6d0, .6); rim.position.set(4, 5, -6); scene.add(rim);
+
+// ---------- pomegranate materials ----------
+// skin: deep red, darker toward the bottom, yellow-green blush patches, fine speckles
+const SKIN = canvasTex(2048, 1024, (g, w, h) => {
+  const base = g.createLinearGradient(0, 0, 0, h); base.addColorStop(0, '#a3121e'); base.addColorStop(.45, '#c4202c'); base.addColorStop(1, '#7c0d17');
+  g.fillStyle = base; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 26; i++) { const x = rnd() * w, y = h * (.15 + rnd() * .6), r = 60 + rnd() * 170, gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, `rgba(${200 + rnd() * 40},${120 + rnd() * 50},60,${.25 + rnd() * .25})`); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r); }
+  for (let i = 0; i < 30000; i++) { g.fillStyle = `rgba(${rnd() < .5 ? '90,0,10' : '255,170,150'},${.05 + rnd() * .12})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 3, 1 + rnd() * 3); }
+});
+SKIN.wrapS = THREE.RepeatWrapping;
+// seeds: packed glossy red arils with thin pale membranes
+const arils = (g, w, h, n, rmin, rmax, clipR) => {
+  for (let i = 0; i < n; i++) {
+    const x = rnd() * w, y = rnd() * h; if (clipR && Math.hypot(x - w / 2, y - h / 2) > clipR) continue;
+    const r = rmin + rnd() * (rmax - rmin), a = rnd() * 3;
+    const gr = g.createRadialGradient(x - r * .3, y - r * .35, r * .1, x, y, r);
+    gr.addColorStop(0, '#ff7a86'); gr.addColorStop(.35, '#d1102a'); gr.addColorStop(1, '#6a0412');
+    g.beginPath(); g.ellipse(x, y, r, r * (.75 + rnd() * .2), a, 0, 7); g.fillStyle = gr; g.fill();
+    g.beginPath(); g.ellipse(x - r * .3, y - r * .35, r * .25, r * .14, a, 0, 7); g.fillStyle = 'rgba(255,255,255,.55)'; g.fill();
+  }
+};
+const CAP = canvasTex(1024, 1024, (g, w, h) => {
+  const c = w / 2;
+  g.beginPath(); g.arc(c, c, c, 0, 7); g.fillStyle = '#9c121d'; g.fill();
+  g.beginPath(); g.arc(c, c, c * .955, 0, 7); g.fillStyle = '#f0dcae'; g.fill();
+  g.save(); g.beginPath(); g.arc(c, c, c * .9, 0, 7); g.clip();
+  g.fillStyle = '#e9cf9a'; g.fillRect(0, 0, w, h);
+  arils(g, w, h, 2600, 16, 26);
+  g.strokeStyle = 'rgba(245,225,175,.95)'; g.lineWidth = 9;                    // chamber walls
+  for (let k = 0; k < 6; k++) { const a = k / 6 * 6.283 + .3; g.beginPath(); g.moveTo(c, c); g.quadraticCurveTo(c + Math.cos(a + .3) * c * .5, c + Math.sin(a + .3) * c * .5, c + Math.cos(a) * c * .92, c + Math.sin(a) * c * .92); g.stroke(); }
+  g.restore();
+});
+const ARILS = canvasTex(512, 512, (g, w, h) => { g.fillStyle = '#7a0a16'; g.fillRect(0, 0, w, h); arils(g, w, h, 900, 13, 21); g.strokeStyle = 'rgba(240,215,160,.8)'; g.lineWidth = 5; g.beginPath(); g.moveTo(0, h * .62); g.bezierCurveTo(w * .3, h * .5, w * .6, h * .75, w, h * .58); g.stroke(); });
+const skinMat = (planes = null) => new THREE.MeshPhysicalMaterial({ map: SKIN, roughness: .38, clearcoat: .35, clearcoatRoughness: .35, clippingPlanes: planes, clipShadows: true });
+const capMat = (planes = null) => new THREE.MeshStandardMaterial({ map: CAP, roughness: .28, clippingPlanes: planes, clipShadows: true, side: THREE.DoubleSide });
+const sphereGeo = new THREE.SphereGeometry(R, 128, 96);
+const capGeo = new THREE.CircleGeometry(1, 96);
+
+// crown: a short tube with six pointed dry sepals
+function makeCrown() {
+  const g = new THREE.Group(), m = new THREE.MeshStandardMaterial({ color: 0x7a2a22, roughness: .7 });
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(.17, .22, .22, 20, 1, true), m); tube.position.y = R + .06; g.add(tube);
+  for (let k = 0; k < 6; k++) {
+    const s = new THREE.Mesh(new THREE.ConeGeometry(.07, .26, 6), m), a = k / 6 * 6.283;
+    s.position.set(Math.cos(a) * .17, R + .2, Math.sin(a) * .17); s.rotation.set(Math.sin(a) * .7, 0, -Math.cos(a) * .7); g.add(s);
+  }
+  g.traverse(o => o.castShadow = true); return g;
+}
+
+// ---------- the floating, still whole fruit (with the cut lines drawn so far) ----------
+const fruit = new THREE.Group(); scene.add(fruit);
+const whole = new THREE.Mesh(sphereGeo, skinMat()); whole.castShadow = true; fruit.add(whole);
+const crown = makeCrown(); fruit.add(crown);
+const torus = new THREE.TorusGeometry(1, .005, 6, 160);
+const lines = new THREE.InstancedMesh(torus, new THREE.MeshStandardMaterial({ color: 0x3a050b, roughness: .6 }), 120); lines.frustumCulled = false; fruit.add(lines);
+const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S = new THREE.Vector3(), Z = new THREE.Vector3(0, 0, 1);
+function drawLines(planes, k) {
+  let n = 0;
+  for (let i = 0; i < Math.min(k, planes.length, 120); i++) {
+    const p = planes[i], rr = Math.sqrt(Math.max(0, R * R - p.d * p.d)) * 1.003; if (rr < .05) continue;
+    Q.setFromUnitVectors(Z, p.n); P.copy(p.n).multiplyScalar(p.d); S.set(rr, rr, rr); M.compose(P, Q, S); lines.setMatrixAt(n++, M);
+  }
+  lines.count = n; lines.instanceMatrix.needsUpdate = true;
+}
+// knife strokes: a dark blurred streak that sweeps down through the fruit along the cut plane
+const streakTex = canvasTex(64, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, 'rgba(20,20,22,0)'); gr.addColorStop(.35, 'rgba(25,25,28,.85)'); gr.addColorStop(.6, 'rgba(160,165,175,.8)'); gr.addColorStop(1, 'rgba(20,20,22,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+const streakMat = new THREE.MeshBasicMaterial({ map: streakTex, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+const streaks = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1), streakMat, 24); streaks.frustumCulled = false; scene.add(streaks);
+
+// ---------- wedge rounds: cells of the sphere cut by the planes, each rendered by clipping ----------
+function cellsOf(r) {
+  if (r.cells) return r.cells;
+  const pl = r.planes, map = new Map();
+  let s = 7;
+  const rand = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 24000; i++) {                                  // sample the volume (and the surface for contact points)
+    let x, y, z; do { x = rand() * 2 - 1; y = rand() * 2 - 1; z = rand() * 2 - 1; } while (x * x + y * y + z * z > 1);
+    if (i % 3 === 0) { const l = Math.hypot(x, y, z); x /= l; y /= l; z /= l; }
+    const p = new THREE.Vector3(x * R, y * R, z * R), key = pl.map(q => q.n.dot(p) >= q.d ? 1 : 0).join('');
+    if (!map.has(key)) map.set(key, []); map.get(key).push(p);
+  }
+  r.cells = [...map.entries()].filter(([, pts]) => pts.length > 30).map(([key, pts], ci) => {
+    const c = pts.reduce((a, p) => a.add(p), new THREE.Vector3()).multiplyScalar(1 / pts.length);
+    const signs = [...key].map(Number);
+    const local = pl.map((q, i) => { const sg = signs[i] ? 1 : -1; return new THREE.Plane(q.n.clone().multiplyScalar(sg), -q.d * sg); });
+    const g = new THREE.Group(); g.visible = false; scene.add(g);
+    const skin = new THREE.Mesh(sphereGeo, skinMat(local.map(p => p.clone()))); skin.castShadow = skin.receiveShadow = true; g.add(skin);
+    const caps = local.map((lp, i) => {
+      const q = pl[i], rr = Math.sqrt(Math.max(0, R * R - q.d * q.d)); if (rr < .02) return null;
+      const others = local.filter((_, j) => j !== i).map(p => p.clone());
+      const m = new THREE.Mesh(capGeo, capMat(others)); m.scale.setScalar(rr);
+      m.position.copy(q.n).multiplyScalar(q.d); m.quaternion.setFromUnitVectors(Z, lp.normal.clone().negate()); m.castShadow = true; g.add(m);
+      return { m, i };
+    }).filter(Boolean);
+    const hasCrown = c.y > .25 * R && Math.abs(c.x) < .9 && Math.abs(c.z) < .9 && ci === [...map.entries()].findIndex(([, p]) => p === pts);
+    // landing: flips over so the skin points down and the seeds face up, moves outward, rests on the board
+    const out = new THREE.Vector3(c.x, 0, c.z); if (out.length() < 1e-3) out.set(1, 0, 0); out.normalize();
+    const down = c.clone().normalize();
+    const qf = new THREE.Quaternion().setFromUnitVectors(down.lengthSq() > 1e-6 ? down : new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -1, 0));
+    qf.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), (hash(ci, r.n) - .5) * .9));
+    const dist = (r.n === 1 ? 1.25 : r.n === 3 ? 1.35 : 1.25 + .9 * hash(ci, 3)) * (1 + .15 * hash(ci, 9));
+    const pf = new THREE.Vector3(out.x * dist, 0, out.z * dist * .8);
+    const rot = pts.filter((_, k) => k % 4 === 0).map(p => p.clone().sub(c).applyQuaternion(qf));
+    const minY = Math.min(...rot.map(p => p.y));
+    return { g, skin, caps, local, c, qf, pf, minY, dur: .55 + .2 * hash(ci, 5), delay: .03 * hash(ci, 7) };
+  });
+  return r.cells;
+}
+const QI = new THREE.Quaternion(), V = new THREE.Vector3();
+function drawCells(r, t) {
+  const cells = cellsOf(r), u0 = t - r.hit;
+  for (const cl of cells) {
+    cl.g.visible = true;
+    const u = clamp((u0 - cl.delay) / cl.dur), e = 1 - (1 - u) * (1 - u);
+    const gy = ground(cl.pf.x, cl.pf.z) - cl.minY;
+    // start: in place inside the fruit (which just landed with its centre at y = R); end: flipped and spread on the board
+    const x = lerp(cl.c.x, cl.pf.x, e), z = lerp(cl.c.z, cl.pf.z, e);
+    const y = lerp(R + cl.c.y, gy, u * u) + Math.sin(Math.PI * u) * .55 + .03 * Math.sin(clamp((u0 - cl.delay - cl.dur) / .18) * Math.PI);
+    cl.g.position.set(x, y, z); cl.g.quaternion.copy(QI).slerp(cl.qf, ease(u));
+    // the cell's own geometry is in fruit coordinates: shift it so the cell's centroid is the pivot
+    cl.g.children.forEach(m => { if (!m.userData.p0) m.userData.p0 = m.position.clone(); m.position.copy(m.userData.p0).sub(cl.c); });
+    cl.g.updateMatrixWorld(true);
+    const mw = new THREE.Matrix4().copy(cl.g.matrixWorld).multiply(new THREE.Matrix4().makeTranslation(-cl.c.x, -cl.c.y, -cl.c.z));
+    const world = cl.local.map(p => p.clone().applyMatrix4(mw));
+    world.forEach((p, i) => cl.skin.material.clippingPlanes[i].copy(p));
+    cl.caps.forEach(({ m, i }) => { let k = 0; world.forEach((p, j) => { if (j !== i) m.material.clippingPlanes[k++].copy(p); }); });
+  }
+}
+function hideCells(r) { if (r.cells) r.cells.forEach(c => c.g.visible = false); }
+
+// ---------- cube rounds: grid cells, trimmed to the fruit, bursting outward ----------
+const CUBES = 24000, boxGeo = new THREE.BoxGeometry(1, 1, 1);
+const aril = new THREE.MeshPhysicalMaterial({ map: ARILS, roughness: .25, clearcoat: .5 });
+const skinFace = skinMat(); skinFace.map = SKIN.clone(); skinFace.map.repeat.set(.08, .1); skinFace.map.needsUpdate = true;
+const cubeSets = [[aril, aril, aril, aril, aril, aril], [skinFace, skinFace, aril, aril, aril, aril], [aril, aril, skinFace, skinFace, aril, aril], [aril, aril, aril, aril, skinFace, skinFace]]
+  .map(m => { const im = new THREE.InstancedMesh(boxGeo, m, CUBES); im.castShadow = im.receiveShadow = true; im.frustumCulled = false; im.count = 0; scene.add(im); return im; });
+function cubesOf(r) {
+  if (r.cubes) return r.cubes;
+  const [ax, ay, az] = r.grid, wx = 2 * R / (ax + 1), wy = 2 * R / (ay + 1), wz = 2 * R / (az + 1);
+  const big = r.n >= 40, power = { 13: 1.1, 25: 1.35, 40: 1.7, 100: 2.3 }[r.n];
+  r.cubes = [];
+  for (let i = 0; i <= ax; i++) for (let j = 0; j <= ay; j++) for (let k = 0; k <= az; k++) {
+    const x0 = -R + wx * i, y0 = -R + wy * j, z0 = -R + wz * k, x1 = x0 + wx, y1 = y0 + wy, z1 = z0 + wz;
+    const dx = near(x0, x1, 0) / R, dy = near(y0, y1, 0) / R, dz = near(z0, z1, 0) / R;
+    if (dx * dx + dy * dy + dz * dz >= 1) continue;
+    const ex = R * Math.sqrt(1 - dy * dy - dz * dz), ey = R * Math.sqrt(1 - dx * dx - dz * dz), ez = R * Math.sqrt(1 - dx * dx - dy * dy);
+    const a0 = Math.max(x0, -ex), a1 = Math.min(x1, ex), b0 = Math.max(y0, -ey), b1 = Math.min(y1, ey), c0 = Math.max(z0, -ez), c1 = Math.min(z1, ez);
+    const sx = Math.max(.012, a1 - a0), sy = Math.max(.012, b1 - b0), sz = Math.max(.012, c1 - c0);
+    const lx = 1 - sx / wx, ly = 1 - sy / wy, lz = 1 - sz / wz, lm = Math.max(lx, ly, lz);
+    const kind = lm < .08 ? 0 : lm === lx ? 1 : lm === ly ? 2 : 3;
+    const c = new THREE.Vector3((a0 + a1) / 2, (b0 + b1) / 2, (c0 + c1) / 2);
+    const h1 = hash(i, j, k + r.n), h2 = hash(j + 7, k, i + r.n), h3 = hash(k + 3, i, j + 5 * r.n);
+    // outward burst: mostly sideways, a little forward toward the camera; bonus pieces partly fly past the camera
+    const dir = new THREE.Vector3(c.x, Math.max(0, c.y) * .5 + .15, c.z + .35 * R).normalize().applyAxisAngle(new THREE.Vector3(0, 1, 0), (h2 - .5) * 1.1);
+    const sp = power * (.55 + .7 * h1) * (.6 + .6 * (c.length() / R));
+    let pf = new THREE.Vector3(c.x + dir.x * sp, 0, c.z + dir.z * sp * 1.1);
+    let peak = .2 + .6 * h2 + (big ? .5 : 0), dur = .45 + .35 * h3;
+    if (r.n === 100 && h3 < .22) { pf.set((h1 - .5) * 9, 0, 6 + 8 * h2); peak = 2.4 + 2.5 * h1; dur = .8 + .5 * h2; }   // toward and past the camera
+    const smin = Math.min(sx, sy, sz);
+    const qf = new THREE.Quaternion().setFromEuler(new THREE.Euler(h1 * 6.28, h2 * 6.28, h3 * 6.28));
+    r.cubes.push({ c, sx, sy, sz, kind, pf, peak, dur, qf, rest: smin / 2, delay: .05 * h2 });
+  }
+  return r.cubes;
+}
+function drawCubes(r, t) {
+  const cubes = cubesOf(r), u0 = t - r.hit, nn = [0, 0, 0, 0];
+  for (const cb of cubes) {
+    const u = clamp((u0 - cb.delay) / cb.dur);
+    const gy = ground(cb.pf.x, cb.pf.z) + cb.rest;
+    P.set(lerp(cb.c.x, cb.pf.x, u), lerp(R + cb.c.y, gy, u * u) + cb.peak * 4 * u * (1 - u), lerp(cb.c.z, cb.pf.z, u));
+    Q.copy(QI).slerp(cb.qf, u); S.set(cb.sx, cb.sy, cb.sz); M.compose(P, Q, S);
+    const im = cubeSets[cb.kind]; if (nn[cb.kind] < CUBES) im.setMatrixAt(nn[cb.kind]++, M);
+  }
+  cubeSets.forEach((im, i) => { im.count = nn[i]; im.instanceMatrix.needsUpdate = true; });
+}
+function hideCubes() { cubeSets.forEach(im => im.count = 0); }
+
+// ---------- loose seeds that fly out on impact ----------
+const SEEDS = 2600;
+const seedMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(.032, 12, 10), new THREE.MeshPhysicalMaterial({ color: 0xb3081f, roughness: .12, clearcoat: 1, transmission: .25, thickness: .2 }), SEEDS);
+seedMesh.castShadow = true; seedMesh.frustumCulled = false; seedMesh.count = 0; scene.add(seedMesh);
+function drawSeeds(r, t) {
+  const n = Math.min(SEEDS, { 1: 40, 3: 90, 7: 160, 13: 260, 25: 420, 40: 650, 100: 2600 }[r.n]), u0 = t - r.hit;
+  let k = 0;
+  for (let i = 0; i < n; i++) {
+    const h1 = hash(i, r.n, 1), h2 = hash(i, r.n, 2), h3 = hash(i, r.n, 3), a = h1 * 6.283;
+    const sp = (1.2 + 3.2 * h2) * (r.n >= 40 ? 1.5 : 1), far = r.n === 100 && h3 < .25;
+    const pf = far ? new THREE.Vector3((h1 - .5) * 8, 0, 5 + 8 * h2) : new THREE.Vector3(Math.cos(a) * (R * .6 + sp), 0, Math.sin(a) * (R * .6 + sp) + .4);
+    const dur = (far ? .9 : .45) + .4 * h3, u = clamp((u0 - .02 * h3) / dur);
+    const y = lerp(R + (h3 - .5) * R, ground(pf.x, pf.z) + .04, u * u) + (far ? 3 : .5 + 1.2 * h1) * 4 * u * (1 - u);
+    P.set(lerp(Math.cos(a) * R * .5, pf.x, u), y, lerp(Math.sin(a) * R * .5, pf.z, u));
+    Q.setFromAxisAngle(Z, h2 * 3); S.set(1, .8 + .3 * h3, .8); M.compose(P, Q, S); seedMesh.setMatrixAt(k++, M);
+  }
+  seedMesh.count = k; seedMesh.instanceMatrix.needsUpdate = true;
+}
+
+// ---------- camera: a slow push-in during every round; the hook is a close-up ----------
+const CAM0 = new THREE.Vector3(0, 9.0, 13.0), LOOK0 = new THREE.Vector3(0, 1.2, 0);
+function placeCamera(t, r) {
+  if (!r) { const u = t / HOOK; cam.position.set(Math.sin(u * .5) * .5, 5.4, 8.6 - .6 * u); cam.lookAt(0, FLOAT_Y + .15, 0); return; }
+  const u = clamp((t - r.t0) / (r.t1 - r.t0)), z = (1 - (1 - u) * (1 - u)) * .13;
+  cam.position.copy(LOOK0).addScaledVector(CAM0.clone().sub(LOOK0), 1 - z); cam.lookAt(LOOK0);
+}
+
+const el = id => document.getElementById(id);
+window.renderAt = t => {
+  t = Math.min(t, DURATION - 1e-6);
+  const r = t < HOOK ? null : ROUNDS.find(q => t < q.t1) || ROUNDS[ROUNDS.length - 1];
+  ROUNDS.forEach(q => { if (q !== r) hideCells(q); });
+  hideCubes(); seedMesh.count = 0; streaks.count = 0;
+  el('hook').style.display = r ? 'none' : 'block';
+  el('label').style.display = r && !r.bonus ? 'block' : 'none';
+  el('bonus').style.display = r && r.bonus ? 'block' : 'none';
+  el('end').style.display = r && r.bonus && t > r.t1 - END ? 'block' : 'none';
+  if (r) el('label').textContent = r.n === 1 ? '1 Cut' : `${r.n} Cuts`;
+  if (!r) {                                                         // hook: the 40-cut fruit, all lines drawn, close up
+    fruit.visible = true; fruit.position.set(0, FLOAT_Y + .04 * Math.sin(t * 3), 0); fruit.rotation.y = t * .25;
+    drawLines(ROUNDS[5].planes, 999);
+  } else if (t < r.hit) {                                           // floating, strokes, drop
+    fruit.visible = true; fruit.rotation.y = 0;
+    const fy = t < r.drop ? FLOAT_Y + .04 * Math.sin((t - r.t0) * 3) : lerp(FLOAT_Y, R, Math.pow((t - r.drop) / (r.hit - r.drop), 2));
+    fruit.position.set(0, fy, 0);
+    const k = strokesDone(r, t); drawLines(r.planes, k);
+    // streaks of the strokes that happened in the last 0.08 s
+    let ns = 0;
+    for (let i = Math.max(0, k - 24); i < k; i++) {
+      const ts = strokeAt(r, i + 1), age = (t - ts) / .08; if (age < 0 || age > 1) continue;
+      const p = r.planes[i];
+      const up = Math.abs(p.n.y) > .9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+      const along = new THREE.Vector3().crossVectors(p.n, up).normalize(), dn = new THREE.Vector3().crossVectors(along, p.n).normalize();
+      const base = p.n.clone().multiplyScalar(p.d).addScaledVector(dn, lerp(2.2, -2.2, age) * R * .6);
+      M.makeBasis(along.clone().multiplyScalar(3.4 * R), dn.clone().multiplyScalar(.55 * R), p.n.clone()); M.setPosition(base.x, base.y + fy, base.z);
+      streaks.setMatrixAt(ns++, M);
+    }
+    streaks.count = ns; streaks.instanceMatrix.needsUpdate = true;
+  } else {                                                          // burst
+    fruit.visible = false;
+    if (r.n <= 7) drawCells(r, t); else drawCubes(r, t);
+    drawSeeds(r, t);
+  }
+  placeCamera(t, r);
+  r3.render(scene, cam);
+};
+window.ready = true;
+</script></body></html>
