@@ -480,3 +480,7 @@ Uygulama (her bölüm, iki seri):
   Soap at 2 h: 50% at 6 s, 27% at 15 s, 19% at 22 s, 10% at 42 s → onion keeps about twice as many viewers to the end.
 - Biggest single loss: ~80% → ~50% between 4 and 8 s = the end of the 10-cut round and the first slide (5.5 s after the trim).
   Later transitions cost little. Next test (one change only): make the first round end later / stronger.
+
+## §39 Gingerbread Man vs 1,000 Cuts, Instagram ~30 min (31 Oct 00:19 TR, posted ~23:50)
+- 422 views / 44 viewers (preliminary, see §37 note), avg 7 s, skip 4.5%, likes 3, comments 1, saves/shares/reposts 0, follows 0.
+  Views exactly on the "typical Reels" line. Same age soap: 468 / 82, avg 10 s, skip 8.3%. Too early to judge; compare at ~10 h with onion (§38).
