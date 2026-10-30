@@ -3,6 +3,7 @@
 - File: Mango_1000_Cuts.mp4 (46.1 s, 1080x1920, 30 fps, -14.4 LUFS fixed gain). Same format as dragon fruit v2:
   rounds 10/50/100/250/500/1,000, slide transitions, camera push every round, cubes from half of each round's cuts, cone pile.
   1,000 cuts → 15,729,008 pieces. TikTok copy: offthebooks/releases/tiktok/TikTok_Mango_1000_Cuts.mp4
+- Re-rendered 30 Oct with the slide fix (the pile used to vanish mid-slide at round changes, leaving a ghost shadow).
 - Why mango: the most viewed video on @infiniteslice01's profile (17.4M).
 
 ## YouTube
