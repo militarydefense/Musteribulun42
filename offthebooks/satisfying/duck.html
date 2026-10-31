@@ -19,7 +19,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const W = 1080, H = 1920, FPS = 30;
-const RX = 2.05, RY = 1.27, RZ = 1.12;             // rubber duck: half length (x), half height (y), half depth (z); stands on y = 0
+const RX = 1.93, RY = 1.26, RZ = 1.1;             // rubber duck: half length (x), half height (y), half depth (z); stands on y = 0
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, x) => a + (b - a) * x;
 const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -57,7 +57,7 @@ const PRIMS = [
   { c: [-1.42, 1.22, 0], r: [.42, .36, .42], col: YEL },           // tail
   { c: [.88, 1.9, 0], r: [.66, .62, .64], col: YEL },              // head
   { c: [1.62, 1.78, 0], r: [.4, .14, .32], col: ORA },             // beak
-].map(p => ({ ...p, c: [-p.c[0], p.c[1], p.c[2]] }));             // mirrored: the head faces the camera side
+].map(p => ({ ...p, c: [-p.c[0] + .09, p.c[1], p.c[2]] }));   // mirrored: the head faces the camera side; centred so every cut touches the duck             // mirrored: the head faces the camera side
 const nrm = (lo, hi, c, r) => near(lo, hi, c) / r;
 // real piece count from the shape: slices i (x), layers l from the top (y), rows j from the front (z). A grid cell is one
 // piece when it touches the duck; along every (slice, layer) column the duck can be one or more separate runs in z.
@@ -165,7 +165,7 @@ function makeSet() {
   const whole = new THREE.InstancedMesh(partGeo, Object.assign(rindMat(), { clippingPlanes: [clipZ], clipShadows: true }), PRIMS.length);
   PRIMS.forEach((p, i) => { M.compose(P.set(...p.c), Q.identity(), S.set(...p.r)); whole.setMatrixAt(i, M); whole.setColorAt(i, COL.set(p.col)); });
   whole.castShadow = whole.receiveShadow = true; g.add(whole);
-  const cap = new THREE.InstancedMesh(capGeo, fleshMat(FLESH_DISC), PRIMS.length); cap.castShadow = true; g.add(cap);
+  const cap = new THREE.InstancedMesh(capGeo, Object.assign(fleshMat(FLESH_DISC), { side: THREE.DoubleSide }), PRIMS.length); cap.castShadow = true; cap.setColorAt(0, COL.set(YEL)); g.add(cap);
   const lineMat = new THREE.MeshStandardMaterial({ color: 0x7a5200, roughness: .7, clippingPlanes: [clipZ], clipShadows: true });
   const rings = new THREE.InstancedMesh(ringGeo, lineMat, 2000); g.add(rings);
   const ringsH = new THREE.InstancedMesh(ringGeoH, lineMat, 2000); g.add(ringsH);
@@ -183,7 +183,7 @@ const sets = [makeSet(), makeSet()];
 function put(im, i, x, y, z, w, h, d, rx = 0, ry = 0, rz = 0) { E.set(rx, ry, rz); Q.setFromEuler(E); P.set(x, y, z); S.set(w, h, d); M.compose(P, Q, S); im.setMatrixAt(i, M); }
 function setClip(set, plane, nx, nz, c) {
   plane.set(new THREE.Vector3(nx, 0, nz), c);
-  set.g.updateMatrixWorld(true);
+  rig.updateMatrixWorld(true);                                      // the rig's own world matrix too (stale before the first render)
   plane.applyMatrix4(set.g.matrixWorld);
 }
 const cutTimeB = (r, k) => cutAt(r.p2, r.p2e, r.b, k, r.pow);
@@ -197,15 +197,17 @@ function prepCells(r) {
     row.tc = cutTimeB(r, Math.max(1, Math.min(r.b, Math.ceil((j + 1) * hv / hz - 1e-6))));
     for (let l = 0; l < r.VC; l++) for (let v = 0; v < r.VA; v++) {
       const x0 = -RX + wv * v, x1 = x0 + wv, y1 = 2 * RY - hcv * l, y0 = y1 - hcv;
-      let a0 = 1e9, a1 = -1e9, b0 = 1e9, b1 = -1e9, c0 = 1e9, c1 = -1e9, col = YEL, best = 9;
+      let a0 = 1e9, a1 = -1e9, b0 = 1e9, b1 = -1e9, c0 = 1e9, c1 = -1e9, col = YEL, best = 9, bestVol = -1;
       for (const p of PRIMS) {
         const dx = nrm(x0, x1, p.c[0], p.r[0]), dy = nrm(y0, y1, p.c[1], p.r[1]), dz = nrm(z0, z1, p.c[2], p.r[2]), q = dx * dx + dy * dy + dz * dz;
         if (q >= 1) continue;
-        if (q < best) { best = q; col = p.col; }
+        best = Math.min(best, q);
         const ex = p.r[0] * Math.sqrt(1 - dy * dy - dz * dz), ey = p.r[1] * Math.sqrt(1 - dx * dx - dz * dz), ez = p.r[2] * Math.sqrt(1 - dx * dx - dy * dy);
         a0 = Math.min(a0, Math.max(x0, p.c[0] - ex)); a1 = Math.max(a1, Math.min(x1, p.c[0] + ex));
         b0 = Math.min(b0, Math.max(y0, p.c[1] - ey)); b1 = Math.max(b1, Math.min(y1, p.c[1] + ey));
         c0 = Math.min(c0, Math.max(z0, p.c[2] - ez)); c1 = Math.max(c1, Math.min(z1, p.c[2] + ez));
+        const vol = (Math.min(x1, p.c[0] + ex) - Math.max(x0, p.c[0] - ex)) * (Math.min(y1, p.c[1] + ey) - Math.max(y0, p.c[1] - ey)) * (Math.min(z1, p.c[2] + ez) - Math.max(z0, p.c[2] - ez));
+        if (vol > bestVol) { bestVol = vol; col = p.col; }      // the part that fills most of the cell gives the colour
       }
       if (best === 9) continue;
       const sx = Math.max(.02, a1 - a0), sy = Math.max(.02, b1 - b0), sz = Math.max(.02, c1 - c0);
