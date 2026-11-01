@@ -484,3 +484,12 @@ Uygulama (her bölüm, iki seri):
 ## §39 Gingerbread Man vs 1,000 Cuts, Instagram ~30 min (31 Oct 00:19 TR, posted ~23:50)
 - 422 views / 44 viewers (preliminary, see §37 note), avg 7 s, skip 4.5%, likes 3, comments 1, saves/shares/reposts 0, follows 0.
   Views exactly on the "typical Reels" line. Same age soap: 468 / 82, avg 10 s, skip 8.3%. Too early to judge; compare at ~10 h with onion (§38).
+
+## §40 YouTube @cut.counter — the channel "woke up" (1 Nov, 17:00 TR)
+- Last 60 min: 6,245 views across 6 Shorts (~1,000 each), in synchronized waves every ~15 min. Videos that were flat for
+  17–47 h (passion fruit, gingerbread, kiwi, pomegranate) jumped together right after the pineapple upload.
+- Traffic is real: Shorts feed 95.6–97.5% on every video, search 1–2.4%, channel pages 0.1–0.7%.
+- Stayed to watch (vs swiped): duck 72.3%, gingerbread 72.6%, kiwi 71.8%, pomegranate 71.4%, passion fruit 69.2%,
+  pineapple 56.4% (66 min old). Soap was 32.6%, NCK Part 5 58.3% → the cut format now holds YouTube viewers well.
+- Totals: pomegranate 1.3K, duck 1.3K, kiwi 1.2K, passion fruit 1.2K, gingerbread 1.1K, pineapple 1.0K; watermelon (old format) 2 in the last hour.
+- Keep: one video a day, same format; reply to comments; next = pillow (viewer request).
