@@ -32,15 +32,16 @@ const hash = (a, b, c = 0) => { let h = Math.imul(a | 0, 374761393) ^ Math.imul(
 const near = (a0, a1, c) => c < a0 ? a0 - c : c > a1 ? c - a1 : 0;     // distance from c to the range [a0, a1]
 
 // ---------- timeline: idle → lengthwise cuts → turn → horizontal cuts → turn → crosswise cuts → hold → slide ----------
-const PLAN = [[10, 4.0], [50, 4.6], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6.6]];
+const PLAN = [[10, 2.2], [50, 4.2], [100, 5.0], [250, 5.4], [500, 5.8], [1000, 6.6]];   // a fast first round: viewers leave in the first seconds
 const IDLE = .3, TURN = .38, HOLD = .75, SLIDE = .5, LAST_HOLD = 1.9;
 const ROUNDS = []; let acc = 0;
 PLAN.forEach(([n, w], i) => {
   const ac = Math.round(n / 2), a = Math.round(ac * RX / (RX + RY)), c = ac - a, b = n - ac;   // like the reference: cubes start at half of the cuts
   const r = { i, n, a, c, b, t0: acc };
-  r.p1 = acc + IDLE; r.p1e = r.p1 + w * a / n;                     // A: lengthwise (x)
-  r.p3 = r.p1e + TURN; r.p3e = r.p3 + w * c / n;                   // C: horizontal (y), top to bottom
-  r.p2 = r.p3e + TURN; r.p2e = r.p2 + w * b / n;                   // B: crosswise (z), front to back
+  const idle = i === 0 ? .03 : IDLE, turn = i === 0 ? .26 : TURN;  // the very first cut lands right away
+  r.p1 = acc + idle; r.p1e = r.p1 + w * a / n;                     // A: lengthwise (x)
+  r.p3 = r.p1e + turn; r.p3e = r.p3 + w * c / n;                   // C: horizontal (y), top to bottom
+  r.p2 = r.p3e + turn; r.p2e = r.p2 + w * b / n;                   // B: crosswise (z), front to back
   r.hold = r.p2e; r.slide = r.p2e + (i === PLAN.length - 1 ? LAST_HOLD : HOLD); r.t1 = r.slide + SLIDE;
   r.pow = n <= 50 ? 1 : 1.25;
   r.VA = Math.min(a + 1, 56); r.VC = Math.min(c + 1, 32); r.VB = Math.min(b + 1, 36);   // drawn grid (the counter always uses the real one)
@@ -340,7 +341,7 @@ function knifeAt(r, t) {
     return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)), y: k === 0 ? REST_Y * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, dir: 'a' };
   }
   if (t < r.p3) {                                                  // lift out, swing round and lie flat in front of the melon
-    const u = easeInOut((t - r.p1e) / TURN), q = qa.clone().slerp(QC, u);
+    const u = easeInOut((t - r.p1e) / (r.p3 - r.p1e)), q = qa.clone().slerp(QC, u);
     return { q, x: lerp(xCut(r, r.a), B_X, u), y: lerp(0, yCut(r, 1), u) + (2 * RY + .6) * Math.sin(Math.PI * u), z: lerp(A_Z, C_Z0, u) };
   }
   if (t < r.p3e) {
@@ -350,7 +351,7 @@ function knifeAt(r, t) {
     return { q: QC, x: B_X, y, z: ph < .35 && k > 0 ? lerp(C_Z1, C_Z0, back) : lerp(C_Z0, C_Z1, push), dir: 'c' };
   }
   if (t < r.p2) {                                                  // pull out the back, stand up for the crosswise cuts
-    const u = easeInOut((t - r.p3e) / TURN), q = QC.clone().slerp(qb, u);
+    const u = easeInOut((t - r.p3e) / (r.p2 - r.p3e)), q = QC.clone().slerp(qb, u);
     return { q, x: B_X, y: lerp(yCut(r, r.c), LIFT, u) + (2 * RY - yCut(r, r.c) + .4) * Math.sin(Math.PI * u), z: lerp(C_Z1, zCut(r, 1), u) };
   }
   if (t < r.p2e) {
