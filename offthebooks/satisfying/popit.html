@@ -19,7 +19,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const W = 1080, H = 1920, FPS = 30;
-const RX = 2.2, RY = .19, RZ = 2.02, HS = 3.6;               // heart pop-it: half width (x), half thickness (y), half length (z); lies flat on y = 0
+const RX = 2.175, RY = .19, RZ = 1.99, HS = 3.6;     // RX, RZ = the heart's own extent, so every cut touches it               // heart pop-it: half width (x), half thickness (y), half length (z); lies flat on y = 0
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, x) => a + (b - a) * x;
 const easeOut = x => 1 - Math.pow(1 - clamp(x), 3), easeIn = x => Math.pow(clamp(x), 3), easeInOut = x => (x = clamp(x), x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
