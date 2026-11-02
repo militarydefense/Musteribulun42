@@ -154,10 +154,10 @@ const DONUT_TEX = canvasTex(2048, 512, (g, w, h) => {
 DONUT_TEX.wrapS = THREE.RepeatWrapping; DONUT_TEX.flipY = false; DONUT_TEX.needsUpdate = true;   // canvas row = v, so the icing sits on top
 const NOISE = canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(0,0,0,${.03 + rnd() * .05})`; g.beginPath(); g.arc(rnd() * w, rnd() * h, 1 + rnd() * 2.5, 0, 7); g.fill(); } });
 // cut lines drawn by the shader: lengthwise lines every wv up to nva, horizontal lines every hcv down to nvc
-const CUTU = { uWv: { value: 1 }, uNa: { value: 0 }, uHc: { value: 1 }, uNc: { value: 0 }, uLw: { value: .01 } };
-function withCutLines(m) {
+const cutUniforms = () => ({ uWv: { value: 1 }, uNa: { value: 0 }, uHc: { value: 1 }, uNc: { value: 0 }, uLw: { value: .01 } });
+function withCutLines(m, U) {                                       // each set has its own lines (the incoming donut is still uncut)
   m.onBeforeCompile = sh => {
-    Object.assign(sh.uniforms, CUTU);
+    Object.assign(sh.uniforms, U);
     sh.vertexShader = 'varying vec3 vLoc;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvLoc = position;');
     sh.fragmentShader = 'varying vec3 vLoc;\nuniform float uWv, uNa, uHc, uNc, uLw;\n' + sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
       { float fx = (vLoc.x + ${RX.toFixed(4)}) / uWv, fy = (${(2 * RY).toFixed(4)} - vLoc.y) / uHc;
@@ -176,7 +176,8 @@ const CUBES = 40000, CAPW = 512, CAPH = 160;
 function makeSet() {
   const g = new THREE.Group(); rig.add(g);
   const clipZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const whole = new THREE.Mesh(donutGeo, withCutLines(new THREE.MeshPhysicalMaterial({ map: DONUT_TEX, roughness: .45, clearcoat: .35, clearcoatRoughness: .3, clippingPlanes: [clipZ], clipShadows: true })));
+  const U = cutUniforms();
+  const whole = new THREE.Mesh(donutGeo, withCutLines(new THREE.MeshPhysicalMaterial({ map: DONUT_TEX, roughness: .45, clearcoat: .35, clearcoatRoughness: .3, clippingPlanes: [clipZ], clipShadows: true }), U));
   whole.castShadow = whole.receiveShadow = true; g.add(whole);
   const capCanvas = document.createElement('canvas'); capCanvas.width = CAPW; capCanvas.height = CAPH;
   const capTex = new THREE.CanvasTexture(capCanvas); capTex.colorSpace = THREE.SRGBColorSpace;
@@ -185,7 +186,7 @@ function makeSet() {
   const cubes = new THREE.InstancedMesh(boxGeo, new THREE.MeshStandardMaterial({ map: NOISE, roughness: .6 }), CUBES);
   cubes.castShadow = cubes.receiveShadow = true; cubes.setColorAt(0, COL.set('#fff')); g.add(cubes);
   g.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; });
-  return { g, whole, cap, capCanvas, capTex, clipZ, cubes, bracts: { visible: true } };
+  return { g, whole, U, cap, capCanvas, capTex, clipZ, cubes, bracts: { visible: true } };
 }
 const sets = [makeSet(), makeSet()];
 function setClip(set, plane, nx, nz, c) {
@@ -254,11 +255,9 @@ function drawMelon(set, r, t, offset) {
   const ka = Math.floor(countAt(t, r.p1, r.p1e, r.a, r.pow) + 1e-6), kc = Math.floor(countAt(t, r.p3, r.p3e, r.c, r.pow) + 1e-6),
         kb = Math.floor(countAt(t, r.p2, r.p2e, r.b, r.pow) + 1e-6);
   const w = 2 * RX / (r.a + 1), hc = 2 * RY / (r.c + 1), hz = 2 * RZ / (r.b + 1), wv = 2 * RX / r.VA, hcv = 2 * RY / r.VC, hv = 2 * RZ / r.VB;
-  // the shader uniforms are shared by both sets: the incoming melon (offset != 0 and nothing cut) must not overwrite them
-  if (offset === 0 || ka + kc + kb > 0) {
-    CUTU.uWv.value = wv; CUTU.uHc.value = hcv; CUTU.uLw.value = Math.max(.008, Math.min(.016, Math.min(wv, hcv) * .14));
-    CUTU.uNa.value = Math.min(r.VA - 1, Math.floor((w * ka) / wv + 1e-6)); CUTU.uNc.value = Math.min(r.VC - 1, Math.floor((hc * kc) / hcv + 1e-6));
-  }
+  const U = set.U;
+  U.uWv.value = wv; U.uHc.value = hcv; U.uLw.value = Math.max(.008, Math.min(.016, Math.min(wv, hcv) * .14));
+  U.uNa.value = Math.min(r.VA - 1, Math.floor((w * ka) / wv + 1e-6)); U.uNc.value = Math.min(r.VC - 1, Math.floor((hc * kc) / hcv + 1e-6));
   let nn = 0;
   if (kb === 0) {
     setClip(set, set.clipZ, 0, -1, RZ + 1); set.cap.visible = false;
