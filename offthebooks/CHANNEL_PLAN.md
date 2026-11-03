@@ -493,3 +493,12 @@ Uygulama (her bölüm, iki seri):
   pineapple 56.4% (66 min old). Soap was 32.6%, NCK Part 5 58.3% → the cut format now holds YouTube viewers well.
 - Totals: pomegranate 1.3K, duck 1.3K, kiwi 1.2K, passion fruit 1.2K, gingerbread 1.1K, pineapple 1.0K; watermelon (old format) 2 in the last hour.
 - Keep: one video a day, same format; reply to comments; next = pillow (viewer request).
+
+## §41 YouTube — Melon (kavun) vs 1,000 Cuts at 38 h (3 Nov, 11:26 TR) — best video so far
+- 9,021 views, 2.7K unique viewers (3.3 views per viewer → strong looping), +12 subscribers, 49.9 watch hours,
+  avg view 0:26 of 0:46 (55.4%), stayed 73.1%, Shorts feed 96.4%, search 2.6%.
+- Retention curve (read off the chart): starts ~115% (replays), ~110% until ~4 s, drops to ~75% by ~8 s
+  (end of the 10-cut round at 5.5 s + first slide), then a slow slide to ~40% at 44 s, small drop at the very end.
+- Melon still had the OLD pacing. Pumpkin, pop-it, Rubik, donut, avocado have the fast first round (first slide at 3.5 s):
+  compare their curves at the same age — does the 4–8 s drop move earlier / shrink?
+- Other YouTube 1 Nov–3 Nov: donut 1.8K at 10.5 h, Rubik 1.6K at 15 h, pop-it 1.2K at 21 h.
