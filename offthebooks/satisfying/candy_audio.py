@@ -44,13 +44,13 @@ def build():
     base = audio.read(OUT / "audio.wav")
     tl = json.loads((OUT / "timeline.json").read_text())
     cuts = np.array(tl["cuts"]); prev = np.insert(np.diff(cuts), 0, 1.0); nxt = np.append(np.diff(cuts), 1.0)
-    mix = base * .55
+    mix = base * .4                                                 # knife quieter, the candy crack leads
     for i, t in enumerate(cuts):
         rate = 1 / max(min(prev[i], nxt[i]), 1e-3)
         c = crack(rate > 12) * min(1.0, 5.0 / rate) ** .5
         s = int(t * SR) - int(.002 * SR)
         if 0 <= s < len(mix):
-            e = min(len(mix), s + len(c)); mix[s:e] += c[: e - s] * .9
+            e = min(len(mix), s + len(c)); mix[s:e] += c[: e - s] * 1.1
     mix /= np.abs(mix).max() + 1e-9
     audio.write(OUT / "audio.wav", mix * .9, ch=2)
     print("candy audio", round(len(mix) / SR, 2), "s,", len(cuts), "cracks")
