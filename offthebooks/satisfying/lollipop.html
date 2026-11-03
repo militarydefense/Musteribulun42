@@ -170,15 +170,15 @@ const EDGE = OUTLINE.map(([x, z], i) => { const [x2, z2] = OUTLINE[(i + 1) % OUT
   return { x: (x + x2) / 2 - dz / l * .03, z: (z + z2) / 2 + dx / l * .03, l, a: Math.atan2(-dz, dx) }; });
 // ---------- pop-it: rainbow silicone heart ----------
 // bands from the back (top of the heart) to the front (tip): purple, blue, teal, yellow, orange, red
-const BAND_COL = ['#f0287a', '#ff6a12', '#ffc800', '#2fb84a', '#18b4e8', '#a83fc8'];
-const STICK = '#f4dcc8', PITCH = DR / 4.6;
+const BAND_COL = ['#ff1a78', '#ff5a00', '#ffd000', '#22c83c', '#00b8f0', '#b030e0'];
+const STICK = '#f4dcc8', PITCH = DR / 4.8;
 // a rope coiled in a spiral (r = PITCH * turns): which coil a point is on, where across it, and how far along it
 const ropeAt = (x, dz) => { const r = Math.hypot(x, dz), th = (Math.atan2(dz, x) / 6.2832 + 1) % 1, sp = r / PITCH - th, n = Math.floor(sp);
   return { r, across: sp - n, along: n * 7 + th * (7 + 5 * Math.min(1, r / DR)) }; };   // stripes per turn grow a little toward the rim
 const colAt = (x, z) => {                                          // twisted rainbow rope: diagonal stripes with thin white lines, cream stick
   const dz = z - DZC, q = ropeAt(x, dz); if (q.r > DR && Math.abs(x) < SW + .08) return STICK;
   const st = q.along + q.across * 1.1, f = st - Math.floor(st);
-  return f < .06 ? '#fff4f4' : BAND_COL[((Math.floor(st) % 6) + 6) % 6];
+  return f < .07 ? '#ffffff' : BAND_COL[((Math.floor(st) % 6) + 6) % 6];
 };
 const BUBBLES = [{ x: 0, z: -9, c: 0 }], BR = .001;
 const TOPW = 1400, TOPH = 2700;
@@ -187,8 +187,9 @@ const TOP = canvasTex(TOPW, TOPH, (g, w, h) => {
   const img = g.createImageData(w, h), C = new THREE.Color();
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const wx = -RX + (x + .5) / w * 2 * RX, wz = RZ - (y + .5) / h * 2 * RZ, p = (y * w + x) * 4; C.set(colAt(wx, wz));
-    const q = ropeAt(wx, wz - DZC), sh = q.r <= DR ? .55 + .5 * Math.sin(Math.PI * q.across) ** .6 : .8 + .2 * Math.cos(Math.min(1, Math.abs(wx) / SW) * 1.5);   // each coil is round: dark grooves between   // glossy ridges on the swirl
-    img.data[p] = 255 * C.r * sh; img.data[p + 1] = 255 * C.g * sh; img.data[p + 2] = 255 * C.b * sh; img.data[p + 3] = 255;
+    const q = ropeAt(wx, wz - DZC), sh = q.r <= DR ? .62 + .42 * Math.sin(Math.PI * q.across) ** .7 : .8 + .2 * Math.cos(Math.min(1, Math.abs(wx) / SW) * 1.5);   // each coil is round: dark grooves between   // glossy ridges on the swirl
+    const hl = q.r <= DR ? Math.max(0, 1 - Math.abs(q.across - .32) / .1) ** 2 * .55 : 0;   // a shiny line along every coil
+    img.data[p] = 255 * Math.min(1, C.r * sh + hl); img.data[p + 1] = 255 * Math.min(1, C.g * sh + hl); img.data[p + 2] = 255 * Math.min(1, C.b * sh + hl); img.data[p + 3] = 255;
   }
   g.putImageData(img, 0, 0);
   for (let i = 0; i < 9000; i++) { g.fillStyle = `rgba(255,255,255,${.02 + rnd() * .04})`; g.fillRect(rnd() * w, rnd() * h, 2, 2); }
@@ -196,8 +197,9 @@ const TOP = canvasTex(TOPW, TOPH, (g, w, h) => {
 TOP.repeat.set(1 / (2 * RX), 1 / (2 * RZ)); TOP.offset.set(.5, .5);
 const RIND = canvasTex(64, 64, (g, w, h) => { g.fillStyle = '#ffffff'; g.fillRect(0, 0, w, h); });
 const FLESH = RIND, FLESH_DISC = RIND;
-const rindMat = () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .25, clearcoat: .8, clearcoatRoughness: .12, envMapIntensity: .3 });
-const fleshMat = () => new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .6 });
+// hard candy: glossy, and not tone-mapped so the colours stay as bright as the reference photo
+const rindMat = () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .2, clearcoat: 1, clearcoatRoughness: .06, envMapIntensity: .2 });
+const fleshMat = () => new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .3 });
 
 // geometry: the outline extruded to the toy's thickness, lying flat (top at y = 2RY, bottom at 0); sides coloured by band
 const shape = new THREE.Shape(OUTLINE.map(([x, z]) => new THREE.Vector2(x, z)));
@@ -212,7 +214,8 @@ const CUBES = 36000;
 function makeSet() {
   const g = new THREE.Group(); rig.add(g);
   const clipZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const top = new THREE.MeshPhysicalMaterial({ map: TOP, roughness: .4, clearcoat: .35, clearcoatRoughness: .3, envMapIntensity: .15, clippingPlanes: [clipZ], clipShadows: true });
+  const top = new THREE.MeshBasicMaterial({ map: TOP, toneMapped: false,       // colours and shine baked into the texture: as bright as the photo
+    clippingPlanes: [clipZ], clipShadows: true });
   const side = Object.assign(rindMat(), { vertexColors: true, clippingPlanes: [clipZ], clipShadows: true });
   const whole = new THREE.Mesh(cookieGeo, [top, side]); whole.castShadow = whole.receiveShadow = true; g.add(whole);
   const bubbles = new THREE.InstancedMesh(bubbleGeo, Object.assign(rindMat(), { clippingPlanes: [clipZ], clipShadows: true }), BUBBLES.length);
@@ -223,7 +226,8 @@ function makeSet() {
   const rings = new THREE.InstancedMesh(boxGeo, lineMat, 600); g.add(rings);
   const ringsH = new THREE.InstancedMesh(boxGeo, lineMat, 2400); g.add(ringsH);
   const capLines = new THREE.InstancedMesh(boxGeo, new THREE.MeshStandardMaterial({ color: 0x000000, transparent: true, opacity: .3 }), 600); g.add(capLines);
-  const cubes = [0, 1, 2, 3].map(() => { const im = new THREE.InstancedMesh(boxGeo, rindMat(), CUBES); im.castShadow = im.receiveShadow = true; im.setColorAt(0, COL.set('#ffffff')); g.add(im); return im; });
+  const cubeMat = new THREE.MeshLambertMaterial({ color: 0xffffff, toneMapped: false });   // saturated pieces: lit, but not washed out by the tone curve
+  const cubes = [0, 1, 2, 3].map(() => { const im = new THREE.InstancedMesh(boxGeo, cubeMat, CUBES); im.castShadow = im.receiveShadow = true; im.setColorAt(0, COL.set('#ffffff')); g.add(im); return im; });
   g.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; });
   return { g, whole, cap, clipZ, rings, ringsH, lineMat, capLines, cubes, bracts: { visible: true } };
 }
