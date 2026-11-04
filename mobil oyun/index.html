@@ -13,7 +13,8 @@
   :root {
     color-scheme: dark;
     --bg: #1c110a;
-    --gold: #ffcf4a; --gold-deep: #8a3a00; --red: #ff4a4a; --text: #fff7e8;
+    --gold: #ffcf4a; --gold-deep: #8a3a00; --red: #ff4a4a; --green: #7ee05a; --text: #fff7e8;
+    --panel: rgba(20, 10, 4, 0.55);
     --display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
     --body: "Nunito", "Trebuchet MS", system-ui, sans-serif;
   }
@@ -24,36 +25,52 @@
     touch-action: none; user-select: none; -webkit-user-select: none;
   }
   canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+  .hidden { display: none !important; }
+
+  /* ---- HUD ---- */
+  #timebar { position: fixed; top: 0; left: 0; right: 0; height: calc(6px + env(safe-area-inset-top, 0px)); background: rgba(0,0,0,.45); pointer-events: none; }
+  #timebar i { position: absolute; left: 0; bottom: 0; height: 6px; width: 100%; background: var(--green); transition: background .3s; box-shadow: 0 0 10px currentColor; }
   #hud {
     position: fixed; top: 0; left: 0; right: 0;
-    padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
-    display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 8px; pointer-events: none;
   }
-  #score { font-family: var(--display); font-size: 48px; line-height: 1; color: var(--gold);
+  #score { font-family: var(--display); font-size: 46px; line-height: 1; color: var(--gold);
     text-shadow: 0 4px 0 var(--gold-deep), 0 0 18px #0009; transform-origin: left center; }
-  #best { font-size: 14px; font-weight: 800; opacity: .8; margin-top: 6px; }
-  #right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-  #lives { font-size: 30px; letter-spacing: 2px; filter: drop-shadow(0 2px 2px #0008); }
-  #timer { font-family: var(--display); font-size: 36px; line-height: 1; color: var(--gold); text-shadow: 0 3px 0 var(--gold-deep); }
+  #best { font-size: 13px; font-weight: 800; margin-top: 6px; text-shadow: 0 1px 3px #000; opacity: .92; }
+  #goal { justify-self: center; width: min(170px, 38vw); margin-top: 4px; background: var(--panel); border-radius: 14px; padding: 6px 10px 8px; text-align: center; }
+  #goalTxt { font-weight: 900; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .gbar { height: 10px; border-radius: 6px; background: rgba(255,255,255,.18); overflow: hidden; margin-top: 4px; }
+  .gbar i { display: block; height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg, #ffcf4a, #ff8a1a); transition: width .2s; }
+  #goal.full .gbar i { background: linear-gradient(90deg, #9ef07a, #3ac030); }
+  #right { justify-self: end; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  #lives { font-size: 28px; letter-spacing: 2px; filter: drop-shadow(0 2px 2px #0008); }
+  #timer { font-family: var(--display); font-size: 40px; line-height: 1; color: var(--gold); text-shadow: 0 3px 0 var(--gold-deep), 0 0 12px #0008; font-variant-numeric: tabular-nums; }
+  #timer small { font-size: 16px; margin-left: 2px; }
+  #timer.low { color: #ff5a5a; text-shadow: 0 3px 0 #6a0000; animation: pulse .5s ease-in-out infinite alternate; }
+  @keyframes pulse { to { transform: scale(1.12); } }
   .iconBtn {
     pointer-events: auto; background: #0007; border: 2px solid #fff3; color: var(--text);
     border-radius: 14px; font-size: 18px; width: 46px; height: 46px; cursor: pointer;
   }
+
+  /* ---- Ekranlar ---- */
   .screen {
     position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 14px; padding: 16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px));
-    text-align: center; background: radial-gradient(circle at 50% 40%, #0004, #000b);
+    gap: 12px; padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    text-align: center; background: radial-gradient(circle at 50% 40%, #0005, #000c); overflow-y: auto;
   }
-  .hidden { display: none !important; }
-  h1 {
-    font-family: var(--display); font-weight: 400;
-    margin: 0 0 6px; font-size: clamp(48px, 14vw, 84px); line-height: .95; color: var(--gold);
-    text-shadow: 0 6px 0 var(--gold-deep), 0 10px 24px #000a, 0 0 40px #ff8a0066; transform: rotate(-4deg);
-    animation: bob 2.4s ease-in-out infinite;
+  h1, h2 {
+    font-family: var(--display); font-weight: 400; margin: 0 0 4px; color: var(--gold); text-wrap: balance;
+    text-shadow: 0 6px 0 var(--gold-deep), 0 10px 24px #000a;
   }
+  h1 { font-size: clamp(46px, 13vw, 80px); line-height: .95; transform: rotate(-4deg); }
+  h2 { font-size: clamp(34px, 9vw, 52px); line-height: 1; }
+  #menu h1 { animation: bob 2.4s ease-in-out infinite; }
   h1 .l2 { color: #9ef07a; text-shadow: 0 6px 0 #1f6a10, 0 10px 24px #000a; }
   @keyframes bob { 50% { transform: rotate(-2deg) translateY(-6px); } }
-  .sub { opacity: .9; margin: 0 0 8px; max-width: 340px; font-weight: 600; line-height: 1.4; text-wrap: balance; }
+  .sub { opacity: .92; margin: 0; max-width: 340px; font-weight: 700; line-height: 1.4; text-wrap: balance; }
+  .label { font-size: 12px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-top: 6px; }
   .btn {
     width: min(300px, 100%); padding: 14px 20px; font-family: var(--display); font-size: 24px; letter-spacing: .5px;
     border: none; border-radius: 18px; color: #3a1f08; cursor: pointer;
@@ -61,23 +78,58 @@
     transition: transform .08s;
   }
   .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #a8650a; }
-  .btn:focus-visible, .iconBtn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .btn:focus-visible, .iconBtn:focus-visible, .lvl:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .btn.big { font-size: 30px; padding: 18px 20px; }
   .btn.alt { background: linear-gradient(#b4f590, #4fc030); box-shadow: 0 6px 0 #2b7a14, 0 10px 20px #0007; color: #143a08; }
   .btn.alt2 { background: linear-gradient(#a8e2ff, #3aa0f0); box-shadow: 0 6px 0 #1a5a9a, 0 10px 20px #0007; color: #0a2a4a; }
+  .btn.ghost { background: rgba(255,255,255,.12); box-shadow: none; color: var(--text); border: 2px solid rgba(255,255,255,.25); font-size: 20px; padding: 10px 16px; }
   .btn small { display: block; font-family: var(--body); font-size: 13px; font-weight: 800; opacity: .75; letter-spacing: 0; }
-  #finalScore { font-family: var(--display); font-size: 80px; line-height: 1; color: var(--gold); text-shadow: 0 6px 0 var(--gold-deep); }
+  .row { display: flex; gap: 10px; width: min(300px, 100%); }
+  .row .btn { font-size: 18px; padding: 10px 6px; }
+  .row .btn small { font-size: 11px; }
+
+  #levelGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; width: min(360px, 100%); }
+  .lvl {
+    aspect-ratio: 1; border: none; border-radius: 16px; cursor: pointer; color: #fff; font-family: var(--display); font-size: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    box-shadow: inset 0 -5px 0 rgba(0,0,0,.3), 0 4px 10px #0006; text-shadow: 0 2px 0 rgba(0,0,0,.45);
+  }
+  .lvl .st { font-size: 11px; letter-spacing: 1px; color: #ffd84a; font-family: var(--body); font-weight: 900; }
+  .lvl.locked { filter: grayscale(1) brightness(.55); cursor: default; }
+  .lvl.next { outline: 3px solid #fff; animation: pulse .7s ease-in-out infinite alternate; }
+  #introCard, #doneCard {
+    background: var(--panel); border: 2px solid rgba(255,255,255,.14); border-radius: 22px; padding: 18px 20px;
+    width: min(320px, 100%); display: flex; flex-direction: column; gap: 10px; backdrop-filter: blur(4px);
+  }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fact { background: rgba(255,255,255,.08); border-radius: 12px; padding: 8px; }
+  .fact b { display: block; font-family: var(--display); font-weight: 400; font-size: 28px; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .fact span { font-size: 12px; font-weight: 800; opacity: .8; }
+  #introFruits { font-size: 13px; font-weight: 800; opacity: .9; }
+  .tip { font-size: 13px; font-weight: 700; opacity: .85; line-height: 1.35; }
+  #stars { font-size: 52px; letter-spacing: 6px; line-height: 1; }
+  #stars span { display: inline-block; color: rgba(255,255,255,.2); transform: scale(.4); transition: transform .35s cubic-bezier(.3,1.8,.5,1), color .2s; }
+  #stars span.on { color: #ffd84a; transform: scale(1); text-shadow: 0 0 18px #ffb020; }
+  #finalScore { font-family: var(--display); font-size: 76px; line-height: 1; color: var(--gold); text-shadow: 0 6px 0 var(--gold-deep); }
   #newBest { color: #9ef07a; font-weight: 900; font-size: 20px; }
   #muteBtn { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); }
-  @media (prefers-reduced-motion: reduce) { h1 { animation: none; } }
+  #legend { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 340px; }
+  #legend span { font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,.1); }
+  @media (prefers-reduced-motion: reduce) { #menu h1, .lvl.next, #timer.low { animation: none; } }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
+<div id="timebar" class="hidden"><i id="timeFill"></i></div>
 <div id="hud" class="hidden">
   <div>
     <div id="score">0</div>
     <div id="best">En iyi: 0</div>
+  </div>
+  <div id="goal" class="hidden">
+    <div id="goalTxt">Hedef 0/15</div>
+    <div class="gbar"><i id="goalFill"></i></div>
   </div>
   <div id="right">
     <div id="lives"></div>
@@ -88,24 +140,70 @@
 
 <div id="menu" class="screen">
   <h1>Kes Kes<br><span class="l2">Bahçe!</span></h1>
-  <p class="sub">Parmağını kaydırıp meyveleri kes. Bombalara dokunma! Tek hamlede çok meyve kesersen kombo kazanırsın.</p>
-  <button class="btn" data-mode="classic">Klasik<small>3 can · bombalara dikkat</small></button>
-  <button class="btn alt" data-mode="timed">Süreli<small>60 saniye · bomba −10 puan</small></button>
-  <button class="btn alt2" data-mode="zen">Zen<small>90 saniye · bomba yok</small></button>
+  <p class="sub">Parmağını kaydırıp meyveleri kes, bombalardan uzak dur. Süre bitmeden bölüm hedefine ulaş!</p>
+  <button class="btn big" id="levelsBtn">Bölümler<small>Survival · her bölüm daha zor</small></button>
+  <div class="label">Serbest oyun</div>
+  <div class="row">
+    <button class="btn" data-mode="classic">Klasik<small>3 can</small></button>
+    <button class="btn alt" data-mode="timed">Süreli<small>60 sn</small></button>
+    <button class="btn alt2" data-mode="zen">Zen<small>bombasız</small></button>
+  </div>
+</div>
+
+<div id="levels" class="screen hidden">
+  <h2>Bölümler</h2>
+  <p class="sub" id="levelsInfo">Bir bölüm seç</p>
+  <div id="levelGrid"></div>
+  <div id="legend">
+    <span style="color:#7ee05a">+3 sn · Nadir</span>
+    <span style="color:#6ab8ff">+5 sn · Çok nadir</span>
+    <span style="color:#c890ff">+10 sn · Destansı</span>
+    <span style="color:#ffc040">+15 sn · Efsanevi</span>
+  </div>
+  <button class="btn ghost" id="levelsBack">← Ana Menü</button>
+</div>
+
+<div id="intro" class="screen hidden">
+  <h2 id="introNum">Bölüm 1</h2>
+  <div id="introCard">
+    <div id="introTheme" class="label" style="margin:0;opacity:1;font-size:14px">Bahçe Tezgahı</div>
+    <div class="facts">
+      <div class="fact"><b id="introGoal">15</b><span>puan hedefi</span></div>
+      <div class="fact"><b id="introTime">40</b><span>saniye</span></div>
+    </div>
+    <div id="introFruits"></div>
+    <div class="tip" id="introTip"></div>
+  </div>
+  <button class="btn big" id="introGo">Başla!</button>
+  <button class="btn ghost" id="introMap">Bölüm Haritası</button>
 </div>
 
 <div id="pauseScreen" class="screen hidden">
-  <h1>Mola</h1>
+  <h2>Mola</h2>
   <button class="btn" id="resumeBtn">Devam Et</button>
   <button class="btn alt2" id="quitBtn">Ana Menü</button>
 </div>
 
+<div id="done" class="screen hidden">
+  <h2 id="doneTitle">Bölüm Tamamlandı!</h2>
+  <div id="stars"><span>★</span><span>★</span><span>★</span></div>
+  <div id="doneCard">
+    <div class="facts">
+      <div class="fact"><b id="doneLeft">0</b><span>kalan saniye</span></div>
+      <div class="fact"><b id="doneBonus">+0</b><span>süre bonusu</span></div>
+    </div>
+    <div class="fact"><b id="doneTotal">0</b><span>toplam puan</span></div>
+  </div>
+  <button class="btn big alt" id="nextBtn">Sonraki Bölüm →</button>
+  <button class="btn ghost" id="doneMap">Bölüm Haritası</button>
+</div>
+
 <div id="over" class="screen hidden">
-  <h1 id="overTitle">Oyun Bitti</h1>
+  <h2 id="overTitle">Oyun Bitti</h2>
   <div id="finalScore">0</div>
   <div id="newBest" class="hidden">🏆 Yeni rekor!</div>
   <div id="stats" class="sub"></div>
-  <button class="btn" id="againBtn">Tekrar Oyna</button>
+  <button class="btn" id="againBtn">Tekrar Dene</button>
   <button class="btn alt2" id="menuBtn">Ana Menü</button>
 </div>
 
@@ -157,6 +255,10 @@
     miss() { tone(300, 0.25, 'square', 0.08, -150); },
     combo(n) { [0, 1, 2].forEach(i => setTimeout(() => tone(500 + n * 60 + i * 180, 0.12, 'triangle', 0.12), i * 70)); },
     special() { tone(880, 0.3, 'sine', 0.15, 440); },
+    rare() { tone(1200, 0.25, 'sine', 0.06, 600); },
+    time(sec) { const n = sec >= 10 ? 5 : sec >= 5 ? 4 : 3; for (let i = 0; i < n; i++) setTimeout(() => tone(660 * Math.pow(1.26, i), 0.14, 'triangle', 0.14), i * 70); },
+    tick() { tone(1000, 0.05, 'square', 0.05); },
+    win() { [0, 4, 7, 12].forEach((s, i) => setTimeout(() => tone(523 * Math.pow(2, s / 12), 0.22, 'triangle', 0.14), i * 110)); },
   };
   const muteBtn = document.getElementById('muteBtn');
   function updMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
@@ -173,15 +275,75 @@
     { name: 'nar',      r: 42, skin: '#c0182e', skin2: '#6a0614', rind: '#ffe6d6', flesh: '#ffdccc', juice: '#d8103a', fleshScale: 0.9 },
     { name: 'kivi',     r: 34, skin: '#9a7440', skin2: '#5a4020', rind: '#7ac030', flesh: '#8ad83a', juice: '#9ae04a', fleshScale: 0.94, oval: 1.22 },
     { name: 'şeftali',  r: 38, skin: '#ffb070', skin2: '#e0604a', rind: '#ffd88a', flesh: '#ffc860', juice: '#ffb070', fleshScale: 0.94 },
+    { name: 'çilek',    r: 33, skin: '#ee2a40', skin2: '#8a0a1a', rind: '#ff7a8a', flesh: '#ffb4bc', juice: '#ff2a48', fleshScale: 0.9, shape: 'straw' },
+    { name: 'kiraz',    r: 27, skin: '#c8102c', skin2: '#4a030c', rind: '#a00a20', flesh: '#d81a3c', juice: '#a8102a', fleshScale: 0.9 },
+    { name: 'erik',     r: 33, skin: '#7a40b0', skin2: '#2a1050', rind: '#e8c860', flesh: '#f6dc6a', juice: '#c08ae0', fleshScale: 0.92, oval: 1.06 },
+    { name: 'mango',    r: 41, skin: '#ffb830', skin2: '#d0402a', rind: '#ffd060', flesh: '#ffb020', juice: '#ffa010', fleshScale: 0.93, oval: 1.25 },
+    { name: 'ejder',    r: 41, skin: '#ff3a90', skin2: '#9a0a50', rind: '#ff6ab0', flesh: '#fbf6f0', juice: '#ff5aa8', fleshScale: 0.9, oval: 1.12 },
+    { name: 'hindistan', r: 41, skin: '#7a5030', skin2: '#2e1808', rind: '#4a2e18', flesh: '#fbfaf4', juice: '#eef6ff', fleshScale: 0.86 },
+    { name: 'ananas',   r: 45, skin: '#e0a020', skin2: '#7a4a10', rind: '#ffe07a', flesh: '#ffe04a', juice: '#ffe04a', fleshScale: 0.88, shape: 'pine' },
+    { name: 'muz',      r: 42, skin: '#ffe040', skin2: '#b08a10', rind: '#fff4c0', flesh: '#fff3c8', juice: '#fff6d0', fleshScale: 0.8, shape: 'banana' },
   ];
+  const FRUIT_BY = Object.fromEntries(FRUITS.map(f => [f.name, f]));
   const GOLDEN = { name: 'altın', r: 40, skin: '#ffd700', skin2: '#b8860b', rind: '#fff6c0', flesh: '#ffe680', juice: '#ffe14a', fleshScale: 0.88, golden: true, pts: 5 };
   const FREEZE = { name: 'buz',   r: 38, skin: '#a8ecff', skin2: '#2a90d0', rind: '#ffffff', flesh: '#d8f6ff', juice: '#c8f2ff', fleshScale: 0.88, freeze: true, pts: 2 };
-  [...FRUITS, GOLDEN, FREEZE].forEach(d => { d.pts = d.pts || 1; d.dots = randDisk(60); d.dots2 = randDisk(70); });
+  // Süre veren meyveler: nadirlik arttıkça daha çok saniye
+  const TIME_FRUITS = [
+    { name: 'zaman3',  sec: 3,  chance: 0.016,  rarity: 'NADİR',     skin: '#4cd04c', skin2: '#126a12', glow: '110,240,90',  text: '#7ee05a' },
+    { name: 'zaman5',  sec: 5,  chance: 0.0065, rarity: 'ÇOK NADİR', skin: '#3aa0ff', skin2: '#0a3a90', glow: '80,170,255',  text: '#6ab8ff' },
+    { name: 'zaman10', sec: 10, chance: 0.0025, rarity: 'DESTANSI',  skin: '#b05aff', skin2: '#40109a', glow: '190,110,255', text: '#c890ff' },
+    { name: 'zaman15', sec: 15, chance: 0.001,  rarity: 'EFSANEVİ',  skin: '#ffb020', skin2: '#b03a00', glow: '255,190,40',  text: '#ffc040' },
+  ];
+  TIME_FRUITS.forEach(t => Object.assign(t, { r: 37, rind: '#ffffff', flesh: lighten(t.skin, 90), juice: t.skin, fleshScale: 0.86, timeBonus: t.sec, pts: 1 }));
+  [...FRUITS, GOLDEN, FREEZE, ...TIME_FRUITS].forEach(d => { d.pts = d.pts || 1; d.dots = randDisk(60); d.dots2 = randDisk(70); });
+
+  // ---------- Bölüm temaları ----------
+  const THEMES = [
+    { key: 'wood',   name: 'Bahçe Tezgahı', color: '#a0622a', fruits: ['elma', 'portakal', 'karpuz', 'şeftali'] },
+    { key: 'market', name: 'Yaz Pazarı',    color: '#3a6ab0', fruits: ['limon', 'çilek', 'kiraz', 'karpuz', 'portakal'] },
+    { key: 'beach',  name: 'Tropik Sahil',  color: '#1aa0b0', fruits: ['muz', 'ananas', 'mango', 'hindistan'] },
+    { key: 'night',  name: 'Gece Bahçesi',  color: '#3a3a8a', fruits: ['erik', 'kiraz', 'kivi', 'limon', 'elma'] },
+    { key: 'snow',   name: 'Karlı Dağ',     color: '#5a9ad0', fruits: ['nar', 'kivi', 'erik', 'elma', 'portakal'] },
+    { key: 'lava',   name: 'Volkan Adası',  color: '#c0401a', fruits: ['ejder', 'mango', 'nar', 'çilek', 'ananas'] },
+  ];
+  const FRUIT_LABEL = { karpuz: 'Karpuz', portakal: 'Portakal', limon: 'Limon', elma: 'Elma', nar: 'Nar', kivi: 'Kivi', 'şeftali': 'Şeftali',
+    'çilek': 'Çilek', kiraz: 'Kiraz', erik: 'Erik', mango: 'Mango', ejder: 'Ejder meyvesi', hindistan: 'Hindistan cevizi', ananas: 'Ananas', muz: 'Muz' };
+  function themeFor(L) { return THEMES[(L - 1) % THEMES.length]; }
+  function fruitsFor(L) {
+    const t = themeFor(L), names = [...t.fruits];
+    if (L > THEMES.length) { // ikinci turdan sonra fazladan çeşit
+      const extra = FRUITS.map(f => f.name).filter(n => !names.includes(n));
+      for (let i = 0; i < Math.min(3, Math.floor(L / THEMES.length) + 1); i++) names.push(extra[(L * 7 + i * 5) % extra.length]);
+    }
+    return [...new Set(names)].map(n => FRUIT_BY[n]);
+  }
+  function levelParams(L) {
+    return {
+      target: 15 + (L - 1) * 10,
+      time: 40 + Math.min(20, (L - 1) * 2),
+      interval: Math.max(0.55, 1.45 - (L - 1) * 0.08),
+      waveMax: Math.min(7, 2 + Math.floor(L * 0.5)),
+      bomb: Math.min(0.28, 0.03 + (L - 1) * 0.03),
+      bombPenalty: Math.min(10, 3 + Math.floor(L / 2)),
+      gMul: Math.min(1.4, 1 + (L - 1) * 0.04),
+    };
+  }
 
   // ---------- Şekiller ----------
-  function shapePath(c, def, r) {
+  function shapePath(c, def, r, k = 1) {
     c.beginPath();
-    if (def.shape === 'apple') {
+    if (def.shape === 'banana') {
+      bananaPath(c, r, k);
+    } else if (def.shape === 'straw') {
+      c.moveTo(0, -r * 0.72);
+      c.bezierCurveTo(r * 0.6, -r * 1.0, r * 1.05, -r * 0.55, r * 0.92, r * 0.05);
+      c.bezierCurveTo(r * 0.78, r * 0.6, r * 0.28, r * 1.0, 0, r * 1.04);
+      c.bezierCurveTo(-r * 0.28, r * 1.0, -r * 0.78, r * 0.6, -r * 0.92, r * 0.05);
+      c.bezierCurveTo(-r * 1.05, -r * 0.55, -r * 0.6, -r * 1.0, 0, -r * 0.72);
+      c.closePath();
+    } else if (def.shape === 'pine') {
+      c.ellipse(0, r * 0.08, r * 0.8, r * 0.98, 0, 0, TAU);
+    } else if (def.shape === 'apple') {
       c.moveTo(0, -r * 0.7);
       c.bezierCurveTo(r * 0.45, -r * 1.08, r * 1.08, -r * 0.8, r * 1.02, -r * 0.05);
       c.bezierCurveTo(r * 0.98, r * 0.62, r * 0.55, r * 1.0, r * 0.18, r * 0.95);
@@ -274,6 +436,7 @@
         for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a) * r, Math.sin(a) * r); c.stroke(); }
         c.beginPath(); for (let i = 0; i <= 6; i++) { const a = i / 6 * TAU; c.lineTo(Math.cos(a) * r * 0.55, Math.sin(a) * r * 0.55); } c.stroke();
         break;
+      default: wholeTexture(c, def, r);
     }
     // kenar gölgesi
     const sh = c.createRadialGradient(-r * 0.2, -r * 0.25, r * 0.45, 0, 0, r * 1.15);
@@ -308,6 +471,7 @@
       c.fillStyle = '#fffbe0';
       [[-0.5, -0.1, 0.12], [0.35, -0.5, 0.09], [0.4, 0.4, 0.07]].forEach(([x, y, s]) => star(c, x * r, y * r, s * r));
     }
+    wholeExtras(c, def, r);
   }
   function star(c, x, y, s) {
     c.beginPath();
@@ -319,10 +483,10 @@
   function drawCut(c, def, r) {
     shapePath(c, def, r);
     c.fillStyle = def.skin2; c.fill();
-    c.save(); c.scale(0.94, 0.94); shapePath(c, def, r); c.fillStyle = def.skin; c.fill(); c.restore();
-    c.save(); c.scale(def.fleshScale + 0.06, def.fleshScale + 0.06); shapePath(c, def, r); c.fillStyle = def.rind; c.fill(); c.restore();
+    c.save(); insetPath(c, def, r, 0.94); c.fillStyle = def.skin; c.fill(); c.restore();
+    c.save(); insetPath(c, def, r, def.fleshScale + 0.06); c.fillStyle = def.rind; c.fill(); c.restore();
     const fs = def.fleshScale;
-    c.save(); c.scale(fs, fs); shapePath(c, def, r);
+    c.save(); insetPath(c, def, r, fs);
     const g = c.createRadialGradient(0, 0, 0, 0, 0, r);
     g.addColorStop(0, lighten(def.flesh, 50)); g.addColorStop(0.7, def.flesh); g.addColorStop(1, lighten(def.flesh, -30));
     c.fillStyle = g; c.fill(); c.clip();
@@ -392,6 +556,7 @@
         c.strokeStyle = 'rgba(80,170,230,0.6)'; c.lineWidth = 2;
         for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a) * r, Math.sin(a) * r); c.stroke(); }
         break;
+      default: cutTexture(c, def, r);
     }
     c.restore();
   }
@@ -412,10 +577,11 @@
       const side = kind === 'top' ? -1 : 1;
       c.save();
       c.beginPath(); c.rect(-size, side > 0 ? 0 : -size, size * 2, size); c.clip();
+      if (def.shape === 'banana') c.rotate(-Math.PI / 2); // muz ortasından kesilsin
       drawCut(c, def, r);
       c.restore();
       // kesik yüzeyde parlak çizgi
-      const ov = def.shape === 'lemon' ? 1.12 : (def.oval || 1);
+      const ov = def.shape === 'lemon' ? 1.12 : def.shape === 'banana' ? 0.42 : (def.oval || 1);
       c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 2;
       c.beginPath(); c.moveTo(-r * ov * 0.9, side * 1); c.lineTo(r * ov * 0.9, side * 1); c.stroke();
     }
@@ -432,43 +598,396 @@
   }
   buildShadow();
 
-  // ---------- Arka plan (ahşap tezgah) ----------
+  // ---------- Yeni meyvelerin dokuları ----------
+  function bananaPath(c, r, k) {
+    const N = 32;
+    const yc = t => r * 0.35 - t * t * r * 0.8;
+    const w = t => (r * 0.34 * Math.sqrt(Math.max(0, 1 - Math.pow(Math.abs(t), 3))) + r * 0.03) * k;
+    for (let i = 0; i <= N; i++) { const t = -1 + 2 * i / N, x = t * r * 1.08 * (k < 1 ? 0.97 : 1); i ? c.lineTo(x, yc(t) + w(t)) : c.moveTo(x, yc(t) + w(t)); }
+    for (let i = N; i >= 0; i--) { const t = -1 + 2 * i / N, x = t * r * 1.08 * (k < 1 ? 0.97 : 1); c.lineTo(x, yc(t) - w(t) * 0.9); }
+    c.closePath();
+  }
+  // Kesit içi katmanlar için: muz şekli ölçeklenmez, inceltilir
+  function insetPath(c, def, r, k) {
+    if (def.shape === 'banana') shapePath(c, def, r, k);
+    else { c.scale(k, k); shapePath(c, def, r); }
+  }
+
+  function wholeTexture(c, def, r) {
+    const ov = def.oval || 1;
+    if (def.timeBonus) {
+      c.fillStyle = 'rgba(255,255,255,0.2)'; c.beginPath(); c.arc(0, 0, r * 0.7, 0, TAU); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,0.75)'; c.lineWidth = Math.max(1.5, r * 0.05); c.lineCap = 'round';
+      for (let i = 0; i < 12; i++) { const a = i / 12 * TAU, d0 = i % 3 ? 0.78 : 0.72; c.beginPath(); c.moveTo(Math.cos(a) * r * d0, Math.sin(a) * r * d0); c.lineTo(Math.cos(a) * r * 0.86, Math.sin(a) * r * 0.86); c.stroke(); }
+      return;
+    }
+    switch (def.name) {
+      case 'çilek':
+        def.dots.forEach(([x, y]) => {
+          const px = x * r * 0.82, py = y * r * 0.82 + r * 0.08;
+          c.fillStyle = 'rgba(120,0,10,0.35)'; c.beginPath(); c.ellipse(px, py + 1, r * 0.04, r * 0.06, 0, 0, TAU); c.fill();
+          c.fillStyle = '#ffe680'; c.beginPath(); c.ellipse(px, py, r * 0.025, r * 0.045, 0, 0, TAU); c.fill();
+        });
+        break;
+      case 'erik':
+        c.fillStyle = 'rgba(210,200,255,0.16)'; c.fillRect(-r * 1.5, -r * 1.5, r * 3, r * 3);
+        c.strokeStyle = 'rgba(30,0,60,0.4)'; c.lineWidth = r * 0.05;
+        c.beginPath(); c.moveTo(r * 0.1, -r * 0.95); c.quadraticCurveTo(r * 0.5, 0, r * 0.05, r * 0.95); c.stroke();
+        break;
+      case 'mango': {
+        const gr = c.createRadialGradient(-r * 0.6, -r * 0.4, 0, -r * 0.6, -r * 0.4, r * 1.1);
+        gr.addColorStop(0, 'rgba(90,170,40,0.85)'); gr.addColorStop(1, 'rgba(90,170,40,0)');
+        c.fillStyle = gr; c.fillRect(-r * 1.6, -r * 1.5, r * 3.2, r * 3);
+        const rd = c.createRadialGradient(r * 0.6, r * 0.3, 0, r * 0.6, r * 0.3, r * 0.9);
+        rd.addColorStop(0, 'rgba(230,50,40,0.6)'); rd.addColorStop(1, 'rgba(230,50,40,0)');
+        c.fillStyle = rd; c.fillRect(-r * 1.6, -r * 1.5, r * 3.2, r * 3);
+        c.fillStyle = 'rgba(255,255,200,0.3)';
+        def.dots.slice(0, 25).forEach(([x, y]) => { c.beginPath(); c.arc(x * r * ov, y * r, r * 0.02, 0, TAU); c.fill(); });
+        break;
+      }
+      case 'ejder':
+        c.strokeStyle = 'rgba(120,0,50,0.25)'; c.lineWidth = r * 0.04;
+        for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(Math.cos(a + 0.5) * r * 0.5, Math.sin(a + 0.5) * r * 0.5, Math.cos(a) * r * ov, Math.sin(a) * r); c.stroke(); }
+        break;
+      case 'hindistan':
+        c.strokeStyle = 'rgba(40,20,5,0.55)'; c.lineWidth = 1.4;
+        def.dots2.forEach(([x, y, z]) => { const a = z * TAU; c.beginPath(); c.moveTo(x * r, y * r); c.lineTo(x * r + Math.cos(a) * r * 0.16, y * r + Math.sin(a) * r * 0.16); c.stroke(); });
+        c.strokeStyle = 'rgba(200,150,100,0.25)';
+        def.dots.forEach(([x, y, z]) => { const a = z * TAU; c.beginPath(); c.moveTo(x * r, y * r); c.lineTo(x * r + Math.cos(a) * r * 0.12, y * r + Math.sin(a) * r * 0.12); c.stroke(); });
+        c.fillStyle = '#2a1408';
+        [[-0.22, -0.5], [0.22, -0.5], [0, -0.28]].forEach(([x, y]) => { c.beginPath(); c.ellipse(x * r, y * r, r * 0.09, r * 0.11, 0, 0, TAU); c.fill(); });
+        break;
+      case 'ananas': {
+        c.strokeStyle = 'rgba(100,55,0,0.6)'; c.lineWidth = r * 0.045;
+        const step = r * 0.3;
+        for (let i = -8; i <= 8; i++) {
+          c.beginPath(); c.moveTo(i * step - r, -r * 1.2); c.lineTo(i * step + r, r * 1.2); c.stroke();
+          c.beginPath(); c.moveTo(i * step + r, -r * 1.2); c.lineTo(i * step - r, r * 1.2); c.stroke();
+        }
+        c.fillStyle = 'rgba(140,200,60,0.55)';
+        for (let i = -6; i <= 6; i++) for (let j = -6; j <= 6; j++) {
+          const x = (i + j) * step * 0.5 * (r * 2 / (r * 2)), y = (j - i) * step * 0.5 * 1.2;
+          if (Math.abs(x) < r && Math.abs(y) < r * 1.1) { c.beginPath(); c.arc(x, y, r * 0.035, 0, TAU); c.fill(); }
+        }
+        break;
+      }
+      case 'muz':
+        c.strokeStyle = 'rgba(150,110,0,0.4)'; c.lineWidth = r * 0.04;
+        c.beginPath(); for (let i = 0; i <= 20; i++) { const t = -0.95 + 1.9 * i / 20, x = t * r * 1.08, y = r * 0.35 - t * t * r * 0.8 + r * 0.08; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke();
+        c.fillStyle = 'rgba(120,80,20,0.35)';
+        def.dots.slice(0, 10).forEach(([x, y]) => { c.beginPath(); c.arc(x * r, r * 0.2 + y * r * 0.3, r * 0.025, 0, TAU); c.fill(); });
+        break;
+    }
+  }
+
+  function wholeExtras(c, def, r) {
+    if (def.timeBonus) { leaf(c, 0, -r * 0.92, r * 0.5, -0.6); leaf(c, 0, -r * 0.92, r * 0.4, -2.5); return; }
+    switch (def.name) {
+      case 'çilek':
+        for (let i = 0; i < 6; i++) leaf(c, 0, -r * 0.7, r * 0.42, Math.PI * (0.08 + i * 0.168));
+        c.strokeStyle = '#3a7a1a'; c.lineWidth = r * 0.09; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(0, -r * 0.7); c.lineTo(r * 0.04, -r * 1.0); c.stroke();
+        break;
+      case 'kiraz':
+        c.strokeStyle = '#5a7a1a'; c.lineWidth = r * 0.1; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(0, -r * 0.82); c.quadraticCurveTo(r * 0.1, -r * 1.3, r * 0.5, -r * 1.55); c.stroke();
+        leaf(c, r * 0.45, -r * 1.5, r * 0.6, 0.3);
+        break;
+      case 'erik':
+        c.strokeStyle = '#5a3a18'; c.lineWidth = r * 0.08; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(r * 0.08, -r * 0.92); c.lineTo(r * 0.12, -r * 1.12); c.stroke();
+        break;
+      case 'mango':
+        c.strokeStyle = '#4a3010'; c.lineWidth = r * 0.08; c.lineCap = 'round';
+        c.beginPath(); c.moveTo(-r * 1.1, -r * 0.2); c.lineTo(-r * 1.28, -r * 0.3); c.stroke();
+        break;
+      case 'ejder':
+        for (let i = 0; i < 10; i++) {
+          const a = i / 10 * TAU + 0.3, px = Math.cos(a) * r * 0.72 * (def.oval || 1), py = Math.sin(a) * r * 0.72;
+          c.save(); c.translate(px, py); c.rotate(a);
+          const g = c.createLinearGradient(0, 0, r * 0.5, 0); g.addColorStop(0, '#ff3a90'); g.addColorStop(0.55, '#e0306a'); g.addColorStop(1, '#8ad040');
+          c.fillStyle = g; c.beginPath(); c.moveTo(-r * 0.05, -r * 0.16);
+          c.quadraticCurveTo(r * 0.28, -r * 0.12, r * 0.52, -r * 0.02); c.quadraticCurveTo(r * 0.28, r * 0.1, -r * 0.05, r * 0.16); c.closePath(); c.fill();
+          c.restore();
+        }
+        break;
+      case 'ananas':
+        for (let i = 0; i < 9; i++) {
+          const a = -Math.PI / 2 + (i - 4) * 0.24, len = r * (0.5 + (4 - Math.abs(i - 4)) * 0.11);
+          c.save(); c.translate(0, -r * 0.82); c.rotate(a);
+          const g = c.createLinearGradient(0, 0, len, 0); g.addColorStop(0, '#2e7a1e'); g.addColorStop(1, '#7ed048');
+          c.fillStyle = g; c.beginPath(); c.moveTo(0, -r * 0.09); c.quadraticCurveTo(len * 0.6, -r * 0.06, len, 0); c.quadraticCurveTo(len * 0.6, r * 0.06, 0, r * 0.09); c.closePath(); c.fill();
+          c.restore();
+        }
+        break;
+      case 'muz':
+        c.fillStyle = '#5a3a10';
+        c.save(); c.translate(-r * 1.08, -r * 0.45); c.rotate(-0.9); c.fillRect(-r * 0.05, -r * 0.2, r * 0.12, r * 0.24); c.restore();
+        c.fillStyle = '#3a2408'; c.beginPath(); c.arc(r * 1.06, -r * 0.45, r * 0.05, 0, TAU); c.fill();
+        break;
+    }
+  }
+
+  function cutTexture(c, def, r) {
+    const ov = def.oval || 1;
+    if (def.timeBonus) {
+      c.strokeStyle = def.skin; c.lineWidth = r * 0.05;
+      for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; c.beginPath(); c.moveTo(Math.cos(a) * r * 0.6, Math.sin(a) * r * 0.6); c.lineTo(Math.cos(a) * r * 0.9, Math.sin(a) * r * 0.9); c.stroke(); }
+      c.fillStyle = def.skin; c.beginPath(); c.arc(0, 0, r * 0.12, 0, TAU); c.fill();
+      return;
+    }
+    switch (def.name) {
+      case 'çilek': {
+        const g = c.createRadialGradient(0, 0, r * 0.2, 0, 0, r);
+        g.addColorStop(0, 'rgba(255,255,255,0.7)'); g.addColorStop(0.5, 'rgba(255,200,205,0.2)'); g.addColorStop(1, 'rgba(230,30,60,0.6)');
+        c.fillStyle = g; c.fillRect(-r * 1.5, -r * 1.5, r * 3, r * 3);
+        c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineWidth = r * 0.03;
+        for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.cos(a) * r * 0.8, Math.sin(a) * r * 0.8); c.stroke(); }
+        break;
+      }
+      case 'kiraz': {
+        const pg = c.createRadialGradient(-r * 0.08, -r * 0.08, 0, 0, 0, r * 0.38);
+        pg.addColorStop(0, '#fff0d8'); pg.addColorStop(1, '#c8a070');
+        c.fillStyle = pg; c.beginPath(); c.ellipse(0, 0, r * 0.32, r * 0.38, 0, 0, TAU); c.fill();
+        break;
+      }
+      case 'erik': {
+        const rg = c.createRadialGradient(0, 0, r * 0.55, 0, 0, r);
+        rg.addColorStop(0, 'rgba(200,40,60,0)'); rg.addColorStop(1, 'rgba(200,40,60,0.55)');
+        c.fillStyle = rg; c.fillRect(-r * 1.5, -r * 1.5, r * 3, r * 3);
+        c.fillStyle = '#8a4a20'; c.beginPath(); c.ellipse(0, 0, r * 0.28, r * 0.4, 0.2, 0, TAU); c.fill();
+        c.strokeStyle = 'rgba(40,15,5,0.5)'; c.lineWidth = r * 0.03; c.beginPath(); c.ellipse(0, 0, r * 0.12, r * 0.36, 0.2, 0, TAU); c.stroke();
+        break;
+      }
+      case 'mango':
+        c.fillStyle = '#f4e4a8'; c.beginPath(); c.ellipse(0, 0, r * 0.78 * ov, r * 0.3, 0, 0, TAU); c.fill();
+        c.strokeStyle = 'rgba(220,170,60,0.6)'; c.lineWidth = 1.2;
+        for (let i = -6; i <= 6; i++) { c.beginPath(); c.moveTo(i * r * 0.12, -r * 0.28); c.lineTo(i * r * 0.12 * 1.1, r * 0.28); c.stroke(); }
+        break;
+      case 'ejder':
+        c.fillStyle = '#111';
+        def.dots2.forEach(([x, y]) => { c.beginPath(); c.arc(x * r * 0.92 * ov, y * r * 0.92, r * 0.025, 0, TAU); c.fill(); });
+        break;
+      case 'hindistan': {
+        const wg = c.createRadialGradient(-r * 0.15, -r * 0.15, 0, 0, 0, r * 0.7);
+        wg.addColorStop(0, '#ffffff'); wg.addColorStop(1, '#d8ecf6');
+        c.fillStyle = wg; c.beginPath(); c.arc(0, 0, r * 0.68, 0, TAU); c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.7)'; c.beginPath(); c.ellipse(-r * 0.25, -r * 0.25, r * 0.18, r * 0.08, -0.7, 0, TAU); c.fill();
+        break;
+      }
+      case 'ananas':
+        c.fillStyle = '#fff4b0'; c.beginPath(); c.arc(0, r * 0.08, r * 0.24, 0, TAU); c.fill();
+        c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 1.2;
+        for (let i = 0; i < 24; i++) { const a = i / 24 * TAU; c.beginPath(); c.moveTo(Math.cos(a) * r * 0.25, r * 0.08 + Math.sin(a) * r * 0.25); c.lineTo(Math.cos(a) * r * 0.8, r * 0.08 + Math.sin(a) * r); c.stroke(); }
+        c.fillStyle = 'rgba(160,100,20,0.6)';
+        for (let i = 0; i < 18; i++) { const a = i / 18 * TAU; c.beginPath(); c.arc(Math.cos(a) * r * 0.66, r * 0.08 + Math.sin(a) * r * 0.82, r * 0.03, 0, TAU); c.fill(); }
+        break;
+      case 'muz':
+        c.fillStyle = 'rgba(150,110,50,0.5)';
+        for (let i = 0; i < 9; i++) { const t = -0.7 + 1.4 * i / 8, x = t * r * 1.08, y = r * 0.35 - t * t * r * 0.8; c.beginPath(); c.arc(x, y, r * 0.035, 0, TAU); c.fill(); }
+        break;
+    }
+  }
+
+  // ---------- Arka planlar (her bölüm teması için) ----------
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function vignette(c, amt = 0.6) {
+    const vg = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.8);
+    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, `rgba(0,0,0,${amt})`);
+    c.fillStyle = vg; c.fillRect(0, 0, W, H);
+  }
+  const BG = {
+    wood(c) {
+      const n = Math.max(3, Math.round(W / 120)), pw = W / n;
+      for (let i = 0; i < n; i++) {
+        const x0 = i * pw, l = 20 + Math.random() * 6, h = 24 + Math.random() * 6;
+        const g = c.createLinearGradient(x0, 0, x0 + pw, 0);
+        g.addColorStop(0, `hsl(${h},48%,${l - 3}%)`); g.addColorStop(0.5, `hsl(${h},50%,${l + 2}%)`); g.addColorStop(1, `hsl(${h},48%,${l - 4}%)`);
+        c.fillStyle = g; c.fillRect(x0, 0, pw + 1, H);
+        for (let k = 0; k < 16; k++) {
+          const bx = x0 + Math.random() * pw, amp = 2 + Math.random() * 6, per = 50 + Math.random() * 120, ph = Math.random() * 6;
+          c.strokeStyle = Math.random() < 0.6 ? `rgba(0,0,0,${0.08 + Math.random() * 0.1})` : `rgba(255,210,160,${0.03 + Math.random() * 0.04})`;
+          c.lineWidth = 0.8 + Math.random() * 1.8;
+          c.beginPath();
+          for (let y = -10; y <= H + 10; y += 12) { const x = bx + Math.sin(y / per + ph) * amp; y < 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+          c.stroke();
+        }
+        if (Math.random() < 0.7) {
+          const kx = x0 + pw * (0.3 + Math.random() * 0.4), ky = Math.random() * H, kr = 6 + Math.random() * 10;
+          for (let j = 4; j >= 1; j--) { c.strokeStyle = `rgba(30,12,4,${0.12 * j})`; c.lineWidth = 1.5; c.beginPath(); c.ellipse(kx, ky, kr * j * 0.5, kr * j * 1.1, 0, 0, TAU); c.stroke(); }
+          c.fillStyle = 'rgba(30,12,4,0.5)'; c.beginPath(); c.ellipse(kx, ky, kr * 0.4, kr * 0.8, 0, 0, TAU); c.fill();
+        }
+        c.fillStyle = 'rgba(0,0,0,0.55)'; c.fillRect(x0 - 1.5, 0, 3, H);
+        c.fillStyle = 'rgba(255,220,180,0.07)'; c.fillRect(x0 + 1.5, 0, 1, H);
+      }
+      const top = c.createRadialGradient(W / 2, H * 0.25, 0, W / 2, H * 0.25, Math.max(W, H) * 0.7);
+      top.addColorStop(0, 'rgba(255,190,120,0.16)'); top.addColorStop(1, 'rgba(255,190,120,0)');
+      c.fillStyle = top; c.fillRect(0, 0, W, H);
+      vignette(c);
+    },
+    market(c) {
+      // pazar tezgahında kareli masa örtüsü
+      c.fillStyle = '#efe4cf'; c.fillRect(0, 0, W, H);
+      const s = 34;
+      c.fillStyle = 'rgba(40,80,170,0.38)';
+      for (let x = 0; x < W; x += s * 2) c.fillRect(x, 0, s, H);
+      for (let y = 0; y < H; y += s * 2) c.fillRect(0, y, W, s);
+      c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 1;
+      for (let y = 0; y < H; y += 4) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+      // üstte tente
+      const ah = Math.min(90, H * 0.11), sw = W / 8;
+      for (let i = 0; i < 8; i++) {
+        c.fillStyle = i % 2 ? '#fff4e0' : '#e8423a';
+        c.beginPath(); c.moveTo(i * sw, 0); c.lineTo((i + 1) * sw, 0); c.lineTo((i + 1) * sw, ah);
+        c.quadraticCurveTo((i + 0.5) * sw, ah + 22, i * sw, ah); c.closePath(); c.fill();
+      }
+      const sh = c.createLinearGradient(0, ah, 0, ah + 60); sh.addColorStop(0, 'rgba(0,0,0,0.3)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = sh; c.fillRect(0, ah, W, 60);
+      vignette(c, 0.55);
+    },
+    beach(c) {
+      const seaH = H * 0.38;
+      const sea = c.createLinearGradient(0, 0, 0, seaH);
+      sea.addColorStop(0, '#0a5a8a'); sea.addColorStop(0.6, '#13a0b8'); sea.addColorStop(1, '#4ad8d0');
+      c.fillStyle = sea; c.fillRect(0, 0, W, seaH + 10);
+      c.strokeStyle = 'rgba(255,255,255,0.25)'; c.lineWidth = 2;
+      for (let k = 0; k < 9; k++) {
+        const y0 = rnd(10, seaH - 20); c.beginPath();
+        for (let x = 0; x <= W; x += 10) c.lineTo(x, y0 + Math.sin(x / 30 + k) * 3);
+        c.stroke();
+      }
+      const sand = c.createLinearGradient(0, seaH, 0, H);
+      sand.addColorStop(0, '#f6dea6'); sand.addColorStop(1, '#d8aa66');
+      c.fillStyle = sand;
+      c.beginPath(); c.moveTo(0, seaH);
+      for (let x = 0; x <= W; x += 10) c.lineTo(x, seaH + Math.sin(x / 45) * 8);
+      c.lineTo(W, H); c.lineTo(0, H); c.closePath(); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 5; c.lineCap = 'round';
+      c.beginPath(); for (let x = 0; x <= W; x += 10) c.lineTo(x, seaH + Math.sin(x / 45) * 8 - 2); c.stroke();
+      for (let i = 0; i < 900; i++) { c.fillStyle = Math.random() < 0.5 ? 'rgba(120,80,30,0.18)' : 'rgba(255,255,255,0.3)'; c.fillRect(rnd(0, W), rnd(seaH, H), 1.5, 1.5); }
+      // deniz kabukları ve deniz yıldızı
+      for (let i = 0; i < 4; i++) {
+        const x = rnd(20, W - 20), y = rnd(seaH + 60, H - 30), s2 = rnd(8, 14);
+        c.fillStyle = ['#ff9a7a', '#ffe0c0', '#ffb84a'][i % 3];
+        c.beginPath(); for (let k = 0; k < 10; k++) { const a = k / 10 * TAU, d = k % 2 ? s2 * 0.45 : s2; c.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); } c.closePath(); c.fill();
+      }
+      vignette(c, 0.45);
+    },
+    night(c) {
+      const g = c.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#070b26'); g.addColorStop(0.6, '#162246'); g.addColorStop(1, '#0c1a1a');
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      for (let i = 0; i < 140; i++) { c.fillStyle = `rgba(255,255,255,${rnd(0.2, 0.9)})`; const s2 = rnd(0.6, 1.8); c.fillRect(rnd(0, W), rnd(0, H * 0.7), s2, s2); }
+      const mx = W * 0.78, my = H * 0.16, mr = Math.min(W, H) * 0.09;
+      const mg = c.createRadialGradient(mx, my, mr * 0.8, mx, my, mr * 3.5);
+      mg.addColorStop(0, 'rgba(255,250,210,0.35)'); mg.addColorStop(1, 'rgba(255,250,210,0)');
+      c.fillStyle = mg; c.fillRect(0, 0, W, H);
+      c.fillStyle = '#fff8d8'; c.beginPath(); c.arc(mx, my, mr, 0, TAU); c.fill();
+      c.fillStyle = 'rgba(200,190,150,0.35)'; [[-0.3, -0.2, 0.2], [0.25, 0.25, 0.15], [0.1, -0.4, 0.1]].forEach(([x, y, s2]) => { c.beginPath(); c.arc(mx + x * mr, my + y * mr, s2 * mr, 0, TAU); c.fill(); });
+      // ağaç ve çimen siluetleri
+      c.fillStyle = '#050c10';
+      [[-W * 0.05, 0.62], [W * 1.02, 0.58]].forEach(([tx, th]) => {
+        c.fillRect(tx - 10, H * th, 20, H);
+        for (let k = 0; k < 6; k++) { c.beginPath(); c.arc(tx + rnd(-60, 60), H * th + rnd(-40, 60), rnd(40, 70), 0, TAU); c.fill(); }
+      });
+      c.beginPath(); c.moveTo(0, H);
+      for (let x = 0; x <= W; x += 6) c.lineTo(x, H - 40 - Math.abs(Math.sin(x * 0.7)) * 26 - Math.sin(x / 50) * 10);
+      c.lineTo(W, H); c.closePath(); c.fill();
+      vignette(c, 0.5);
+    },
+    snow(c) {
+      const g = c.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#7ab4e0'); g.addColorStop(0.55, '#c4e2f6'); g.addColorStop(1, '#eef7fd');
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const mount = (base, col, cap, peaks) => {
+        c.fillStyle = col; c.beginPath(); c.moveTo(0, H);
+        const pts = [[0, base]];
+        for (let i = 1; i <= peaks; i++) pts.push([W * i / peaks - W / peaks / 2, base - rnd(H * 0.12, H * 0.24)], [W * i / peaks, base - rnd(0, H * 0.05)]);
+        pts.forEach(([x, y]) => c.lineTo(x, y)); c.lineTo(W, H); c.closePath(); c.fill();
+        c.fillStyle = cap;
+        for (let i = 1; i < pts.length; i += 2) {
+          const [px, py] = pts[i], [lx, ly] = pts[i - 1], [rx, ry] = pts[i + 1] || [W, base];
+          const t = 0.3;
+          c.beginPath(); c.moveTo(px, py); c.lineTo(px + (rx - px) * t, py + (ry - py) * t);
+          c.lineTo(px + (rx - px) * t * 0.5, py + (ry - py) * t * 0.8); c.lineTo(px, py + (ry - py) * t * 0.6);
+          c.lineTo(px + (lx - px) * t * 0.5, py + (ly - py) * t * 0.8); c.lineTo(px + (lx - px) * t, py + (ly - py) * t); c.closePath(); c.fill();
+        }
+      };
+      mount(H * 0.55, '#8fb2d2', '#f4fbff', 3);
+      mount(H * 0.72, '#6f96bd', '#ffffff', 4);
+      c.fillStyle = '#f4faff'; c.beginPath(); c.moveTo(0, H);
+      for (let x = 0; x <= W; x += 10) c.lineTo(x, H * 0.84 + Math.sin(x / 70) * 14);
+      c.lineTo(W, H); c.closePath(); c.fill();
+      vignette(c, 0.35);
+    },
+    lava(c) {
+      const g = c.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#1a0806'); g.addColorStop(0.7, '#2a0c06'); g.addColorStop(1, '#4a1404');
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+      for (let i = 0; i < 400; i++) { c.fillStyle = `rgba(0,0,0,${rnd(0.1, 0.3)})`; c.beginPath(); c.arc(rnd(0, W), rnd(0, H), rnd(2, 10), 0, TAU); c.fill(); }
+      // parlayan çatlaklar
+      c.lineCap = 'round'; c.lineJoin = 'round';
+      for (let k = 0; k < 7; k++) {
+        let x = rnd(0, W), y = rnd(0, H); const pts = [[x, y]];
+        for (let s2 = 0; s2 < 5; s2++) { x += rnd(-38, 38); y += rnd(-30, 30); pts.push([x, y]); }
+        [[9, 'rgba(255,80,0,0.1)'], [3.5, 'rgba(255,110,20,0.4)'], [1.2, 'rgba(255,220,120,0.6)']].forEach(([w, col]) => {
+          c.strokeStyle = col; c.lineWidth = w; c.beginPath(); pts.forEach(([px, py], i) => i ? c.lineTo(px, py) : c.moveTo(px, py)); c.stroke();
+        });
+      }
+      const lv = c.createLinearGradient(0, H * 0.85, 0, H);
+      lv.addColorStop(0, 'rgba(255,90,0,0)'); lv.addColorStop(1, 'rgba(255,110,10,0.75)');
+      c.fillStyle = lv; c.fillRect(0, H * 0.8, W, H * 0.2);
+      vignette(c, 0.55);
+    },
+  };
+  let bgKey = 'wood';
   function buildBackground() {
     bgCanvas = document.createElement('canvas');
     bgCanvas.width = Math.ceil(W * DPR); bgCanvas.height = Math.ceil(H * DPR);
     const c = bgCanvas.getContext('2d'); c.scale(DPR, DPR);
-    const n = Math.max(3, Math.round(W / 120)), pw = W / n;
-    for (let i = 0; i < n; i++) {
-      const x0 = i * pw, l = 20 + Math.random() * 6, h = 24 + Math.random() * 6;
-      const g = c.createLinearGradient(x0, 0, x0 + pw, 0);
-      g.addColorStop(0, `hsl(${h},48%,${l - 3}%)`); g.addColorStop(0.5, `hsl(${h},50%,${l + 2}%)`); g.addColorStop(1, `hsl(${h},48%,${l - 4}%)`);
-      c.fillStyle = g; c.fillRect(x0, 0, pw + 1, H);
-      // damarlar
-      for (let k = 0; k < 16; k++) {
-        const bx = x0 + Math.random() * pw, amp = 2 + Math.random() * 6, per = 50 + Math.random() * 120, ph = Math.random() * 6;
-        c.strokeStyle = Math.random() < 0.6 ? `rgba(0,0,0,${0.08 + Math.random() * 0.1})` : `rgba(255,210,160,${0.03 + Math.random() * 0.04})`;
-        c.lineWidth = 0.8 + Math.random() * 1.8;
-        c.beginPath();
-        for (let y = -10; y <= H + 10; y += 12) { const x = bx + Math.sin(y / per + ph) * amp; y < 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
-        c.stroke();
-      }
-      // budak
-      if (Math.random() < 0.7) {
-        const kx = x0 + pw * (0.3 + Math.random() * 0.4), ky = Math.random() * H, kr = 6 + Math.random() * 10;
-        for (let j = 4; j >= 1; j--) { c.strokeStyle = `rgba(30,12,4,${0.12 * j})`; c.lineWidth = 1.5; c.beginPath(); c.ellipse(kx, ky, kr * j * 0.5, kr * j * 1.1, 0, 0, TAU); c.stroke(); }
-        c.fillStyle = 'rgba(30,12,4,0.5)'; c.beginPath(); c.ellipse(kx, ky, kr * 0.4, kr * 0.8, 0, 0, TAU); c.fill();
-      }
-      // tahta arası boşluk
-      c.fillStyle = 'rgba(0,0,0,0.55)'; c.fillRect(x0 - 1.5, 0, 3, H);
-      c.fillStyle = 'rgba(255,220,180,0.07)'; c.fillRect(x0 + 1.5, 0, 1, H);
+    (BG[bgKey] || BG.wood)(c);
+    initAmbient();
+  }
+  function setTheme(key) { if (key !== bgKey || !bgCanvas) { bgKey = key; buildBackground(); } }
+
+  // Ortam efektleri: ateş böcekleri, kar, kıvılcım
+  let ambient = [];
+  function initAmbient() {
+    ambient = [];
+    const n = { night: 22, snow: 55, lava: 35, beach: 10, wood: 14, market: 0 }[bgKey] || 0;
+    for (let i = 0; i < n; i++) ambient.push(newAmbient(true));
+  }
+  function newAmbient(anywhere) {
+    const a = { x: rnd(0, W), y: anywhere ? rnd(0, H) : 0, ph: rnd(0, TAU), s: rnd(0.6, 1.4) };
+    if (bgKey === 'snow') { a.y = anywhere ? a.y : -10; a.vy = rnd(25, 60); a.r = rnd(1.5, 4); }
+    else if (bgKey === 'lava') { a.y = anywhere ? a.y : H + 10; a.vy = -rnd(30, 80); a.r = rnd(1, 3); }
+    else if (bgKey === 'night') { a.vy = 0; a.r = rnd(1.5, 3); }
+    else if (bgKey === 'beach') { a.y = rnd(0, H * 0.36); a.vy = 0; a.r = rnd(1, 2.5); }
+    else { a.vy = rnd(-6, -2); a.r = rnd(0.8, 1.8); }
+    return a;
+  }
+  function updateAmbient(dt, t) {
+    for (let i = 0; i < ambient.length; i++) {
+      const a = ambient[i];
+      a.y += a.vy * dt;
+      if (bgKey === 'snow') a.x += Math.sin(t / 900 + a.ph) * 20 * dt;
+      else if (bgKey === 'night') { a.x += Math.cos(t / 1300 + a.ph) * 18 * dt; a.y += Math.sin(t / 1100 + a.ph * 2) * 14 * dt; }
+      else if (bgKey === 'lava') a.x += Math.sin(t / 500 + a.ph) * 15 * dt;
+      if (a.y > H + 12 || a.y < -12 || a.x < -12 || a.x > W + 12) ambient[i] = newAmbient(bgKey === 'night' || bgKey === 'beach' || bgKey === 'wood');
     }
-    // üstten sıcak ışık ve vinyet
-    const top = c.createRadialGradient(W / 2, H * 0.25, 0, W / 2, H * 0.25, Math.max(W, H) * 0.7);
-    top.addColorStop(0, 'rgba(255,190,120,0.16)'); top.addColorStop(1, 'rgba(255,190,120,0)');
-    c.fillStyle = top; c.fillRect(0, 0, W, H);
-    const vg = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.8);
-    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.6)');
-    c.fillStyle = vg; c.fillRect(0, 0, W, H);
+  }
+  function drawAmbient(t) {
+    for (const a of ambient) {
+      if (bgKey === 'snow') { ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
+      else if (bgKey === 'night') {
+        const k = 0.5 + 0.5 * Math.sin(t / 400 + a.ph * 3);
+        const g = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.r * 5);
+        g.addColorStop(0, `rgba(220,255,120,${0.9 * k})`); g.addColorStop(1, 'rgba(220,255,120,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(a.x, a.y, a.r * 5, 0, TAU); ctx.fill();
+      } else if (bgKey === 'lava') { ctx.fillStyle = `rgba(255,${140 + (a.ph * 30 | 0)},40,0.85)`; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
+      else if (bgKey === 'beach') { const k = Math.max(0, Math.sin(t / 300 + a.ph * 5)); ctx.fillStyle = `rgba(255,255,255,${k * 0.8})`; ctx.fillRect(a.x, a.y, a.r * 3, a.r * 0.8); }
+      else { ctx.fillStyle = 'rgba(255,220,170,0.18)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
+    }
   }
 
   function resize() {
@@ -482,22 +1001,34 @@
   }
   window.addEventListener('resize', resize);
   resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sprites.clear());
+
+  // ---------- Kayıt: bölüm ilerlemesi ----------
+  function loadProg() { const p = store.get('kkb_prog', null); return p && typeof p === 'object' ? { unlocked: p.unlocked || 1, stars: p.stars || {}, best: p.best || 0 } : { unlocked: 1, stars: {}, best: 0 }; }
+  let prog = loadProg();
+  function saveProg() { store.set('kkb_prog', prog); }
 
   // ---------- Durum ----------
   const MODES = {
     classic: { lives: 3, time: 0, bombs: true },
     timed:   { lives: 0, time: 60, bombs: true },
     zen:     { lives: 0, time: 90, bombs: false },
+    level:   { lives: 0, time: 1, bombs: true },
   };
   let mode = 'classic', state = 'menu';
   let objs = [], halves = [], parts = [], splats = [], texts = [], trail = [], cuts = [];
-  let score = 0, lives = 3, timeLeft = 0, elapsed = 0, spawnT = 0, shake = 0, flash = 0, slowmo = 0;
+  let score = 0, lives = 3, timeLeft = 0, timeMax = 1, elapsed = 0, spawnT = 0, shake = 0, flash = 0, slowmo = 0;
+  let level = 1, LP = levelParams(1), levelScore = 0, scoreAtLevelStart = 0, levelFruits = FRUITS;
   let stats = { sliced: 0, bestCombo: 0 };
-  let pointerDown = false, lastPt = null, swipeHits = [], swipeTimer = 0;
+  let pointerDown = false, lastPt = null, swipeHits = [], swipeTimer = 0, lastTick = 0;
   const pending = [];
 
   const $ = id => document.getElementById(id);
   const hud = $('hud'), scoreEl = $('score'), bestEl = $('best'), livesEl = $('lives'), timerEl = $('timer');
+  const goalEl = $('goal'), goalTxt = $('goalTxt'), goalFill = $('goalFill'), timebar = $('timebar'), timeFill = $('timeFill');
+  const SCREENS = ['menu', 'levels', 'intro', 'pauseScreen', 'done', 'over'];
+  function show(id) { SCREENS.forEach(s => $(s).classList.toggle('hidden', s !== id)); }
+  function showHud(on) { hud.classList.toggle('hidden', !on); timebar.classList.toggle('hidden', !on || !(MODES[mode].time)); }
 
   function bestKey() { return 'kkb_best_' + mode; }
   let shownScore = 0;
@@ -507,57 +1038,155 @@
       shownScore = score;
     }
     scoreEl.textContent = score;
-    bestEl.textContent = 'En iyi: ' + store.get(bestKey(), 0);
+    if (mode === 'level') {
+      bestEl.textContent = `Bölüm ${level}`;
+      goalEl.classList.remove('hidden');
+      const shown = Math.min(levelScore, LP.target);
+      goalTxt.textContent = `Hedef ${shown}/${LP.target}`;
+      goalFill.style.width = (shown / LP.target * 100) + '%';
+      goalEl.classList.toggle('full', levelScore >= LP.target);
+    } else {
+      goalEl.classList.add('hidden');
+      bestEl.textContent = 'En iyi: ' + store.get(bestKey(), 0);
+    }
     if (MODES[mode].lives) {
       livesEl.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, MODES[mode].lives - lives));
       livesEl.classList.remove('hidden'); timerEl.classList.add('hidden');
     } else {
       livesEl.classList.add('hidden'); timerEl.classList.remove('hidden');
-      timerEl.textContent = Math.ceil(timeLeft);
-      timerEl.style.color = timeLeft < 10 ? '#ff5a5a' : '';
+      timerEl.innerHTML = Math.ceil(timeLeft) + '<small>sn</small>';
+      timerEl.classList.toggle('low', timeLeft < 10 && state === 'play');
     }
+    updTimeBar();
+  }
+  function updTimeBar() {
+    const k = Math.max(0, Math.min(1, timeLeft / timeMax));
+    timeFill.style.width = (k * 100) + '%';
+    timeFill.style.background = k > 0.5 ? '#7ee05a' : k > 0.25 ? '#ffcf4a' : '#ff4a4a';
   }
 
+  function resetWorld() {
+    objs = []; halves = []; parts = []; splats = []; texts = []; trail = []; cuts = []; pending.length = 0;
+    shake = 0; flash = 0; slowmo = 0; elapsed = 0; spawnT = 0.6; swipeHits = [];
+  }
+
+  // Serbest modlar
   function start(m) {
     mode = m; state = 'play';
-    objs = []; halves = []; parts = []; splats = []; texts = []; trail = []; cuts = []; pending.length = 0;
-    score = 0; shownScore = 0; lives = MODES[m].lives; timeLeft = MODES[m].time; elapsed = 0; spawnT = 0.5; shake = 0; flash = 0; slowmo = 0;
+    setTheme('wood');
+    resetWorld();
+    score = 0; shownScore = 0; lives = MODES[m].lives; timeLeft = timeMax = MODES[m].time || 1;
     stats = { sliced: 0, bestCombo: 0 };
-    ['menu', 'over', 'pauseScreen'].forEach(id => $(id).classList.add('hidden'));
-    hud.classList.remove('hidden');
+    show(null); showHud(true);
     audio(); updHud();
+  }
+
+  // Bölüm modu
+  function openLevels() {
+    state = 'levels'; mode = 'level'; setTheme('wood'); resetWorld(); showHud(false);
+    const grid = $('levelGrid'); grid.innerHTML = '';
+    const count = Math.max(15, Math.ceil((prog.unlocked + 1) / 5) * 5);
+    for (let L = 1; L <= count; L++) {
+      const b = document.createElement('button');
+      const locked = L > prog.unlocked, st = prog.stars[L] || 0;
+      b.className = 'lvl' + (locked ? ' locked' : '') + (L === prog.unlocked ? ' next' : '');
+      b.style.background = `linear-gradient(${lighten(themeFor(L).color, 40)}, ${themeFor(L).color})`;
+      b.innerHTML = locked ? '🔒' : `${L}<span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>`;
+      b.setAttribute('aria-label', locked ? `Bölüm ${L}, kilitli` : `Bölüm ${L}, ${st} yıldız`);
+      if (!locked) b.addEventListener('click', () => { scoreAtLevelStart = 0; score = 0; openIntro(L); });
+      grid.appendChild(b);
+    }
+    $('levelsInfo').textContent = prog.best ? `En iyi toplam puan: ${prog.best}` : 'Her bölümde süre bitmeden puan hedefine ulaş.';
+    show('levels');
+  }
+
+  const TIPS = [
+    'Tek hamlede 3 veya daha fazla meyve kesersen kombo bonusu kazanırsın.',
+    'Bombayı kesersen süreden saniye kaybedersin. Dikkat!',
+    'Parlayan +sn meyveleri çok nadir çıkar. Kesersen süren uzar!',
+    'Buz meyvesi zamanı yavaşlatır, süre de daha yavaş akar.',
+    'Kalan her saniye bölüm sonunda 2 bonus puan kazandırır.',
+    'Altın meyve tek başına 5 puan değerinde.',
+  ];
+  function openIntro(L) {
+    level = L; LP = levelParams(L); levelFruits = fruitsFor(L);
+    mode = 'level'; state = 'intro';
+    setTheme(themeFor(L).key);
+    resetWorld(); showHud(false);
+    $('introNum').textContent = `Bölüm ${L}`;
+    $('introTheme').textContent = themeFor(L).name;
+    $('introGoal').textContent = LP.target;
+    $('introTime').textContent = LP.time;
+    $('introFruits').textContent = 'Meyveler: ' + levelFruits.map(f => FRUIT_LABEL[f.name]).join(', ');
+    $('introTip').textContent = (L === 1 ? '' : `Bomba: −${LP.bombPenalty} sn. `) + TIPS[(L - 1) % TIPS.length];
+    show('intro');
+  }
+  function startLevel() {
+    state = 'play'; resetWorld();
+    score = scoreAtLevelStart; shownScore = score; levelScore = 0;
+    timeLeft = timeMax = LP.time; lives = 0;
+    stats = { sliced: 0, bestCombo: 0 };
+    show(null); showHud(true); audio(); updHud();
+    popText(W / 2, H * 0.42, `BÖLÜM ${level}`, '#ffcf4a', 52);
+  }
+  function levelComplete() {
+    if (state !== 'play') return;
+    state = 'done'; pending.length = 0;
+    const left = Math.ceil(timeLeft), bonus = left * 2;
+    score += bonus;
+    const ratio = timeLeft / timeMax, st = ratio >= 0.4 ? 3 : ratio >= 0.2 ? 2 : 1;
+    prog.stars[level] = Math.max(prog.stars[level] || 0, st);
+    prog.unlocked = Math.max(prog.unlocked, level + 1);
+    prog.best = Math.max(prog.best, score);
+    saveProg();
+    sfx.win();
+    popText(W / 2, H * 0.4, 'HEDEF TAMAM!', '#9ef07a', 48);
+    $('doneTitle').textContent = `Bölüm ${level} Tamamlandı!`;
+    $('doneLeft').textContent = left;
+    $('doneBonus').textContent = '+' + bonus;
+    $('doneTotal').textContent = score;
+    const spans = $('stars').querySelectorAll('span');
+    spans.forEach(s => s.classList.remove('on'));
+    setTimeout(() => {
+      showHud(false); show('done');
+      spans.forEach((s, i) => setTimeout(() => { if (i < st) { s.classList.add('on'); tone(700 + i * 200, 0.15, 'triangle', 0.12); } }, 250 + i * 300));
+    }, 1100);
   }
 
   function gameOver(title) {
     if (state !== 'play') return;
-    state = 'over';
-    const best = store.get(bestKey(), 0), isBest = score > best;
-    if (isBest) store.set(bestKey(), score);
+    state = 'over'; pending.length = 0;
+    let isBest;
+    if (mode === 'level') {
+      isBest = score > prog.best; if (isBest) { prog.best = score; saveProg(); }
+      $('stats').innerHTML = `Bölüm ${level}: <b>${levelScore}/${LP.target}</b> puan · Kesilen meyve: <b>${stats.sliced}</b>`;
+      $('againBtn').textContent = 'Bölümü Tekrar Dene';
+      $('menuBtn').textContent = 'Bölüm Haritası';
+    } else {
+      const best = store.get(bestKey(), 0); isBest = score > best;
+      if (isBest) store.set(bestKey(), score);
+      $('stats').innerHTML = `Kesilen meyve: <b>${stats.sliced}</b> · En iyi kombo: <b>${stats.bestCombo}</b>`;
+      $('againBtn').textContent = 'Tekrar Oyna';
+      $('menuBtn').textContent = 'Ana Menü';
+    }
     $('overTitle').textContent = title;
     $('finalScore').textContent = score;
     $('newBest').classList.toggle('hidden', !isBest);
-    $('stats').innerHTML = `Kesilen meyve: <b>${stats.sliced}</b> · En iyi kombo: <b>${stats.bestCombo}</b>`;
-    setTimeout(() => { $('over').classList.remove('hidden'); hud.classList.add('hidden'); }, 900);
+    setTimeout(() => { show('over'); showHud(false); }, 900);
   }
 
   // ---------- Fırlatma ----------
   function difficulty() { return Math.min(1, elapsed / 75); }
+  function pickOrigin() { const r = Math.random(); return r < 0.5 ? 'bottom' : r < 0.75 ? 'left' : 'right'; }
 
-  function pickOrigin() {
-    const r = Math.random();
-    return r < 0.5 ? 'bottom' : r < 0.75 ? 'left' : 'right';
-  }
-
-  function launch(kind, origin) {
+  function launch(spec, origin) {
     origin = origin || pickOrigin();
-    let def;
-    if (kind === 'bomb') def = null;
-    else if (kind === 'golden') def = GOLDEN;
-    else if (kind === 'freeze') def = FREEZE;
-    else def = FRUITS[(Math.random() * FRUITS.length) | 0];
+    const isBomb = spec === 'bomb';
+    const pool = mode === 'level' && state !== 'menu' ? levelFruits : FRUITS;
+    const def = isBomb ? null : (spec && typeof spec === 'object' ? spec : pool[(Math.random() * pool.length) | 0]);
     const r = (def ? def.r : 36) * S;
-    const g = 1250 * S;
-    const peak = H * (0.12 + Math.random() * 0.33);   // tepe noktası (üstten)
+    const g = 1250 * S * (mode === 'level' ? LP.gMul : 1);
+    const peak = H * (0.12 + Math.random() * 0.33);
     let x, y = H + r + 6, targetX;
     if (origin === 'left') {
       x = -r * 0.3 + Math.random() * W * 0.06; y = H + r * 0.4 - Math.random() * H * 0.08;
@@ -572,38 +1201,47 @@
     const vy = -Math.sqrt(2 * g * (y - peak));
     const tPeak = -vy / g;
     const vx = (targetX - x) / tPeak;
-    objs.push({ kind: kind || 'fruit', def, x, y, vx, vy, g, r, rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 5, dead: false });
-    sfx.launch();
+    objs.push({ kind: isBomb ? 'bomb' : 'fruit', def, x, y, vx, vy, g, r, rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 5, dead: false });
+    if (def && def.timeBonus) sfx.rare();
+    else sfx.launch();
   }
 
   function later(delay, fn) { pending.push({ t: delay, fn }); }
 
   function pickKind() {
-    const d = difficulty();
-    const bombChance = MODES[mode].bombs ? 0.1 + d * 0.12 : 0;
+    let bombChance;
+    if (mode === 'level') bombChance = LP.bomb;
+    else bombChance = MODES[mode].bombs ? 0.1 + difficulty() * 0.12 : 0;
+    if (Math.random() < bombChance) return 'bomb';
+    if (MODES[mode].time) { // süre veren nadir meyveler
+      let r = Math.random(), acc = 0;
+      for (const tf of TIME_FRUITS) { acc += tf.chance; if (r < acc) return tf; }
+    }
     const r = Math.random();
-    if (r < bombChance) return 'bomb';
-    if (r < bombChance + 0.035) return 'golden';
-    if (r < bombChance + 0.06 && mode !== 'classic') return 'freeze';
+    if (r < 0.025) return GOLDEN;
+    if (r < 0.025 + (mode === 'classic' ? 0 : 0.012)) return FREEZE;
     return undefined;
   }
 
   function spawnWave() {
-    const d = difficulty();
+    const d = mode === 'level' ? Math.min(1, (level - 1) / 12) : difficulty();
+    const waveMax = mode === 'level' ? LP.waveMax : 2 + Math.round(d * 4);
     const pattern = Math.random();
-    if (pattern < 0.12 + d * 0.06) {
-      // meyve yağmuru: iki köşeden sırayla
-      const n = 6 + ((Math.random() * 4) | 0);
-      for (let i = 0; i < n; i++) later(i * 0.11, () => launch(undefined, i % 2 ? 'left' : 'right'));
+    if (pattern < 0.1 + d * 0.06) {
+      const n = 5 + ((Math.random() * (2 + waveMax * 0.6)) | 0);
+      for (let i = 0; i < n; i++) later(i * 0.11, () => launch(i === n - 1 ? pickKind() : undefined, i % 2 ? 'left' : 'right'));
       popText(W / 2, H * 0.45, 'MEYVE YAĞMURU!', '#9ef07a', 30);
-    } else if (pattern < 0.3) {
-      // tek köşeden seri
+    } else if (pattern < 0.28) {
       const side = Math.random() < 0.5 ? 'left' : 'right', n = 3 + ((Math.random() * 3) | 0);
       for (let i = 0; i < n; i++) later(i * 0.14, () => launch(i === n - 1 ? pickKind() : undefined, side));
     } else {
-      const n = 2 + ((Math.random() * (2 + d * 4)) | 0);
+      const n = 2 + ((Math.random() * (waveMax - 1)) | 0);
       for (let i = 0; i < n; i++) later(i * (0.08 + Math.random() * 0.15), () => launch(pickKind()));
     }
+  }
+  function nextSpawnDelay() {
+    if (mode === 'level') return LP.interval + Math.random() * 0.4;
+    return 1.35 - difficulty() * 0.55 + Math.random() * 0.4;
   }
 
   // ---------- Kesme ----------
@@ -626,15 +1264,32 @@
     if (splats.length > 30) splats.shift();
   }
 
+  function addScore(n) {
+    score += n;
+    if (mode === 'level') { levelScore += n; if (levelScore >= LP.target) levelComplete(); }
+  }
+
+  function addTime(sec) {
+    timeLeft += sec;
+    timeMax = Math.max(timeMax, timeLeft);
+    if (timerEl.animate) timerEl.animate([{ transform: 'scale(1.5)', color: '#7ee05a' }, { transform: 'scale(1)' }], { duration: 450 });
+  }
+
   function sliceObj(o, ang) {
     o.dead = true;
     if (o.kind === 'bomb') { explode(o); return; }
     const def = o.def;
     stats.sliced++;
-    score += def.pts;
     sfx.slice();
     if (def.golden) { sfx.special(); popText(o.x, o.y - o.r, '+5 ALTIN!', '#ffd700', 32); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#fff3a0'); }
     if (def.freeze) { sfx.special(); slowmo = 4; popText(o.x, o.y - o.r, 'YAVAŞ ÇEKİM!', '#a8ecff', 30); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#ffffff'); }
+    if (def.timeBonus) {
+      addTime(def.timeBonus); sfx.time(def.timeBonus);
+      popText(o.x, o.y - o.r * 1.4, def.rarity + '!', def.text, 26);
+      popText(o.x, o.y - o.r * 0.2, `+${def.timeBonus} SN`, def.text, 44);
+      for (let i = 0; i < 24 + def.timeBonus * 2; i++) spark(o.x, o.y, i % 2 ? '#ffffff' : def.text);
+      flash = Math.max(flash, 0.25);
+    }
     const nx = Math.cos(ang + Math.PI / 2), ny = Math.sin(ang + Math.PI / 2);
     [1, -1].forEach(side => halves.push({
       def, r: o.r, x: o.x + nx * side * 3, y: o.y + ny * side * 3,
@@ -647,6 +1302,7 @@
     }
     cuts.push({ x: o.x, y: o.y, ang, len: o.r * 2.6, life: 0.22 });
     addSplat(o.x, o.y, o.r * (1.1 + Math.random() * 0.5), def.juice);
+    addScore(def.pts);
   }
 
   function spark(x, y, c) {
@@ -669,6 +1325,11 @@
       lives = 0; updHud();
       popText(o.x, o.y, 'BOMBA!', '#ff4a4a', 46);
       gameOver('Bom! 💥');
+    } else if (mode === 'level') {
+      timeLeft = Math.max(0, timeLeft - LP.bombPenalty);
+      popText(o.x, o.y, `−${LP.bombPenalty} SN`, '#ff4a4a', 44);
+      if (timerEl.animate) timerEl.animate([{ transform: 'scale(1.5)', color: '#ff4a4a' }, { transform: 'scale(1)' }], { duration: 450 });
+      updHud();
     } else {
       score = Math.max(0, score - 10);
       popText(o.x, o.y, '−10', '#ff4a4a', 40);
@@ -677,18 +1338,19 @@
   }
 
   function popText(x, y, s, c, size) {
-    x = Math.max(size * S * s.length * 0.3, Math.min(W - size * S * s.length * 0.3, x));
+    const half = size * S * s.length * 0.3;
+    x = Math.max(half, Math.min(W - half, x));
     texts.push({ x, y, s, c, size: size * S, life: 1.2, max: 1.2 });
   }
 
   function endSwipe() {
     const n = swipeHits.length;
-    if (n >= 3) {
-      score += n;
+    if (n >= 3 && state === 'play') {
       stats.bestCombo = Math.max(stats.bestCombo, n);
       const p = swipeHits.reduce((a, o) => ({ x: a.x + o.x / n, y: a.y + o.y / n }), { x: 0, y: 0 });
       popText(p.x, p.y - 40 * S, `${n}x KOMBO! +${n}`, '#ffcf4a', 36);
       sfx.combo(n); shake = Math.max(shake, 0.15);
+      addScore(n);
     } else if (n) stats.bestCombo = Math.max(stats.bestCombo, n);
     swipeHits = [];
     updHud();
@@ -725,18 +1387,23 @@
   window.addEventListener('pointerup', up);
   window.addEventListener('pointercancel', up);
 
-  // ---------- Menü ----------
+  // ---------- Menü düğmeleri ----------
   document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => start(b.dataset.mode)));
-  $('againBtn').addEventListener('click', () => start(mode));
-  $('menuBtn').addEventListener('click', toMenu);
-  $('quitBtn').addEventListener('click', toMenu);
+  $('levelsBtn').addEventListener('click', () => { audio(); openLevels(); });
+  $('levelsBack').addEventListener('click', toMenu);
+  $('introGo').addEventListener('click', startLevel);
+  $('introMap').addEventListener('click', openLevels);
+  $('nextBtn').addEventListener('click', () => { scoreAtLevelStart = score; openIntro(level + 1); });
+  $('doneMap').addEventListener('click', openLevels);
+  $('againBtn').addEventListener('click', () => mode === 'level' ? openIntro(level) : start(mode));
+  $('menuBtn').addEventListener('click', () => mode === 'level' ? openLevels() : toMenu());
+  $('quitBtn').addEventListener('click', () => mode === 'level' ? openLevels() : toMenu());
   $('pauseBtn').addEventListener('pointerdown', e => { e.stopPropagation(); pause(); });
-  $('resumeBtn').addEventListener('click', () => { state = 'play'; $('pauseScreen').classList.add('hidden'); last = performance.now(); });
-  function pause() { if (state === 'play') { state = 'paused'; $('pauseScreen').classList.remove('hidden'); } }
+  $('resumeBtn').addEventListener('click', () => { state = 'play'; show(null); last = performance.now(); });
+  function pause() { if (state === 'play') { state = 'paused'; show('pauseScreen'); } }
   function toMenu() {
-    state = 'menu'; objs = []; halves = []; pending.length = 0;
-    ['over', 'pauseScreen'].forEach(id => $(id).classList.add('hidden'));
-    hud.classList.add('hidden'); $('menu').classList.remove('hidden');
+    state = 'menu'; mode = 'classic'; setTheme('wood'); resetWorld();
+    showHud(false); show('menu');
   }
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 
@@ -798,7 +1465,7 @@
 
   function drawSpecialGlow(o) {
     const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 120);
-    const col = o.def.golden ? '255,215,0' : '160,230,255';
+    const col = o.def.glow || (o.def.golden ? '255,215,0' : '160,230,255');
     const gl = ctx.createRadialGradient(o.x, o.y, o.r * 0.8, o.x, o.y, o.r * 1.7);
     gl.addColorStop(0, `rgba(${col},${0.35 + 0.3 * pulse})`); gl.addColorStop(1, `rgba(${col},0)`);
     ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(o.x, o.y, o.r * 1.7, 0, TAU); ctx.fill();
@@ -868,6 +1535,18 @@
     }
   }
 
+  function drawTimeLabel(o) {
+    const s = o.r * 0.62;
+    ctx.save();
+    ctx.font = `${s}px "Lilita One", "Arial Rounded MT Bold", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round'; ctx.lineWidth = s * 0.22; ctx.strokeStyle = 'rgba(0,0,0,0.75)';
+    const t = '+' + o.def.timeBonus;
+    ctx.strokeText(t, o.x, o.y - s * 0.12); ctx.fillStyle = '#ffffff'; ctx.fillText(t, o.x, o.y - s * 0.12);
+    ctx.font = `900 ${s * 0.42}px Nunito, sans-serif`;
+    ctx.lineWidth = s * 0.14; ctx.strokeText('SN', o.x, o.y + s * 0.55); ctx.fillText('SN', o.x, o.y + s * 0.55);
+    ctx.restore();
+  }
+
   // ---------- Döngü ----------
   let last = performance.now();
   function frame(now) {
@@ -878,23 +1557,26 @@
 
     for (let i = pending.length - 1; i >= 0; i--) {
       pending[i].t -= dt;
-      if (pending[i].t <= 0) { const p = pending.splice(i, 1)[0]; if (state === 'play' || state === 'menu') p.fn(); }
+      if (pending[i].t <= 0) { const p = pending.splice(i, 1)[0]; if (state === 'play' || state === 'menu' || state === 'levels') p.fn(); }
     }
 
     if (state === 'play') {
       elapsed += realDt;
       if (MODES[mode].time) {
         const before = Math.ceil(timeLeft);
-        timeLeft -= realDt;
-        if (timeLeft <= 0) { timeLeft = 0; updHud(); gameOver('Süre Doldu! ⏰'); }
-        else if (Math.ceil(timeLeft) !== before) updHud();
+        timeLeft -= dt; // yavaş çekimde süre de yavaş akar
+        if (timeLeft <= 0) { timeLeft = 0; updHud(); gameOver(mode === 'level' ? 'Süre Doldu! ⏰' : 'Süre Doldu! ⏰'); }
+        else if (Math.ceil(timeLeft) !== before) {
+          updHud();
+          if (timeLeft < 5.5) sfx.tick();
+        } else updTimeBar();
       }
       spawnT -= dt;
       const fruitsOnScreen = objs.filter(o => o.kind !== 'bomb').length;
       if (fruitsOnScreen === 0 && pending.length === 0 && spawnT > 0.35) spawnT = 0.35;
-      if (spawnT <= 0) { spawnWave(); spawnT = 1.35 - difficulty() * 0.55 + Math.random() * 0.4; }
+      if (spawnT <= 0) { spawnWave(); spawnT = nextSpawnDelay(); }
       if (swipeTimer > 0) { swipeTimer -= realDt; if (swipeTimer <= 0 && swipeHits.length) endSwipe(); }
-    } else if (state === 'menu') {
+    } else if (state === 'menu' || state === 'levels') {
       spawnT -= dt; if (spawnT <= 0) { launch(undefined); spawnT = 0.7; }
     }
 
@@ -919,18 +1601,25 @@
     cuts = cuts.filter(c => c.life > 0);
     for (const s of splats) s.a = Math.max(0, s.a - realDt * 0.04);
     splats = splats.filter(s => s.a > 0);
+    updateAmbient(realDt, now);
 
     ctx.save();
     if (shake > 0) { shake -= realDt; const m = 16 * shake; ctx.translate((Math.random() - 0.5) * m, (Math.random() - 0.5) * m); }
     ctx.drawImage(bgCanvas, 0, 0, W, H);
+    drawAmbient(now);
     drawSplats();
     for (const h of halves) drawShadow(h.x, h.y, h.r * 0.8);
     for (const o of objs) drawShadow(o.x, o.y, o.r);
     for (const h of halves) drawSprite(getSprite(h.def, h.r, h.side > 0 ? 'bottom' : 'top'), h.x, h.y, h.ang + h.rot);
     for (const o of objs) {
       if (o.kind === 'bomb') { drawBomb(o); continue; }
-      if (o.def.golden || o.def.freeze) drawSpecialGlow(o);
+      const special = o.def.golden || o.def.freeze || o.def.timeBonus;
+      if (special) drawSpecialGlow(o);
       drawSprite(getSprite(o.def, o.r, 'whole'), o.x, o.y, o.rot);
+      if (o.def.timeBonus) {
+        drawTimeLabel(o);
+        if (Math.random() < 0.5) spark(o.x + rnd(-o.r, o.r), o.y + rnd(-o.r, o.r), o.def.text);
+      }
     }
     drawParts();
     drawCuts();
@@ -938,6 +1627,12 @@
     drawTexts();
     ctx.restore();
     if (slowmo > 0) { ctx.fillStyle = `rgba(150,220,255,${Math.min(0.2, slowmo * 0.1)})`; ctx.fillRect(0, 0, W, H); }
+    if (state === 'play' && MODES[mode].time && timeLeft < 5) {
+      const k = 0.5 + 0.5 * Math.sin(now / 120);
+      const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.4, W / 2, H / 2, Math.max(W, H) * 0.75);
+      g.addColorStop(0, 'rgba(255,0,0,0)'); g.addColorStop(1, `rgba(255,0,0,${0.12 + 0.18 * k})`);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
     if (flash > 0) { ctx.fillStyle = `rgba(255,255,255,${flash})`; ctx.fillRect(0, 0, W, H); flash -= realDt * 2.5; }
 
     requestAnimationFrame(frame);
