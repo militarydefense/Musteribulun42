@@ -284,7 +284,19 @@
     { name: 'ananas',   r: 45, skin: '#e0a020', skin2: '#7a4a10', rind: '#ffe07a', flesh: '#ffe04a', juice: '#ffe04a', fleshScale: 0.88, shape: 'pine' },
     { name: 'muz',      r: 42, skin: '#ffe040', skin2: '#b08a10', rind: '#fff4c0', flesh: '#fff3c8', juice: '#fff6d0', fleshScale: 0.8, shape: 'banana' },
   ];
-  const FRUIT_BY = Object.fromEntries(FRUITS.map(f => [f.name, f]));
+  const SPRINKLES = ['#ff5a8a', '#ffd84a', '#5ac8ff', '#7ee05a', '#ffffff', '#b07aff'];
+  const DESSERTS = [
+    { name: 'donut',    r: 40, juice: '#ff8ab8', crumb: ['#e8a858', '#ff6aa8', ...SPRINKLES] },
+    { name: 'kruvasan', r: 44, juice: '#f0c070', crumb: ['#e89a3a', '#fbe6b0', '#c87a2a'], cutW: 0.45, shape: 'croissant' },
+    { name: 'çikolata', r: 42, juice: '#5a2e14', crumb: ['#6a3418', '#4a220c', '#8a4a24'] },
+    { name: 'lolipop',  r: 34, juice: '#ff6ab0', crumb: ['#ff4a8a', '#ffffff', '#ffd84a', '#5ac8ff'] },
+    { name: 'cupcake',  r: 40, juice: '#ffb0d0', crumb: ['#ffc4dc', '#f8d898', ...SPRINKLES] },
+    { name: 'pasta',    r: 46, juice: '#ffd0dc', crumb: ['#fff6ec', '#f8d890', '#e83a5a', '#f08aa8'] },
+    { name: 'makaron',  r: 33, juice: '#a8ecc8', crumb: ['#9ae0bc', '#e4fbef', '#ffd0dc'] },
+    { name: 'kurabiye', r: 37, juice: '#d8a060', crumb: ['#d8964a', '#eec488', '#3a1808'] },
+  ];
+  DESSERTS.forEach(d => { d.dessert = true; d.cutW = d.cutW || 0.92; });
+  const FRUIT_BY = Object.fromEntries([...FRUITS, ...DESSERTS].map(f => [f.name, f]));
   const GOLDEN = { name: 'altın', r: 40, skin: '#ffd700', skin2: '#b8860b', rind: '#fff6c0', flesh: '#ffe680', juice: '#ffe14a', fleshScale: 0.88, golden: true, pts: 5 };
   const FREEZE = { name: 'buz',   r: 38, skin: '#a8ecff', skin2: '#2a90d0', rind: '#ffffff', flesh: '#d8f6ff', juice: '#c8f2ff', fleshScale: 0.88, freeze: true, pts: 2 };
   // Süre veren meyveler: nadirlik arttıkça daha çok saniye
@@ -295,24 +307,27 @@
     { name: 'zaman15', sec: 15, chance: 0.001,  rarity: 'EFSANEVİ',  skin: '#ffb020', skin2: '#b03a00', glow: '255,190,40',  text: '#ffc040' },
   ];
   TIME_FRUITS.forEach(t => Object.assign(t, { r: 37, rind: '#ffffff', flesh: lighten(t.skin, 90), juice: t.skin, fleshScale: 0.86, timeBonus: t.sec, pts: 1 }));
-  [...FRUITS, GOLDEN, FREEZE, ...TIME_FRUITS].forEach(d => { d.pts = d.pts || 1; d.dots = randDisk(60); d.dots2 = randDisk(70); });
+  [...FRUITS, ...DESSERTS, GOLDEN, FREEZE, ...TIME_FRUITS].forEach(d => { d.pts = d.pts || 1; d.dots = randDisk(60); d.dots2 = randDisk(70); });
 
   // ---------- Bölüm temaları ----------
   const THEMES = [
     { key: 'wood',   name: 'Bahçe Tezgahı', color: '#a0622a', fruits: ['elma', 'portakal', 'karpuz', 'şeftali'] },
     { key: 'market', name: 'Yaz Pazarı',    color: '#3a6ab0', fruits: ['limon', 'çilek', 'kiraz', 'karpuz', 'portakal'] },
     { key: 'beach',  name: 'Tropik Sahil',  color: '#1aa0b0', fruits: ['muz', 'ananas', 'mango', 'hindistan'] },
+    { key: 'bakery', name: 'Pastane',       color: '#d86a9a', dessert: true, fruits: ['donut', 'kruvasan', 'pasta', 'cupcake', 'kurabiye'] },
     { key: 'night',  name: 'Gece Bahçesi',  color: '#3a3a8a', fruits: ['erik', 'kiraz', 'kivi', 'limon', 'elma'] },
     { key: 'snow',   name: 'Karlı Dağ',     color: '#5a9ad0', fruits: ['nar', 'kivi', 'erik', 'elma', 'portakal'] },
+    { key: 'candy',  name: 'Şeker Diyarı',  color: '#9a5ad8', dessert: true, fruits: ['lolipop', 'çikolata', 'makaron', 'donut', 'cupcake'] },
     { key: 'lava',   name: 'Volkan Adası',  color: '#c0401a', fruits: ['ejder', 'mango', 'nar', 'çilek', 'ananas'] },
   ];
   const FRUIT_LABEL = { karpuz: 'Karpuz', portakal: 'Portakal', limon: 'Limon', elma: 'Elma', nar: 'Nar', kivi: 'Kivi', 'şeftali': 'Şeftali',
-    'çilek': 'Çilek', kiraz: 'Kiraz', erik: 'Erik', mango: 'Mango', ejder: 'Ejder meyvesi', hindistan: 'Hindistan cevizi', ananas: 'Ananas', muz: 'Muz' };
+    'çilek': 'Çilek', kiraz: 'Kiraz', erik: 'Erik', mango: 'Mango', ejder: 'Ejder meyvesi', hindistan: 'Hindistan cevizi', ananas: 'Ananas', muz: 'Muz',
+    donut: 'Donut', kruvasan: 'Kruvasan', 'çikolata': 'Tablet çikolata', lolipop: 'Lolipop', cupcake: 'Cupcake', pasta: 'Pasta', makaron: 'Makaron', kurabiye: 'Kurabiye' };
   function themeFor(L) { return THEMES[(L - 1) % THEMES.length]; }
   function fruitsFor(L) {
     const t = themeFor(L), names = [...t.fruits];
     if (L > THEMES.length) { // ikinci turdan sonra fazladan çeşit
-      const extra = FRUITS.map(f => f.name).filter(n => !names.includes(n));
+      const extra = (t.dessert ? DESSERTS : FRUITS).map(f => f.name).filter(n => !names.includes(n));
       for (let i = 0; i < Math.min(3, Math.floor(L / THEMES.length) + 1); i++) names.push(extra[(L * 7 + i * 5) % extra.length]);
     }
     return [...new Set(names)].map(n => FRUIT_BY[n]);
@@ -379,6 +394,7 @@
 
   // Bütün meyve
   function drawWhole(c, def, r) {
+    if (def.dessert) return dessertWhole(c, def, r);
     shapePath(c, def, r);
     const g = c.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.05, 0, 0, r * 1.15);
     g.addColorStop(0, lighten(def.skin, 80)); g.addColorStop(0.5, def.skin); g.addColorStop(1, def.skin2);
@@ -481,6 +497,7 @@
 
   // Kesit (iç görünüm)
   function drawCut(c, def, r) {
+    if (def.dessert) return dessertCut(c, def, r);
     shapePath(c, def, r);
     c.fillStyle = def.skin2; c.fill();
     c.save(); insetPath(c, def, r, 0.94); c.fillStyle = def.skin; c.fill(); c.restore();
@@ -577,11 +594,11 @@
       const side = kind === 'top' ? -1 : 1;
       c.save();
       c.beginPath(); c.rect(-size, side > 0 ? 0 : -size, size * 2, size); c.clip();
-      if (def.shape === 'banana') c.rotate(-Math.PI / 2); // muz ortasından kesilsin
+      if (def.shape === 'banana' || def.shape === 'croissant') c.rotate(-Math.PI / 2); // muz ortasından kesilsin
       drawCut(c, def, r);
       c.restore();
       // kesik yüzeyde parlak çizgi
-      const ov = def.shape === 'lemon' ? 1.12 : def.shape === 'banana' ? 0.42 : (def.oval || 1);
+      const ov = def.cutW || (def.shape === 'lemon' ? 1.12 : def.shape === 'banana' ? 0.42 : (def.oval || 1));
       c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 2;
       c.beginPath(); c.moveTo(-r * ov * 0.9, side * 1); c.lineTo(r * ov * 0.9, side * 1); c.stroke();
     }
@@ -597,6 +614,263 @@
     x.fillStyle = g; x.fillRect(0, 0, 64, 64); shadowSprite = c;
   }
   buildShadow();
+
+  // ---------- Tatlılar ----------
+  function gloss(c, x, y, rx, ry, a = 0.6) {
+    const g = c.createRadialGradient(x, y, 0, x, y, Math.max(rx, ry));
+    g.addColorStop(0, `rgba(255,255,255,${a})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, TAU); c.fill();
+  }
+  function sprinkles(c, def, r, rMin, rMax, yOff = 0, sx = 1, sy = 1) {
+    def.dots.forEach(([x, y, z], i) => {
+      const d = Math.hypot(x, y); if (d < rMin || d > rMax) return;
+      c.save(); c.translate(x * r * sx, y * r * sy + yOff); c.rotate(z * TAU);
+      c.fillStyle = SPRINKLES[i % SPRINKLES.length];
+      c.beginPath(); c.roundRect ? c.roundRect(-r * 0.06, -r * 0.018, r * 0.12, r * 0.036, r * 0.018) : c.rect(-r * 0.06, -r * 0.018, r * 0.12, r * 0.036); c.fill();
+      c.restore();
+    });
+  }
+  function holeOut(c, r) { // donut deliği: sprite üzerinden boşluk aç
+    c.save(); c.globalCompositeOperation = 'destination-out'; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill(); c.restore();
+    c.strokeStyle = 'rgba(80,40,10,0.35)'; c.lineWidth = Math.max(1, r * 0.12); c.beginPath(); c.arc(0, 0, r, 0, TAU); c.stroke();
+  }
+  function crescent(c, r, k = 1) {
+    const N = 30, yc = t => r * 0.25 - t * t * r * 0.55, w = t => (r * 0.5 * Math.pow(Math.max(0, 1 - Math.pow(Math.abs(t), 2.2)), 0.6) + r * 0.06) * k;
+    c.beginPath();
+    for (let i = 0; i <= N; i++) { const t = -1 + 2 * i / N; i ? c.lineTo(t * r * 1.05, yc(t) + w(t)) : c.moveTo(t * r * 1.05, yc(t) + w(t)); }
+    for (let i = N; i >= 0; i--) { const t = -1 + 2 * i / N; c.lineTo(t * r * 1.05, yc(t) - w(t)); }
+    c.closePath();
+  }
+  function rrect(c, x, y, w, h, rad) { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, rad) : c.rect(x, y, w, h); }
+  function cupcakeLiner(c, r) {
+    c.beginPath(); c.moveTo(-r * 0.78, r * 0.02); c.lineTo(r * 0.78, r * 0.02); c.lineTo(r * 0.56, r * 0.95); c.lineTo(-r * 0.56, r * 0.95); c.closePath();
+  }
+  function frostingPath(c, r) {
+    c.beginPath();
+    c.moveTo(r * 0.9, 0); c.ellipse(0, r * 0.0, r * 0.9, r * 0.3, 0, 0, TAU);
+    c.moveTo(r * 0.7, -r * 0.34); c.ellipse(0, -r * 0.34, r * 0.7, r * 0.27, 0, 0, TAU);
+    c.moveTo(r * 0.44, -r * 0.62); c.ellipse(0, -r * 0.62, r * 0.44, r * 0.22, 0, 0, TAU);
+    c.moveTo(-r * 0.15, -r * 0.75); c.quadraticCurveTo(0, -r * 1.05, r * 0.15, -r * 0.75); c.closePath();
+  }
+  function strawberry(c, x, y, s) {
+    c.fillStyle = '#e8203a'; c.beginPath(); c.moveTo(x, y + s); c.quadraticCurveTo(x - s, y, x - s * 0.6, y - s * 0.5); c.quadraticCurveTo(x, y - s * 0.8, x + s * 0.6, y - s * 0.5); c.quadraticCurveTo(x + s, y, x, y + s); c.fill();
+    c.fillStyle = '#ffe680'; for (let i = 0; i < 5; i++) c.fillRect(x - s * 0.4 + (i % 3) * s * 0.35, y - s * 0.15 + Math.floor(i / 3) * s * 0.35, s * 0.08, s * 0.12);
+    c.fillStyle = '#3a9a2a'; c.beginPath(); c.ellipse(x, y - s * 0.6, s * 0.5, s * 0.16, 0, 0, TAU); c.fill();
+  }
+
+  function dessertWhole(c, def, r) {
+    const ol = (w = 0.035) => { c.lineWidth = Math.max(1.5, r * w); c.strokeStyle = 'rgba(40,15,0,0.45)'; c.stroke(); };
+    switch (def.name) {
+      case 'donut': {
+        const g = c.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
+        g.addColorStop(0, '#f6c27a'); g.addColorStop(0.7, '#d88a3a'); g.addColorStop(1, '#9a5418');
+        c.fillStyle = g; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill(); ol();
+        c.beginPath();
+        for (let i = 0; i <= 64; i++) { const a = i / 64 * TAU, d = r * (0.84 + 0.05 * Math.sin(a * 7) + 0.03 * Math.sin(a * 13)); c.lineTo(Math.cos(a) * d, Math.sin(a) * d); }
+        c.closePath();
+        const gl = c.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r);
+        gl.addColorStop(0, '#ffc0dc'); gl.addColorStop(0.6, '#ff6aa8'); gl.addColorStop(1, '#d83a7a');
+        c.fillStyle = gl; c.fill();
+        sprinkles(c, def, r, 0.42, 0.78);
+        gloss(c, -r * 0.4, -r * 0.45, r * 0.32, r * 0.16, 0.7);
+        holeOut(c, r * 0.3);
+        break;
+      }
+      case 'kruvasan': {
+        crescent(c, r);
+        const g = c.createLinearGradient(0, -r * 0.6, 0, r * 0.8);
+        g.addColorStop(0, '#ffd27a'); g.addColorStop(0.5, '#e89a3a'); g.addColorStop(1, '#a8561a');
+        c.fillStyle = g; c.fill(); ol();
+        c.save(); crescent(c, r); c.clip();
+        c.strokeStyle = 'rgba(120,55,10,0.65)'; c.lineWidth = r * 0.06;
+        [-0.62, -0.25, 0.12, 0.48].forEach(t => {
+          const x = t * r * 1.05, yc = r * 0.25 - t * t * r * 0.55;
+          c.beginPath(); c.moveTo(x - r * 0.12, yc - r * 0.6); c.quadraticCurveTo(x + r * 0.12, yc, x - r * 0.12, yc + r * 0.6); c.stroke();
+        });
+        gloss(c, -r * 0.2, -r * 0.05, r * 0.5, r * 0.16, 0.45);
+        c.restore();
+        break;
+      }
+      case 'çikolata': {
+        const w = r * 1.05, h = r * 0.72;
+        rrect(c, -w, -h, w * 2, h * 2, r * 0.1); c.fillStyle = '#4a220c'; c.fill(); ol();
+        const cols = 4, rows = 3, gw = w * 2 / cols, gh = h * 2 / rows;
+        for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+          const x = -w + i * gw + gw * 0.1, y = -h + j * gh + gh * 0.12;
+          const g = c.createLinearGradient(x, y, x + gw, y + gh); g.addColorStop(0, '#8a4a24'); g.addColorStop(1, '#5a2a10');
+          rrect(c, x, y, gw * 0.8, gh * 0.76, r * 0.05); c.fillStyle = g; c.fill();
+          c.fillStyle = 'rgba(255,220,180,0.18)'; c.fillRect(x + 2, y + 2, gw * 0.8 - 4, 2);
+        }
+        // ambalaj (sağ yarı)
+        c.save(); rrect(c, -w, -h, w * 2, h * 2, r * 0.1); c.clip();
+        c.fillStyle = '#d8b04a';
+        c.beginPath(); c.moveTo(w * 0.15, -h - 2); for (let k = 0; k <= 10; k++) c.lineTo(w * 0.15 + (k % 2 ? -r * 0.07 : r * 0.02), -h + k * h * 0.2); c.lineTo(w + 2, h + 2); c.lineTo(w + 2, -h - 2); c.closePath(); c.fill();
+        const wg = c.createLinearGradient(0, -h, 0, h); wg.addColorStop(0, '#e8343a'); wg.addColorStop(1, '#9a1018');
+        c.fillStyle = wg; c.fillRect(w * 0.25, -h - 2, w, h * 2 + 4);
+        c.fillStyle = '#fff3c8'; c.font = `900 ${r * 0.26}px Nunito, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.save(); c.translate(w * 0.64, 0); c.rotate(-Math.PI / 2); c.fillText('ÇİKO', 0, 0); c.restore();
+        gloss(c, w * 0.5, -h * 0.5, r * 0.3, r * 0.1, 0.4);
+        c.restore();
+        break;
+      }
+      case 'lolipop': {
+        const R = r * 0.92;
+        c.fillStyle = '#ff4a8a'; c.beginPath(); c.arc(0, 0, R, 0, TAU); c.fill();
+        c.save(); c.beginPath(); c.arc(0, 0, R, 0, TAU); c.clip();
+        [['#ffffff', 0], ['#ffd84a', Math.PI * 0.66], ['#5ac8ff', Math.PI * 1.33]].forEach(([col, off]) => {
+          c.strokeStyle = col; c.lineWidth = R * 0.14; c.lineCap = 'round'; c.beginPath();
+          for (let i = 0; i <= 80; i++) { const th = i / 80 * Math.PI * 5, d = R * 1.05 * th / (Math.PI * 5); const x = Math.cos(th + off) * d, y = Math.sin(th + off) * d; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+          c.stroke();
+        });
+        c.restore();
+        c.beginPath(); c.arc(0, 0, R, 0, TAU); ol();
+        gloss(c, -R * 0.4, -R * 0.45, R * 0.35, R * 0.2, 0.8);
+        // çubuk
+        c.fillStyle = '#fbf6ee'; c.strokeStyle = 'rgba(0,0,0,0.25)'; c.lineWidth = 1;
+        rrect(c, -r * 0.07, R * 0.95, r * 0.14, r * 0.62, r * 0.05); c.fill(); c.stroke();
+        c.fillStyle = '#5ac8ff'; c.beginPath(); c.moveTo(0, R * 1.02); c.lineTo(-r * 0.3, R * 0.88); c.lineTo(-r * 0.28, R * 1.18); c.closePath(); c.moveTo(0, R * 1.02); c.lineTo(r * 0.3, R * 0.88); c.lineTo(r * 0.28, R * 1.18); c.closePath(); c.fill();
+        break;
+      }
+      case 'cupcake': {
+        cupcakeLiner(c, r);
+        const lg = c.createLinearGradient(-r, 0, r, 0); lg.addColorStop(0, '#2a88c8'); lg.addColorStop(0.5, '#6ad0ff'); lg.addColorStop(1, '#2a88c8');
+        c.fillStyle = lg; c.fill(); ol();
+        c.save(); cupcakeLiner(c, r); c.clip();
+        c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = r * 0.05;
+        for (let i = -5; i <= 5; i++) { c.beginPath(); c.moveTo(i * r * 0.15, r * 0.02); c.lineTo(i * r * 0.105, r * 0.95); c.stroke(); }
+        c.restore();
+        frostingPath(c, r);
+        const fg = c.createLinearGradient(0, -r, 0, r * 0.3); fg.addColorStop(0, '#ffd4e6'); fg.addColorStop(1, '#f06aa0');
+        c.fillStyle = fg; c.fill('nonzero');
+        c.strokeStyle = 'rgba(200,60,120,0.5)'; c.lineWidth = r * 0.03;
+        [[0, 0.9, 0.3], [-0.34, 0.7, 0.27], [-0.62, 0.44, 0.22]].forEach(([y, rx, ry]) => { c.beginPath(); c.ellipse(0, y * r, rx * r, ry * r, 0, 0.15, Math.PI - 0.15); c.stroke(); });
+        sprinkles(c, def, r, 0, 0.8, -r * 0.3, 0.8, 0.45);
+        gloss(c, -r * 0.3, -r * 0.5, r * 0.25, r * 0.1, 0.6);
+        // kiraz
+        c.strokeStyle = '#4a6a1a'; c.lineWidth = r * 0.05; c.beginPath(); c.moveTo(0, -r * 0.95); c.quadraticCurveTo(r * 0.1, -r * 1.25, r * 0.28, -r * 1.3); c.stroke();
+        const cg = c.createRadialGradient(-r * 0.05, -r * 1.0, 0, 0, -r * 0.92, r * 0.18); cg.addColorStop(0, '#ff6a7a'); cg.addColorStop(1, '#a00a1a');
+        c.fillStyle = cg; c.beginPath(); c.arc(0, -r * 0.92, r * 0.17, 0, TAU); c.fill();
+        break;
+      }
+      case 'pasta': {
+        const w = r * 1.0, top = -r * 0.4, bot = r * 0.72;
+        rrect(c, -w, top, w * 2, bot - top, r * 0.12);
+        const sg = c.createLinearGradient(-w, 0, w, 0); sg.addColorStop(0, '#f08aa8'); sg.addColorStop(0.5, '#ffc0d4'); sg.addColorStop(1, '#e07898');
+        c.fillStyle = sg; c.fill(); ol();
+        // krema ve damlalar
+        c.fillStyle = '#fff6ec'; c.beginPath(); c.moveTo(-w, top + r * 0.1);
+        for (let i = 0; i <= 10; i++) { const x = -w + i * w * 0.2, d = (i % 2 ? 0.28 : 0.12) * r + Math.sin(i * 2.3) * r * 0.06; c.lineTo(x, top + d); }
+        c.lineTo(w, top); c.lineTo(-w, top); c.closePath(); c.fill();
+        rrect(c, -w, top - r * 0.08, w * 2, r * 0.2, r * 0.1); c.fill();
+        c.fillStyle = '#fff'; c.fillRect(-w, bot - r * 0.12, w * 2, r * 0.05);
+        // üstte çilekler ve mum
+        strawberry(c, -w * 0.55, top - r * 0.2, r * 0.17); strawberry(c, w * 0.55, top - r * 0.2, r * 0.17);
+        c.fillStyle = '#8ad8ff'; c.fillRect(-r * 0.05, top - r * 0.62, r * 0.1, r * 0.48);
+        c.fillStyle = '#ffffff'; for (let k = 0; k < 3; k++) c.fillRect(-r * 0.05, top - r * 0.55 + k * r * 0.15, r * 0.1, r * 0.04);
+        const fl = c.createRadialGradient(0, top - r * 0.72, 0, 0, top - r * 0.72, r * 0.16); fl.addColorStop(0, '#fff6a0'); fl.addColorStop(0.5, '#ffb020'); fl.addColorStop(1, 'rgba(255,120,0,0)');
+        c.fillStyle = fl; c.beginPath(); c.ellipse(0, top - r * 0.74, r * 0.09, r * 0.15, 0, 0, TAU); c.fill();
+        gloss(c, -w * 0.5, r * 0.1, r * 0.3, r * 0.12, 0.35);
+        break;
+      }
+      case 'makaron': {
+        const shell = (y, flip) => {
+          c.beginPath(); c.ellipse(0, y, r * 0.98, r * 0.36, 0, flip ? 0 : Math.PI, flip ? Math.PI : TAU); c.closePath();
+          const g = c.createLinearGradient(0, y - r * 0.4, 0, y + r * 0.4); g.addColorStop(0, '#c8f4dc'); g.addColorStop(1, '#6ac898');
+          c.fillStyle = g; c.fill(); ol(0.03);
+        };
+        shell(-r * 0.12, false); shell(r * 0.12, true);
+        c.fillStyle = '#fff0f4'; rrect(c, -r * 0.92, -r * 0.14, r * 1.84, r * 0.28, r * 0.12); c.fill();
+        c.fillStyle = '#9ae0bc';
+        for (let i = 0; i < 14; i++) { const x = -r * 0.85 + i * r * 0.13; c.beginPath(); c.arc(x, -r * 0.13, r * 0.06, 0, TAU); c.fill(); c.beginPath(); c.arc(x, r * 0.13, r * 0.06, 0, TAU); c.fill(); }
+        gloss(c, -r * 0.35, -r * 0.32, r * 0.35, r * 0.1, 0.6);
+        break;
+      }
+      case 'kurabiye': {
+        c.beginPath();
+        for (let i = 0; i <= 40; i++) { const a = i / 40 * TAU, d = r * (0.95 + 0.04 * Math.sin(a * 5 + 1) + 0.03 * Math.sin(a * 11)); c.lineTo(Math.cos(a) * d, Math.sin(a) * d); }
+        c.closePath();
+        const g = c.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
+        g.addColorStop(0, '#f2c27a'); g.addColorStop(0.7, '#d8964a'); g.addColorStop(1, '#a8661e');
+        c.fillStyle = g; c.fill(); ol();
+        c.strokeStyle = 'rgba(120,60,10,0.35)'; c.lineWidth = 1.5;
+        for (let i = 0; i < 5; i++) { const a = i * 1.3; c.beginPath(); c.moveTo(Math.cos(a) * r * 0.2, Math.sin(a) * r * 0.2); c.lineTo(Math.cos(a + 0.3) * r * 0.55, Math.sin(a + 0.3) * r * 0.55); c.stroke(); }
+        c.fillStyle = '#3a1808';
+        def.dots.slice(0, 11).forEach(([x, y, z]) => { c.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * TAU, d = r * (0.08 + z * 0.04) * (k % 2 ? 0.75 : 1); c.lineTo(x * r * 0.8 + Math.cos(a) * d, y * r * 0.8 + Math.sin(a) * d); } c.closePath(); c.fill(); });
+        gloss(c, -r * 0.35, -r * 0.4, r * 0.3, r * 0.15, 0.3);
+        break;
+      }
+    }
+  }
+
+  function dessertCut(c, def, r) {
+    switch (def.name) {
+      case 'donut':
+        c.fillStyle = '#c87a32'; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
+        c.fillStyle = '#fbe2b4'; c.beginPath(); c.arc(0, 0, r * 0.9, 0, TAU); c.fill();
+        c.fillStyle = 'rgba(200,140,70,0.45)'; def.dots2.forEach(([x, y, z]) => { c.beginPath(); c.arc(x * r * 0.85, y * r * 0.85, r * (0.02 + z * 0.03), 0, TAU); c.fill(); });
+        c.strokeStyle = '#ff6aa8'; c.lineWidth = r * 0.1; c.beginPath(); c.arc(0, 0, r * 0.95, 0, TAU); c.stroke();
+        c.fillStyle = '#e83a5a'; c.beginPath(); c.arc(0, 0, r * 0.5, 0, TAU); c.fill(); // reçel dolgu
+        holeOut(c, r * 0.3);
+        break;
+      case 'kruvasan':
+        crescent(c, r); c.fillStyle = '#c87a2a'; c.fill();
+        crescent(c, r, 0.82); c.fillStyle = '#fbe6b0'; c.fill();
+        c.save(); crescent(c, r, 0.82); c.clip();
+        c.strokeStyle = 'rgba(200,130,50,0.6)'; c.lineWidth = 1.5;
+        for (let k = 1; k <= 4; k++) { c.beginPath(); for (let i = 0; i <= 30; i++) { const t = -1 + 2 * i / 30, x = t * r * 1.05, y = r * 0.25 - t * t * r * 0.55 + (k - 2.5) * r * 0.1; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+        c.restore();
+        break;
+      case 'çikolata': {
+        const w = r * 1.05, h = r * 0.72;
+        rrect(c, -w, -h, w * 2, h * 2, r * 0.1); c.fillStyle = '#4a220c'; c.fill();
+        const gw = w * 2 / 4, gh = h * 2 / 3;
+        for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) { rrect(c, -w + i * gw + gw * 0.1, -h + j * gh + gh * 0.12, gw * 0.8, gh * 0.76, r * 0.05); c.fillStyle = (i + j) % 2 ? '#7a3e1c' : '#6a3418'; c.fill(); }
+        c.fillStyle = '#9a5a30'; c.fillRect(-w, -r * 0.05, w * 2, r * 0.1); // kırık yüzey
+        break;
+      }
+      case 'lolipop': {
+        const R = r * 0.92;
+        c.fillStyle = '#ff4a8a'; c.beginPath(); c.arc(0, 0, R, 0, TAU); c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.35)';
+        for (let i = 0; i < 6; i++) { c.beginPath(); c.moveTo(R * (0.9 - i * 0.15), 0); c.arc(0, 0, R * (0.9 - i * 0.15), 0, TAU); c.moveTo(R * (0.84 - i * 0.15), 0); c.arc(0, 0, R * (0.84 - i * 0.15), 0, TAU, true); c.fill(); }
+        break;
+      }
+      case 'cupcake':
+        cupcakeLiner(c, r); c.fillStyle = '#3a98d8'; c.fill();
+        c.save(); cupcakeLiner(c, r); c.clip();
+        const cg = c.createLinearGradient(0, 0, 0, r); cg.addColorStop(0, '#f8d898'); cg.addColorStop(1, '#e0b060');
+        c.fillStyle = cg; c.fillRect(-r * 0.72, -r * 0.1, r * 1.44, r * 1.1);
+        c.fillStyle = 'rgba(180,120,40,0.4)'; def.dots2.forEach(([x, y]) => { if (y > 0.05) { c.beginPath(); c.arc(x * r * 0.6, y * r * 0.9, r * 0.025, 0, TAU); c.fill(); } });
+        c.fillStyle = '#e83a5a'; c.beginPath(); c.ellipse(0, r * 0.4, r * 0.18, r * 0.24, 0, 0, TAU); c.fill();
+        c.restore();
+        frostingPath(c, r); c.fillStyle = '#ffc4dc'; c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.5)'; c.beginPath(); c.ellipse(0, -r * 0.3, r * 0.4, r * 0.12, 0, 0, TAU); c.fill();
+        break;
+      case 'pasta': {
+        const w = r * 1.0, top = -r * 0.4, bot = r * 0.72;
+        rrect(c, -w, top, w * 2, bot - top, r * 0.12); c.fillStyle = '#f08aa8'; c.fill();
+        c.save(); rrect(c, -w * 0.94, top + r * 0.06, w * 1.88, bot - top - r * 0.12, r * 0.08); c.clip();
+        const layers = ['#fff6ec', '#f8d890', '#fffaf0', '#e83a5a', '#f8d890', '#fffaf0', '#f8d890'];
+        const lh = (bot - top) / layers.length;
+        layers.forEach((col, i) => { c.fillStyle = col; c.fillRect(-w, top + i * lh, w * 2, lh + 1); });
+        c.fillStyle = 'rgba(200,140,60,0.3)'; def.dots2.forEach(([x, y]) => { c.beginPath(); c.arc(x * w, y * r * 0.5 + r * 0.15, r * 0.02, 0, TAU); c.fill(); });
+        c.restore();
+        break;
+      }
+      case 'makaron':
+        c.fillStyle = '#6ac898'; c.beginPath(); c.ellipse(0, 0, r * 0.98, r * 0.48, 0, 0, TAU); c.fill();
+        c.fillStyle = '#e4fbef'; c.beginPath(); c.ellipse(0, 0, r * 0.88, r * 0.4, 0, 0, TAU); c.fill();
+        c.fillStyle = 'rgba(120,200,160,0.4)'; def.dots2.forEach(([x, y]) => { c.beginPath(); c.arc(x * r * 0.8, y * r * 0.35, r * 0.03, 0, TAU); c.fill(); });
+        c.fillStyle = '#ffd0dc'; c.fillRect(-r * 0.9, -r * 0.1, r * 1.8, r * 0.2);
+        break;
+      case 'kurabiye':
+        c.fillStyle = '#b06a22'; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
+        c.fillStyle = '#eec488'; c.beginPath(); c.arc(0, 0, r * 0.88, 0, TAU); c.fill();
+        c.fillStyle = 'rgba(170,100,30,0.4)'; def.dots2.forEach(([x, y]) => { c.beginPath(); c.arc(x * r * 0.8, y * r * 0.8, r * 0.03, 0, TAU); c.fill(); });
+        c.fillStyle = '#3a1808'; def.dots.slice(0, 9).forEach(([x, y]) => { c.beginPath(); c.arc(x * r * 0.75, y * r * 0.75, r * 0.07, 0, TAU); c.fill(); });
+        break;
+    }
+  }
 
   // ---------- Yeni meyvelerin dokuları ----------
   function bananaPath(c, r, k) {
@@ -940,6 +1214,68 @@
       vignette(c, 0.55);
     },
   };
+  BG.bakery = function (c) {
+    c.fillStyle = '#fdecf1'; c.fillRect(0, 0, W, H);
+    const sw = 28;
+    for (let x = 0; x < W; x += sw * 2) { c.fillStyle = '#f8cfdc'; c.fillRect(x, 0, sw, H); }
+    c.fillStyle = 'rgba(190,130,70,0.25)';
+    for (let y = 20; y < H; y += 44) for (let x = (y / 44 % 2) * sw; x < W; x += sw * 2) { c.beginPath(); c.arc(x + sw / 2, y, 2.5, 0, TAU); c.fill(); }
+    // raf
+    const sy = H * 0.3;
+    c.fillStyle = 'rgba(0,0,0,0.12)'; c.fillRect(0, sy + 14, W, 14);
+    const sg = c.createLinearGradient(0, sy, 0, sy + 14); sg.addColorStop(0, '#c88a50'); sg.addColorStop(1, '#8a5428');
+    c.fillStyle = sg; c.fillRect(0, sy, W, 14);
+    // raftaki kavanozlar
+    for (let x = 20; x < W - 30; x += 70) {
+      const h = rnd(40, 70), w = rnd(34, 46);
+      c.fillStyle = 'rgba(255,255,255,0.45)'; rrect(c, x, sy - h, w, h, 8); c.fill();
+      c.fillStyle = ['#ff8ab8', '#ffd84a', '#8ad8ff', '#b07aff'][(x / 70 | 0) % 4]; c.globalAlpha = 0.55; rrect(c, x + 4, sy - h * 0.6, w - 8, h * 0.6 - 4, 6); c.fill(); c.globalAlpha = 1;
+      c.fillStyle = '#c88a50'; c.fillRect(x - 2, sy - h - 6, w + 4, 8);
+    }
+    // mermer tezgah
+    const ty = H * 0.8;
+    const mg = c.createLinearGradient(0, ty, 0, H); mg.addColorStop(0, '#fbf8f4'); mg.addColorStop(1, '#e4ddd6');
+    c.fillStyle = mg; c.fillRect(0, ty, W, H - ty);
+    c.strokeStyle = 'rgba(150,140,140,0.35)'; c.lineWidth = 1.2;
+    for (let k = 0; k < 6; k++) { let x = rnd(0, W), y = ty + rnd(5, H - ty); c.beginPath(); c.moveTo(x, y); for (let i = 0; i < 6; i++) { x += rnd(10, 40); y += rnd(-12, 12); c.lineTo(x, y); } c.stroke(); }
+    c.fillStyle = '#c86a90'; c.fillRect(0, ty - 6, W, 8);
+    vignette(c, 0.35);
+  };
+  BG.candy = function (c) {
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#ffc2e6'); g.addColorStop(0.5, '#d4b4ff'); g.addColorStop(1, '#a8dcff');
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // pamuk şeker bulutları
+    for (let k = 0; k < 5; k++) {
+      const cx = rnd(0, W), cy = rnd(H * 0.08, H * 0.45), col = k % 2 ? 'rgba(255,255,255,0.65)' : 'rgba(255,190,225,0.7)';
+      c.fillStyle = col;
+      for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(cx + rnd(-50, 50), cy + rnd(-14, 14), rnd(20, 36), 0, TAU); c.fill(); }
+    }
+    // arka plan lolipop ağaçları
+    for (let k = 0; k < 4; k++) {
+      const x = (k + 0.5) * W / 4 + rnd(-20, 20), y = H * rnd(0.55, 0.65), R = rnd(26, 40);
+      c.fillStyle = 'rgba(255,255,255,0.35)'; c.fillRect(x - 3, y, 6, H);
+      c.fillStyle = ['#ff7ab8', '#ffd84a', '#7ad8ff', '#b88aff'][k]; c.globalAlpha = 0.32; c.beginPath(); c.arc(x, y, R, 0, TAU); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,0.8)'; c.lineWidth = 4; c.beginPath();
+      for (let i = 0; i <= 50; i++) { const th = i / 50 * Math.PI * 4, d = R * th / (Math.PI * 4); i ? c.lineTo(x + Math.cos(th) * d, y + Math.sin(th) * d) : c.moveTo(x, y); }
+      c.stroke(); c.globalAlpha = 1;
+    }
+    // tepeler
+    [[0.78, '#ff9ad0', 60], [0.88, '#9af0c8', 45]].forEach(([b, col, a]) => {
+      c.fillStyle = col; c.beginPath(); c.moveTo(0, H);
+      for (let x = 0; x <= W; x += 8) c.lineTo(x, H * b + Math.sin(x / a) * 16);
+      c.lineTo(W, H); c.closePath(); c.fill();
+    });
+    // şeker baston
+    [[W * 0.1, -0.15], [W * 0.88, 0.2]].forEach(([x, rot]) => {
+      c.save(); c.translate(x, H * 0.92); c.rotate(rot);
+      c.lineCap = 'round'; c.lineWidth = 14; c.strokeStyle = '#ffffff';
+      c.beginPath(); c.moveTo(0, 0); c.lineTo(0, -H * 0.18); c.arc(18, -H * 0.18, 18, Math.PI, 0); c.stroke();
+      c.lineCap = 'butt'; c.setLineDash([9, 9]); c.strokeStyle = '#e8303a'; c.beginPath(); c.moveTo(0, 0); c.lineTo(0, -H * 0.18); c.arc(18, -H * 0.18, 18, Math.PI, 0); c.stroke(); c.setLineDash([]);
+      c.restore();
+    });
+    vignette(c, 0.25);
+  };
   let bgKey = 'wood';
   function buildBackground() {
     bgCanvas = document.createElement('canvas');
@@ -954,12 +1290,12 @@
   let ambient = [];
   function initAmbient() {
     ambient = [];
-    const n = { night: 22, snow: 55, lava: 35, beach: 10, wood: 14, market: 0 }[bgKey] || 0;
+    const n = { night: 22, snow: 55, lava: 35, beach: 10, wood: 14, market: 0, bakery: 18, candy: 40 }[bgKey] || 0;
     for (let i = 0; i < n; i++) ambient.push(newAmbient(true));
   }
   function newAmbient(anywhere) {
     const a = { x: rnd(0, W), y: anywhere ? rnd(0, H) : 0, ph: rnd(0, TAU), s: rnd(0.6, 1.4) };
-    if (bgKey === 'snow') { a.y = anywhere ? a.y : -10; a.vy = rnd(25, 60); a.r = rnd(1.5, 4); }
+    if (bgKey === 'snow' || bgKey === 'candy') { a.y = anywhere ? a.y : -10; a.vy = rnd(25, 60); a.r = rnd(1.5, 4); a.c = SPRINKLES[(Math.random() * SPRINKLES.length) | 0]; }
     else if (bgKey === 'lava') { a.y = anywhere ? a.y : H + 10; a.vy = -rnd(30, 80); a.r = rnd(1, 3); }
     else if (bgKey === 'night') { a.vy = 0; a.r = rnd(1.5, 3); }
     else if (bgKey === 'beach') { a.y = rnd(0, H * 0.36); a.vy = 0; a.r = rnd(1, 2.5); }
@@ -970,7 +1306,7 @@
     for (let i = 0; i < ambient.length; i++) {
       const a = ambient[i];
       a.y += a.vy * dt;
-      if (bgKey === 'snow') a.x += Math.sin(t / 900 + a.ph) * 20 * dt;
+      if (bgKey === 'snow' || bgKey === 'candy') { a.x += Math.sin(t / 900 + a.ph) * 20 * dt; a.ph += dt * 2; }
       else if (bgKey === 'night') { a.x += Math.cos(t / 1300 + a.ph) * 18 * dt; a.y += Math.sin(t / 1100 + a.ph * 2) * 14 * dt; }
       else if (bgKey === 'lava') a.x += Math.sin(t / 500 + a.ph) * 15 * dt;
       if (a.y > H + 12 || a.y < -12 || a.x < -12 || a.x > W + 12) ambient[i] = newAmbient(bgKey === 'night' || bgKey === 'beach' || bgKey === 'wood');
@@ -978,7 +1314,9 @@
   }
   function drawAmbient(t) {
     for (const a of ambient) {
-      if (bgKey === 'snow') { ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
+      if (bgKey === 'candy') { ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(a.ph); ctx.fillStyle = a.c; ctx.fillRect(-a.r * 1.5, -a.r * 0.45, a.r * 3, a.r * 0.9); ctx.restore(); }
+      else if (bgKey === 'bakery') { ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
+      else if (bgKey === 'snow') { ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, TAU); ctx.fill(); }
       else if (bgKey === 'night') {
         const k = 0.5 + 0.5 * Math.sin(t / 400 + a.ph * 3);
         const g = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.r * 5);
@@ -1101,7 +1439,7 @@
   }
 
   const TIPS = [
-    'Tek hamlede 3 veya daha fazla meyve kesersen kombo bonusu kazanırsın.',
+    'Tek hamlede 3 veya daha fazla nesne kesersen kombo bonusu kazanırsın.',
     'Bombayı kesersen süreden saniye kaybedersin. Dikkat!',
     'Parlayan +sn meyveleri çok nadir çıkar. Kesersen süren uzar!',
     'Buz meyvesi zamanı yavaşlatır, süre de daha yavaş akar.',
@@ -1117,7 +1455,7 @@
     $('introTheme').textContent = themeFor(L).name;
     $('introGoal').textContent = LP.target;
     $('introTime').textContent = LP.time;
-    $('introFruits').textContent = 'Meyveler: ' + levelFruits.map(f => FRUIT_LABEL[f.name]).join(', ');
+    $('introFruits').textContent = (themeFor(L).dessert ? 'Tatlılar: ' : 'Meyveler: ') + levelFruits.map(f => FRUIT_LABEL[f.name]).join(', ');
     $('introTip').textContent = (L === 1 ? '' : `Bomba: −${LP.bombPenalty} sn. `) + TIPS[(L - 1) % TIPS.length];
     show('intro');
   }
@@ -1296,12 +1634,17 @@
       vx: o.vx * 0.5 + nx * side * 110 * S, vy: Math.min(o.vy * 0.4, 0) + ny * side * 110 * S - 60 * S,
       g: o.g, ang, side, rot: 0, vr: side * (1.5 + Math.random() * 2.5), life: 3,
     }));
-    for (let i = 0; i < 22; i++) {
+    if (def.dessert) for (let i = 0; i < 26; i++) {
+      const a = Math.random() * TAU, sp = (100 + Math.random() * 380) * S;
+      parts.push({ type: 'crumb', x: o.x, y: o.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 140 * S, r: (2 + Math.random() * 4) * S, c: def.crumb[i % def.crumb.length], life: 0.7 + Math.random() * 0.5, max: 1.2, g: 1100 * S, rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 20 });
+    }
+    else for (let i = 0; i < 22; i++) {
       const a = Math.random() * TAU, sp = (120 + Math.random() * 420) * S;
       parts.push({ type: 'drop', x: o.x, y: o.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 120 * S, r: (2 + Math.random() * 4.5) * S, c: def.juice, life: 0.6 + Math.random() * 0.5, max: 1.1, g: 1100 * S });
     }
     cuts.push({ x: o.x, y: o.y, ang, len: o.r * 2.6, life: 0.22 });
-    addSplat(o.x, o.y, o.r * (1.1 + Math.random() * 0.5), def.juice);
+    addSplat(o.x, o.y, o.r * (def.dessert ? 0.7 : 1.1 + Math.random() * 0.5), def.juice);
+    if (def.dessert) splats[splats.length - 1].a = 0.3;
     addScore(def.pts);
   }
 
@@ -1501,6 +1844,9 @@
       if (p.type === 'smoke') {
         ctx.globalAlpha = k * 0.5; ctx.fillStyle = p.c;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (2 - k), 0, TAU); ctx.fill();
+      } else if (p.type === 'crumb') {
+        p.rot += p.vr * 0.016; ctx.globalAlpha = Math.min(1, k * 2); ctx.fillStyle = p.c;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.r, -p.r * 0.6, p.r * 2, p.r * 1.2); ctx.restore();
       } else if (p.type === 'drop') {
         ctx.globalAlpha = Math.min(1, k * 2); ctx.strokeStyle = p.c; ctx.lineCap = 'round'; ctx.lineWidth = p.r * 2;
         ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * 0.018, p.y - p.vy * 0.018); ctx.stroke();
