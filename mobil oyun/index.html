@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2b1a12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Kes Kes Bahçe</title>
+<style>
+  :root {
+    --bg1: #3a2416; --bg2: #1c110a;
+    --gold: #ffcf4a; --red: #ff4a4a; --text: #fff7e8;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; background: var(--bg2);
+    font-family: "Trebuchet MS", system-ui, sans-serif; color: var(--text);
+    touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+  #hud {
+    position: fixed; top: 0; left: 0; right: 0; padding: calc(10px + env(safe-area-inset-top)) 16px 0;
+    display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none;
+  }
+  #score { font-size: 40px; font-weight: 900; color: var(--gold); text-shadow: 0 3px 0 #7a4a00, 0 0 12px #0008; }
+  #best { font-size: 14px; opacity: .8; margin-top: 2px; }
+  #right { text-align: right; }
+  #lives { font-size: 28px; letter-spacing: 2px; }
+  #timer { font-size: 28px; font-weight: 900; color: var(--gold); }
+  #pauseBtn {
+    pointer-events: auto; margin-top: 6px; background: #0006; border: 2px solid #fff4; color: var(--text);
+    border-radius: 12px; font-size: 18px; width: 44px; height: 44px;
+  }
+  .screen {
+    position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; padding: 16px; text-align: center; background: radial-gradient(circle at 50% 40%, #0005, #000c);
+  }
+  .hidden { display: none !important; }
+  h1 {
+    margin: 0 0 6px; font-size: clamp(40px, 11vw, 72px); line-height: 1; color: var(--gold);
+    text-shadow: 0 5px 0 #8a3a00, 0 0 30px #ff8a0088; transform: rotate(-3deg);
+  }
+  .sub { opacity: .85; margin: 0 0 10px; max-width: 360px; }
+  .btn {
+    width: min(300px, 100%); padding: 16px 20px; font-size: 20px; font-weight: 800; border: none; border-radius: 16px;
+    color: #2b1a12; background: linear-gradient(#ffe07a, #ffb020); box-shadow: 0 5px 0 #a8650a; cursor: pointer;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #a8650a; }
+  .btn.alt { background: linear-gradient(#9ef07a, #4fc030); box-shadow: 0 5px 0 #2b7a14; }
+  .btn.alt2 { background: linear-gradient(#8ad8ff, #3aa0f0); box-shadow: 0 5px 0 #1a5a9a; }
+  .btn small { display: block; font-size: 12px; font-weight: 600; opacity: .75; }
+  #finalScore { font-size: 64px; font-weight: 900; color: var(--gold); }
+  #newBest { color: #9ef07a; font-weight: 800; font-size: 20px; }
+  .row { display: flex; gap: 10px; width: min(300px, 100%); }
+  .row .btn { font-size: 16px; padding: 12px; }
+  #muteBtn { position: fixed; bottom: calc(14px + env(safe-area-inset-bottom)); right: 16px; pointer-events: auto;
+    background: #0006; border: 2px solid #fff4; color: var(--text); border-radius: 12px; font-size: 18px; width: 44px; height: 44px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud" class="hidden">
+  <div>
+    <div id="score">0</div>
+    <div id="best">En iyi: 0</div>
+  </div>
+  <div id="right">
+    <div id="lives"></div>
+    <div id="timer" class="hidden">60</div>
+    <button id="pauseBtn" aria-label="Duraklat">⏸</button>
+  </div>
+</div>
+
+<div id="menu" class="screen">
+  <h1>Kes Kes<br>Bahçe!</h1>
+  <p class="sub">Parmağını kaydırıp meyveleri kes. Bombalara dokunma! Tek hamlede çok meyve kesersen kombo kazanırsın.</p>
+  <button class="btn" data-mode="classic">Klasik<small>3 can · bombalara dikkat</small></button>
+  <button class="btn alt" data-mode="timed">Süreli<small>60 saniye · bomba −10 puan</small></button>
+  <button class="btn alt2" data-mode="zen">Zen<small>90 saniye · bomba yok</small></button>
+</div>
+
+<div id="pauseScreen" class="screen hidden">
+  <h1>Mola</h1>
+  <button class="btn" id="resumeBtn">Devam Et</button>
+  <button class="btn alt2" id="quitBtn">Ana Menü</button>
+</div>
+
+<div id="over" class="screen hidden">
+  <h1 id="overTitle">Oyun Bitti</h1>
+  <div id="finalScore">0</div>
+  <div id="newBest" class="hidden">🏆 Yeni rekor!</div>
+  <div id="stats" class="sub"></div>
+  <button class="btn" id="againBtn">Tekrar Oyna</button>
+  <button class="btn alt2" id="menuBtn">Ana Menü</button>
+</div>
+
+<button id="muteBtn" aria-label="Ses">🔊</button>
+
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+  let W = 0, H = 0, DPR = 1, S = 1; // S = ölçek (nesne boyutu)
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    S = Math.max(0.75, Math.min(1.3, Math.min(W, H) / 420));
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---------- Kayıt ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+
+  // ---------- Ses (WebAudio sentez) ----------
+  let actx = null, muted = store.get('kkb_muted', false);
+  function audio() {
+    if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; } }
+    if (actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+  function tone(freq, dur, type = 'sine', vol = 0.2, slide = 0) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, freq + slide), t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur);
+  }
+  function noise(dur, vol = 0.3, freq = 1200) {
+    if (muted) return; const a = audio(); if (!a) return;
+    const len = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    f.type = 'bandpass'; f.frequency.value = freq; g.gain.value = vol;
+    src.buffer = buf; src.connect(f).connect(g).connect(a.destination); src.start();
+  }
+  const sfx = {
+    slice() { noise(0.12, 0.35, 2500 + Math.random() * 1500); tone(600 + Math.random() * 300, 0.08, 'triangle', 0.08, -300); },
+    swoosh() { noise(0.15, 0.08, 800); },
+    launch() { tone(180, 0.15, 'sine', 0.06, 120); },
+    bomb() { noise(0.6, 0.7, 300); tone(90, 0.5, 'sawtooth', 0.25, -60); },
+    miss() { tone(300, 0.25, 'square', 0.08, -150); },
+    combo(n) { [0, 1, 2].forEach(i => setTimeout(() => tone(500 + n * 60 + i * 180, 0.12, 'triangle', 0.12), i * 70)); },
+    special() { tone(880, 0.3, 'sine', 0.15, 440); },
+  };
+  const muteBtn = document.getElementById('muteBtn');
+  function updMute() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+  updMute();
+  muteBtn.addEventListener('pointerdown', e => { e.stopPropagation(); muted = !muted; store.set('kkb_muted', muted); updMute(); });
+
+  // ---------- Meyve tanımları ----------
+  const FRUITS = [
+    { name: 'karpuz',   r: 46, skin: '#2e8b2e', skin2: '#1d5e1d', flesh: '#ff3b4f', juice: '#ff3b4f', pts: 1, stripes: true, seeds: '#222' },
+    { name: 'portakal', r: 34, skin: '#ff9a1a', skin2: '#e07800', flesh: '#ffc04a', juice: '#ffa21a', pts: 1 },
+    { name: 'limon',    r: 30, skin: '#ffe23a', skin2: '#e0bf00', flesh: '#fff59a', juice: '#ffe94a', pts: 1, oval: 1.25 },
+    { name: 'elma',     r: 32, skin: '#e8243a', skin2: '#a8121f', flesh: '#fff1c8', juice: '#fff0b0', pts: 1, stem: true },
+    { name: 'nar',      r: 36, skin: '#b0122c', skin2: '#700818', flesh: '#ff2a5a', juice: '#d8103a', pts: 1, crown: true, seeds: '#ff6a8a' },
+    { name: 'kivi',     r: 28, skin: '#8a6a3a', skin2: '#5e4520', flesh: '#7ad83a', juice: '#8ae04a', pts: 1, oval: 1.2, seeds: '#111' },
+    { name: 'şeftali',  r: 31, skin: '#ffa07a', skin2: '#f06a5a', flesh: '#ffd08a', juice: '#ffb080', pts: 1 },
+  ];
+  const GOLDEN = { name: 'altın', r: 34, skin: '#ffd700', skin2: '#c89a00', flesh: '#fff3a0', juice: '#ffe14a', pts: 5, golden: true };
+  const FREEZE = { name: 'buz', r: 32, skin: '#9ae6ff', skin2: '#3ab0e0', flesh: '#e8faff', juice: '#c8f2ff', pts: 2, freeze: true };
+
+  // ---------- Durum ----------
+  const MODES = {
+    classic: { lives: 3, time: 0, bombs: true },
+    timed:   { lives: 0, time: 60, bombs: true },
+    zen:     { lives: 0, time: 90, bombs: false },
+  };
+  let mode = 'classic', state = 'menu';
+  let objs = [], halves = [], parts = [], splats = [], texts = [], trail = [];
+  let score = 0, lives = 3, timeLeft = 0, elapsed = 0, spawnT = 0, shake = 0, flash = 0, slowmo = 0;
+  let stats = { sliced: 0, bestCombo: 0, missed: 0 };
+  let pointerDown = false, lastPt = null, swipeHits = [], swipeTimer = 0, swipeLen = 0;
+
+  const $ = id => document.getElementById(id);
+  const hud = $('hud'), scoreEl = $('score'), bestEl = $('best'), livesEl = $('lives'), timerEl = $('timer');
+
+  function bestKey() { return 'kkb_best_' + mode; }
+  function updHud() {
+    scoreEl.textContent = score;
+    bestEl.textContent = 'En iyi: ' + store.get(bestKey(), 0);
+    if (MODES[mode].lives) {
+      livesEl.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, MODES[mode].lives - lives));
+      livesEl.classList.remove('hidden'); timerEl.classList.add('hidden');
+    } else {
+      livesEl.classList.add('hidden'); timerEl.classList.remove('hidden');
+      timerEl.textContent = Math.ceil(timeLeft);
+      timerEl.style.color = timeLeft < 10 ? '#ff5a5a' : '';
+    }
+  }
+
+  function start(m) {
+    mode = m; state = 'play';
+    objs = []; halves = []; parts = []; splats = []; texts = []; trail = [];
+    score = 0; lives = MODES[m].lives; timeLeft = MODES[m].time; elapsed = 0; spawnT = 0.6; shake = 0; flash = 0; slowmo = 0;
+    stats = { sliced: 0, bestCombo: 0, missed: 0 };
+    ['menu', 'over', 'pauseScreen'].forEach(id => $(id).classList.add('hidden'));
+    hud.classList.remove('hidden');
+    audio(); updHud();
+  }
+
+  function gameOver(title) {
+    if (state !== 'play') return;
+    state = 'over';
+    const best = store.get(bestKey(), 0), isBest = score > best;
+    if (isBest) store.set(bestKey(), score);
+    $('overTitle').textContent = title;
+    $('finalScore').textContent = score;
+    $('newBest').classList.toggle('hidden', !isBest);
+    $('stats').innerHTML = `Kesilen meyve: <b>${stats.sliced}</b> · En iyi kombo: <b>${stats.bestCombo}</b>`;
+    setTimeout(() => { $('over').classList.remove('hidden'); hud.classList.add('hidden'); }, 900);
+  }
+
+  // ---------- Üretim ----------
+  function difficulty() { return Math.min(1, elapsed / 90); }
+
+  function launch(kind) {
+    const d = difficulty();
+    const x = W * (0.15 + Math.random() * 0.7);
+    const g = 1400 * S;
+    const peak = H * (0.25 + Math.random() * 0.35);            // nesnenin çıkacağı yükseklik (üstten)
+    const vy = -Math.sqrt(2 * g * (H + 60 * S - peak));
+    const tFlight = -vy / g;
+    const targetX = W * (0.2 + Math.random() * 0.6);
+    const vx = (targetX - x) / tFlight;
+    let def;
+    if (kind === 'bomb') def = null;
+    else if (kind === 'golden') def = GOLDEN;
+    else if (kind === 'freeze') def = FREEZE;
+    else def = FRUITS[(Math.random() * FRUITS.length) | 0];
+    const r = (def ? def.r : 30) * S;
+    objs.push({
+      kind: kind || 'fruit', def, x, y: H + r + 10, vx, vy, g, r,
+      rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 6, t: 0, dead: false,
+    });
+    sfx.launch();
+  }
+
+  function spawnWave() {
+    const d = difficulty();
+    const n = 1 + ((Math.random() * (1 + d * 4)) | 0);
+    const bombChance = MODES[mode].bombs ? 0.12 + d * 0.15 : 0;
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        if (state !== 'play') return;
+        const r = Math.random();
+        if (r < bombChance) launch('bomb');
+        else if (r < bombChance + 0.03) launch('golden');
+        else if (r < bombChance + 0.05 && mode !== 'classic') launch('freeze');
+        else launch();
+      }, i * (120 + Math.random() * 180));
+    }
+    // ara sıra meyve yağmuru
+    if (Math.random() < 0.06 + d * 0.05) {
+      for (let i = 0; i < 6; i++) setTimeout(() => state === 'play' && launch(), 600 + i * 90);
+    }
+  }
+
+  // ---------- Kesme ----------
+  function segCircle(ax, ay, bx, by, cx, cy, r) {
+    const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy;
+    let t = l2 ? ((cx - ax) * dx + (cy - ay) * dy) / l2 : 0;
+    t = Math.max(0, Math.min(1, t));
+    const px = ax + dx * t - cx, py = ay + dy * t - cy;
+    return px * px + py * py <= r * r;
+  }
+
+  function sliceObj(o, ang) {
+    o.dead = true;
+    if (o.kind === 'bomb') { explode(o); return; }
+    const def = o.def;
+    stats.sliced++;
+    const pts = def.pts;
+    score += pts;
+    sfx.slice();
+    if (def.golden) { sfx.special(); popText(o.x, o.y - o.r, '+5 ALTIN!', '#ffd700', 30); }
+    if (def.freeze) { sfx.special(); slowmo = 4; popText(o.x, o.y - o.r, 'YAVAŞLAT!', '#9ae6ff', 28); }
+    // iki yarım
+    const nx = Math.cos(ang + Math.PI / 2), ny = Math.sin(ang + Math.PI / 2);
+    [1, -1].forEach(side => halves.push({
+      def, r: o.r, x: o.x, y: o.y, vx: o.vx * 0.5 + nx * side * 120 * S, vy: o.vy * 0.4 + ny * side * 120 * S - 80 * S,
+      g: o.g, ang, side, rot: 0, vr: side * (2 + Math.random() * 3), life: 3,
+    }));
+    // meyve suyu
+    for (let i = 0; i < 18; i++) {
+      const a = Math.random() * 6.28, sp = (100 + Math.random() * 380) * S;
+      parts.push({ x: o.x, y: o.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 100 * S, r: (2 + Math.random() * 5) * S, c: def.juice, life: 0.7 + Math.random() * 0.5, g: 900 * S });
+    }
+    splats.push({ x: o.x, y: o.y, r: o.r * (1.2 + Math.random() * 0.6), c: def.juice, a: 0.55, rot: Math.random() * 6.28, seed: Math.random() * 1000 });
+    if (splats.length > 25) splats.shift();
+  }
+
+  function explode(o) {
+    sfx.bomb(); shake = 0.5; flash = 1;
+    for (let i = 0; i < 40; i++) {
+      const a = Math.random() * 6.28, sp = (150 + Math.random() * 600) * S;
+      parts.push({ x: o.x, y: o.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: (2 + Math.random() * 6) * S,
+        c: Math.random() < 0.5 ? '#ffb020' : '#ff5a1a', life: 0.5 + Math.random() * 0.6, g: 300 * S });
+    }
+    if (mode === 'classic') {
+      lives = 0; updHud();
+      popText(o.x, o.y, 'BOMBA!', '#ff4a4a', 40);
+      gameOver('Bom! 💥');
+    } else {
+      score = Math.max(0, score - 10);
+      popText(o.x, o.y, '−10', '#ff4a4a', 36);
+      updHud();
+    }
+  }
+
+  function popText(x, y, s, c, size) { texts.push({ x, y, s, c, size: size * S, life: 1.1 }); }
+
+  function endSwipe() {
+    const fruitHits = swipeHits.length;
+    if (fruitHits >= 3) {
+      const bonus = fruitHits;
+      score += bonus;
+      stats.bestCombo = Math.max(stats.bestCombo, fruitHits);
+      const p = swipeHits.reduce((a, o) => ({ x: a.x + o.x / fruitHits, y: a.y + o.y / fruitHits }), { x: 0, y: 0 });
+      popText(p.x, p.y - 30 * S, `${fruitHits}x KOMBO! +${bonus}`, '#ffcf4a', 34);
+      sfx.combo(fruitHits);
+    } else if (fruitHits) stats.bestCombo = Math.max(stats.bestCombo, fruitHits);
+    swipeHits = []; swipeLen = 0;
+    updHud();
+  }
+
+  function handleMove(x, y) {
+    trail.push({ x, y, t: performance.now() });
+    if (!lastPt) { lastPt = { x, y }; return; }
+    const dx = x - lastPt.x, dy = y - lastPt.y, dist = Math.hypot(dx, dy);
+    swipeLen += dist;
+    if (dist > 4 && state === 'play') {
+      const ang = Math.atan2(dy, dx);
+      for (const o of objs) {
+        if (o.dead) continue;
+        if (segCircle(lastPt.x, lastPt.y, x, y, o.x, o.y, o.r * 0.95)) {
+          sliceObj(o, ang);
+          if (o.kind !== 'bomb') swipeHits.push(o);
+          if (state !== 'play') break;
+        }
+      }
+      if (dist > 30 && Math.random() < 0.15) sfx.swoosh();
+      updHud();
+    }
+    lastPt = { x, y };
+    swipeTimer = 0.25;
+  }
+
+  cv.addEventListener('pointerdown', e => { pointerDown = true; lastPt = null; trail = []; audio(); handleMove(e.clientX, e.clientY); });
+  window.addEventListener('pointermove', e => { if (pointerDown) handleMove(e.clientX, e.clientY); });
+  const up = () => { pointerDown = false; lastPt = null; if (swipeHits.length) endSwipe(); };
+  window.addEventListener('pointerup', up);
+  window.addEventListener('pointercancel', up);
+
+  // ---------- Menü düğmeleri ----------
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => start(b.dataset.mode)));
+  $('againBtn').addEventListener('click', () => start(mode));
+  $('menuBtn').addEventListener('click', toMenu);
+  $('quitBtn').addEventListener('click', toMenu);
+  $('pauseBtn').addEventListener('pointerdown', e => { e.stopPropagation(); pause(); });
+  $('resumeBtn').addEventListener('click', () => { state = 'play'; $('pauseScreen').classList.add('hidden'); last = performance.now(); });
+  function pause() { if (state === 'play') { state = 'paused'; $('pauseScreen').classList.remove('hidden'); } }
+  function toMenu() {
+    state = 'menu'; objs = []; halves = [];
+    ['over', 'pauseScreen'].forEach(id => $(id).classList.add('hidden'));
+    hud.classList.add('hidden'); $('menu').classList.remove('hidden');
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+
+  // ---------- Çizim ----------
+  function drawFruitBody(def, r) {
+    const ov = def.oval || 1;
+    const g = ctx.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r * 1.1);
+    g.addColorStop(0, lighten(def.skin)); g.addColorStop(0.55, def.skin); g.addColorStop(1, def.skin2);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.ellipse(0, 0, r * ov, r, 0, 0, 6.283); ctx.fill();
+    if (def.stripes) {
+      ctx.strokeStyle = def.skin2; ctx.lineWidth = r * 0.12;
+      for (let i = -2; i <= 2; i++) {
+        ctx.beginPath(); ctx.ellipse(0, 0, r * Math.abs(i) * 0.3 + 1, r * 0.98, 0, 0, 6.283);
+        ctx.save(); ctx.clip(); ctx.restore(); ctx.stroke();
+      }
+    }
+    if (def.name === 'kivi' || def.name === 'şeftali') { // tüylü doku
+      ctx.fillStyle = '#0001';
+      for (let i = 0; i < 14; i++) { const a = i * 2.4, d = (i % 5) / 5 * r * 0.8; ctx.fillRect(Math.cos(a) * d * ov, Math.sin(a) * d, 1.5, 1.5); }
+    }
+    if (def.stem) {
+      ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = r * 0.12; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, -r * 0.85); ctx.quadraticCurveTo(r * 0.1, -r * 1.2, r * 0.05, -r * 1.3); ctx.stroke();
+      ctx.fillStyle = '#4caf30'; ctx.beginPath(); ctx.ellipse(r * 0.3, -r * 1.1, r * 0.28, r * 0.13, -0.5, 0, 6.283); ctx.fill();
+    }
+    if (def.crown) {
+      ctx.fillStyle = def.skin2; ctx.beginPath();
+      for (let i = 0; i < 5; i++) { const x = -r * 0.3 + i * r * 0.15; ctx.moveTo(x, -r * 0.85); ctx.lineTo(x + r * 0.07, -r * 1.2); ctx.lineTo(x + r * 0.14, -r * 0.85); }
+      ctx.fill();
+    }
+    if (def.golden || def.freeze) {
+      ctx.strokeStyle = def.golden ? '#fff6b0' : '#ffffff'; ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.5 + 0.5 * Math.sin(performance.now() / 120);
+      ctx.beginPath(); ctx.arc(0, 0, r * 1.18, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    // parlama
+    ctx.fillStyle = '#ffffff55';
+    ctx.beginPath(); ctx.ellipse(-r * 0.35 * ov, -r * 0.4, r * 0.25, r * 0.14, -0.6, 0, 6.283); ctx.fill();
+  }
+
+  function drawHalf(h) {
+    const def = h.def, r = h.r, ov = def.oval || 1;
+    ctx.save();
+    ctx.translate(h.x, h.y); ctx.rotate(h.ang + h.rot);
+    ctx.beginPath(); // yarım daire (kesik yüzü düz)
+    if (h.side > 0) ctx.ellipse(0, 0, r * ov, r, 0, 0, Math.PI); else ctx.ellipse(0, 0, r * ov, r, 0, Math.PI, Math.PI * 2);
+    ctx.closePath();
+    ctx.fillStyle = def.skin; ctx.fill();
+    ctx.clip();
+    ctx.fillStyle = def.flesh;
+    ctx.beginPath(); ctx.ellipse(0, 0, r * ov * 0.86, r * 0.86, 0, 0, 6.283); ctx.fill();
+    if (def.seeds) {
+      ctx.fillStyle = def.seeds;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * h.side, d = r * 0.45;
+        ctx.beginPath(); ctx.ellipse(Math.cos(a) * d * ov, Math.sin(a) * d, r * 0.06, r * 0.1, a, 0, 6.283); ctx.fill();
+      }
+    }
+    if (def.name === 'portakal' || def.name === 'limon') {
+      ctx.strokeStyle = '#ffffff88'; ctx.lineWidth = 1.5;
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * r * 0.8 * ov, Math.sin(a) * r * 0.8); ctx.stroke(); }
+    }
+    ctx.restore();
+  }
+
+  function drawBomb(o) {
+    const r = o.r;
+    ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(o.rot);
+    // kırmızı uyarı halesi
+    ctx.fillStyle = `rgba(255,60,60,${0.18 + 0.12 * Math.sin(performance.now() / 90)})`;
+    ctx.beginPath(); ctx.arc(0, 0, r * 1.45, 0, 6.283); ctx.fill();
+    const g = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
+    g.addColorStop(0, '#555'); g.addColorStop(1, '#111');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.283); ctx.fill();
+    ctx.fillStyle = '#333'; ctx.fillRect(-r * 0.25, -r * 1.15, r * 0.5, r * 0.3);
+    ctx.strokeStyle = '#c8a060'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, -r * 1.15); ctx.quadraticCurveTo(r * 0.3, -r * 1.5, r * 0.5, -r * 1.4); ctx.stroke();
+    // kıvılcım
+    const sp = 4 + Math.random() * 5;
+    ctx.fillStyle = Math.random() < 0.5 ? '#fff6a0' : '#ff9a1a';
+    ctx.beginPath(); ctx.arc(r * 0.5, -r * 1.4, sp, 0, 6.283); ctx.fill();
+    ctx.fillStyle = '#ff4a4a'; ctx.font = `bold ${r * 0.9}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('✕', 0, r * 0.05);
+    ctx.restore();
+    if (Math.random() < 0.5) parts.push({ x: o.x + Math.cos(o.rot) * 0, y: o.y - r * 1.3, vx: (Math.random() - 0.5) * 80, vy: -60 - Math.random() * 60, r: 2, c: '#ffcf4a', life: 0.3, g: 0 });
+  }
+
+  function lighten(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.min(255, (n >> 16) + 70), g = Math.min(255, ((n >> 8) & 255) + 70), b = Math.min(255, (n & 255) + 70);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function drawBackground() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#4a2e1a'); g.addColorStop(1, '#22140b');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // tahta kesme tahtası çizgileri
+    ctx.strokeStyle = '#00000022'; ctx.lineWidth = 2;
+    for (let y = 40; y < H; y += 70) { ctx.beginPath(); ctx.moveTo(0, y); for (let x = 0; x <= W; x += 40) ctx.lineTo(x, y + Math.sin(x / 90 + y) * 6); ctx.stroke(); }
+    // lekeler
+    for (const s of splats) {
+      ctx.save(); ctx.globalAlpha = s.a; ctx.fillStyle = s.c; ctx.translate(s.x, s.y); ctx.rotate(s.rot);
+      ctx.beginPath(); ctx.arc(0, 0, s.r * 0.6, 0, 6.283); ctx.fill();
+      for (let i = 0; i < 7; i++) { const a = i * 0.9 + s.seed, d = s.r * (0.6 + ((s.seed * (i + 1)) % 1) * 0.6); ctx.beginPath(); ctx.arc(Math.cos(a) * d, Math.sin(a) * d, s.r * 0.12, 0, 6.283); ctx.fill(); }
+      ctx.restore();
+    }
+  }
+
+  function drawTrail() {
+    const now = performance.now();
+    trail = trail.filter(p => now - p.t < 140);
+    if (trail.length < 2) return;
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (let pass = 0; pass < 2; pass++) {
+      for (let i = 1; i < trail.length; i++) {
+        const a = trail[i - 1], b = trail[i], k = i / trail.length;
+        ctx.strokeStyle = pass ? `rgba(255,255,255,${k})` : `rgba(140,220,255,${k * 0.5})`;
+        ctx.lineWidth = (pass ? 4 : 12) * k * S + 1;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  // ---------- Döngü ----------
+  let last = performance.now();
+  function frame(now) {
+    let dt = Math.min(0.033, (now - last) / 1000); last = now;
+    if (state === 'paused') { requestAnimationFrame(frame); return; }
+    const realDt = dt;
+    if (slowmo > 0) { slowmo -= realDt; dt *= 0.4; }
+
+    if (state === 'play') {
+      elapsed += realDt;
+      if (MODES[mode].time) {
+        timeLeft -= realDt;
+        if (timeLeft <= 0) { timeLeft = 0; updHud(); gameOver('Süre Doldu! ⏰'); }
+        else if (Math.ceil(timeLeft) !== Math.ceil(timeLeft + realDt)) updHud();
+      }
+      spawnT -= dt;
+      if (spawnT <= 0) { spawnWave(); spawnT = 1.8 - difficulty() * 0.9 + Math.random() * 0.6; }
+      if (swipeTimer > 0) { swipeTimer -= realDt; if (swipeTimer <= 0 && swipeHits.length) endSwipe(); }
+    } else if (state === 'menu') {
+      spawnT -= dt; if (spawnT <= 0) { launch(); spawnT = 0.9; }
+    }
+
+    // nesneler
+    for (const o of objs) {
+      o.vy += o.g * dt; o.x += o.vx * dt; o.y += o.vy * dt; o.rot += o.vr * dt;
+      if (!o.dead && o.vy > 0 && o.y > H + o.r + 20) {
+        o.dead = true;
+        if (state === 'play' && o.kind === 'fruit' && MODES[mode].lives) {
+          lives--; stats.missed++; sfx.miss(); popText(Math.max(30, Math.min(W - 30, o.x)), H - 40 * S, '✕', '#ff4a4a', 40);
+          updHud(); if (lives <= 0) gameOver('Oyun Bitti');
+        }
+      }
+    }
+    objs = objs.filter(o => !o.dead);
+    for (const h of halves) { h.vy += h.g * dt; h.x += h.vx * dt; h.y += h.vy * dt; h.rot += h.vr * dt; h.life -= dt; }
+    halves = halves.filter(h => h.life > 0 && h.y < H + 120);
+    for (const p of parts) { p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; }
+    parts = parts.filter(p => p.life > 0);
+    for (const t of texts) { t.y -= 50 * realDt; t.life -= realDt; }
+    texts = texts.filter(t => t.life > 0);
+    for (const s of splats) s.a = Math.max(0, s.a - realDt * 0.05);
+
+    // çiz
+    ctx.save();
+    if (shake > 0) { shake -= realDt; const m = 14 * shake; ctx.translate((Math.random() - 0.5) * m, (Math.random() - 0.5) * m); }
+    drawBackground();
+    for (const h of halves) drawHalf(h);
+    for (const o of objs) {
+      if (o.kind === 'bomb') { drawBomb(o); continue; }
+      ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(o.rot);
+      ctx.fillStyle = '#0003'; ctx.beginPath(); ctx.ellipse(4, 6, o.r * (o.def.oval || 1), o.r, 0, 0, 6.283); ctx.fill();
+      drawFruitBody(o.def, o.r); ctx.restore();
+    }
+    for (const p of parts) { ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill(); }
+    ctx.globalAlpha = 1;
+    drawTrail();
+    for (const t of texts) {
+      ctx.globalAlpha = Math.min(1, t.life * 2);
+      ctx.font = `900 ${t.size}px "Trebuchet MS", sans-serif`; ctx.textAlign = 'center';
+      ctx.lineWidth = 5; ctx.strokeStyle = '#000a'; ctx.strokeText(t.s, t.x, t.y);
+      ctx.fillStyle = t.c; ctx.fillText(t.s, t.x, t.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    if (slowmo > 0) { ctx.fillStyle = `rgba(150,220,255,${Math.min(0.18, slowmo * 0.1)})`; ctx.fillRect(0, 0, W, H); }
+    if (flash > 0) { ctx.fillStyle = `rgba(255,255,255,${flash})`; ctx.fillRect(0, 0, W, H); flash -= realDt * 2.5; }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
