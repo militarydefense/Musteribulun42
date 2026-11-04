@@ -30,7 +30,7 @@ const near = (a0, a1, c) => c < a0 ? a0 - c : c > a1 ? c - a1 : 0;     // distan
 
 // ---------- timeline: lengthwise → turn → horizontal → turn → crosswise → short hold → hard cut (like the reference) ----------
 // lengthwise slices really come apart and stay apart; on the crosswise pass every freed row tips over as cubes.
-const PLAN = [[10, 3.8], [50, 8.3], [100, 8.7], [250, 10.9], [500, 11.9], [1000, 12.9]];   // longer big rounds, ~0.4 s single chops in round 10
+const PLAN = [[10, 2.4], [50, 5.0], [100, 5.6], [250, 6.6], [500, 7.4], [1000, 8.4]];   // brisk: viewers leave when the cuts are slow
 // drawn cube size per round (round 10: the real pieces): every round clearly smaller than the one before
 const SIZE = [0, .16, .1, .065, .042, .027];
 const IDLE = .12, TURN = .4, HOLD = .45, LAST_HOLD = 1.9;       // ~0.5 s of quiet between rounds
@@ -39,7 +39,7 @@ PLAN.forEach(([n, w], i) => {
   const ac = Math.round(n / 2), a = Math.round(ac * RX / (RX + RY)), c = ac - a, b = n - ac;   // cubes start at half of the cuts
   const r = { i, n, a, c, b, t0: acc };
   const step = w / n;
-  r.p1 = i === 0 ? acc + .12 - step : acc + IDLE;                // round 10: the first cut lands at 0.12 s, the knife is already coming down
+  r.p1 = i === 0 ? acc + .3 - step : acc + IDLE;                 // round 10: the first cut lands at 0.3 s (the knife starts clearly above the coconut)
   r.p1e = r.p1 + w * a / n;                                        // A: lengthwise (x)
   r.p3 = r.p1e + TURN; r.p3e = r.p3 + w * c / n;                   // C: horizontal (y), top to bottom
   r.p2 = r.p3e + TURN; r.p2e = r.p2 + w * b / n;                   // B: crosswise (z), front to back
@@ -228,7 +228,7 @@ function setClip(set, plane, nx, nz, c) {
 }
 const cutTimeB = (r, k) => cutAt(r.p2, r.p2e, r.b, k, r.pow);
 // lengthwise slices slide apart: each cut pushes everything left of it a little further left
-const gapOf = r => clamp(1.5 / r.VA, .025, .26);
+const gapOf = r => clamp(.7 / r.VA, .012, .16);       // the whole spread stays small: the coconut must not look stretched
 const offFull = (r, v) => -gapOf(r) * (r.VA - 1 - v);
 function slabOffsets(r, t) {
   const w = 2 * RX / (r.a + 1), wv = 2 * RX / r.VA, gap = gapOf(r);
@@ -272,30 +272,33 @@ function prepCells(r) {
   // piece lands on the surface of the cone holding the first k pieces; within a row the higher pieces land nearer the tip.
   const all = r.cells.flat(), N = all.length;
   const vol = all.reduce((v, c) => v + c.sx * c.sy * c.sz, 0) / .7;
-  const H = 2 * RY * 1.2, R = Math.min(2.6, Math.sqrt(3 * vol / (Math.PI * H))), CX = -.35 - gapOf(r) * r.VA * .25, CZ = RZ * .9;
+  // a low, rounded mound (about 33°, like real chopped pieces), not a tall sharp cone
+  const SLOPE = .62, R = Math.min(3.1, Math.cbrt(3 * vol / (Math.PI * SLOPE * .8))), H = R * SLOPE, CX = -.1, CZ = RZ * .9 + .35;
+  const prof = (rho, f) => { const q = rho / (R * f); return q >= 1 ? 0 : H * f * (1 - Math.pow(q, 1.6)); };   // surface height of the mound of scale f
   let k = 0;
   for (const row of r.cells) {
     const order = [...row].sort((p, q) => q.y - p.y);
     order.forEach((c, rank) => {
-      const f = Math.cbrt((k + 1) / N), rk = R * f, hk = H * f; c.k = k; k++;
+      const f = Math.cbrt((k + 1) / N); c.k = k; k++;
       const u = Math.sqrt((rank + .2 + .6 * hash(rank, k, 7)) / order.length), th = hash(k, rank, 3) * 6.283;
-      const rho = rk * u, smin = Math.min(c.sx, c.sy, c.sz);
+      const rho = R * f * u * (.9 + .2 * hash(k, 5, rank)), smin = Math.min(c.sx, c.sy, c.sz);
       c.x0 = c.x + offFull(r, c.v);
-      c.fx = CX + rho * Math.cos(th); c.fz = CZ + rho * Math.sin(th); c.fy = hk * (1 - u) + smin * .45;
+      c.fx = CX + rho * Math.cos(th); c.fz = CZ + rho * Math.sin(th); c.fy = prof(rho, f) + smin * (.35 + .3 * hash(rank, k, 11));
       c.dur = .3 + .22 * Math.sqrt(Math.hypot(c.fx - c.x0, c.fy - c.y, c.fz - c.z));
       c.rho = rho; c.land = row.tc + c.dur / 1.12 + .08;
     });
   }
-  // pieces buried deep inside the cone are not drawn any more (nobody can see them and software rendering is slow): a piece
-  // is hidden once the cone has grown more than a couple of piece sizes over it
+  // pieces buried deep inside the mound are not drawn any more (nobody can see them and software rendering is slow): a piece
+  // is hidden once the mound has grown more than a couple of piece sizes over it
   const landK = new Float64Array(N); for (const c of all) landK[c.k] = c.land;
   for (let q = 1; q < N; q++) landK[q] = Math.max(landK[q], landK[q - 1]);                   // time by which the first q+1 pieces have all landed
   const small = 2 * RX / r.VA < .12;
   for (const c of all) {
     c.hide = Infinity; if (!small) continue;
-    const d = 2.5 * Math.max(c.sx, c.sy, c.sz), fNeed = (c.fy + d + H * c.rho / R) / H;
-    if (fNeed >= 1) continue;
-    const kk = Math.ceil(N * fNeed ** 3); if (kk < N) c.hide = Math.max(c.land, landK[kk]);
+    const need = c.fy + 2.5 * Math.max(c.sx, c.sy, c.sz);
+    if (prof(c.rho, 1) < need) continue;
+    let lo = 0, hi = 1; for (let it = 0; it < 30; it++) { const m = (lo + hi) / 2; if (prof(c.rho, m) >= need) hi = m; else lo = m; }
+    const kk = Math.ceil(N * hi ** 3); if (kk < N) c.hide = Math.max(c.land, landK[kk]);
   }
 }
 
@@ -383,13 +386,35 @@ const A_Z = -RZ - .5, B_X = RX + .55;
 // is done when the edge leaves the back of the melon
 const QC = QB.clone().premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2));
 const C_Z0 = RZ + .2, C_Z1 = -RZ - .15;
+// at 30 fps the eye cannot follow more than a few chops a second: above that the knife glides along the cut positions with a
+// steady chopping motion instead of jumping to a random point of each stroke (that looked like stutter)
+const VIS = 6;
+const rateAt = (t, s, e, m, pow) => m * pow * Math.pow(clamp((t - s) / (e - s), .001, 1), pow - 1) / (e - s);
+const chopY = (d, amp) => amp * Math.pow(Math.abs(Math.sin(Math.PI * VIS * d)), .7);   // d: time left in the pass, so the last chop ends on the board
 function knifeAt(r, t) {
+  const k0 = exactKnife(r, t);
+  const win = { a: [r.p1, r.p1e, r.a], c: [r.p3, r.p3e, r.c], b: [r.p2, r.p2e, r.b] }[k0.dir];
+  if (!win) return k0;
+  const w = clamp((win[2] / (win[1] - win[0]) - VIS) / (VIS * .5));   // by the pass's average rate: one mode for the whole pass
+  if (w <= 0) return k0;
+  const xc = clamp(countAt(t, win[0], win[1], win[2], r.pow), 1, win[2]);
+  let s;
+  const d = win[1] - t;
+  if (k0.dir === 'a') s = { x: xCut(r, xc), y: chopY(d, LIFT * .5), z: A_Z };
+  else if (k0.dir === 'b') s = { x: B_X, y: chopY(d, LIFT * .5), z: zCut(r, xc) };
+  else s = { x: B_X, y: yCut(r, xc), z: lerp(C_Z0, C_Z1, .5 + .5 * Math.cos(Math.PI * VIS * d)) };
+  const e0 = exactKnife(r, win[0] + 1e-6), b = easeInOut((t - win[0]) / .15);      // ease in from where the pass starts
+  s = { x: lerp(e0.x, s.x, b), y: lerp(e0.y, s.y, b), z: lerp(e0.z, s.z, b) };
+  return { q: k0.q, dir: k0.dir, x: lerp(k0.x, s.x, w), y: lerp(k0.y, s.y, w), z: lerp(k0.z, s.z, w) };
+}
+function exactKnife(r, t) {
   const qa = QA, qb = QB;
-  if (t < r.p1) return { q: qa, x: xCut(r, 1), y: REST_Y, z: A_Z };
+  if (t < r.p1) return { q: qa, x: xCut(r, 1), y: r.i === 0 ? REST_Y + 1.7 : REST_Y, z: A_Z };
   if (t < r.p1e) {
     const x = countAt(t, r.p1, r.p1e, r.a, r.pow), k = Math.floor(x), ph = x - k;
     const from = xCut(r, Math.max(1, k)), to = xCut(r, Math.min(r.a, k + 1));
-    return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)), y: k === 0 ? REST_Y * (1 - ph) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, dir: 'a' };
+    const ph0 = r.i === 0 ? countAt(r.t0, r.p1, r.p1e, r.a, r.pow) : 0, y0 = r.i === 0 ? REST_Y + 1.7 : REST_Y;     // round 10 starts clearly above the top
+    return { q: qa, x: lerp(from, to, easeInOut((ph - .25) / .5)), y: k === 0 ? y0 * (1 - (ph - ph0) / (1 - ph0)) : LIFT * Math.pow(Math.sin(Math.PI * ph), .7), z: A_Z, dir: 'a' };
   }
   if (t < r.p3) {                                                  // lift out, swing round and lie flat in front of the melon
     const u = easeInOut((t - r.p1e) / (r.p3 - r.p1e)), q = qa.clone().slerp(QC, u);
@@ -397,9 +422,9 @@ function knifeAt(r, t) {
   }
   if (t < r.p3e) {
     const x = countAt(t, r.p3, r.p3e, r.c, r.pow), k = Math.floor(x), ph = x - k;
-    const back = k === 0 ? 1 : easeInOut(ph / .35), push = easeInOut((ph - .35) / .65);
+    const back = k === 0 ? 1 : easeInOut(ph / .45), push = easeInOut((ph - .45) / .55);
     const y = k === 0 ? yCut(r, 1) : lerp(yCut(r, k), yCut(r, Math.min(r.c, k + 1)), back);
-    return { q: QC, x: B_X, y, z: ph < .35 && k > 0 ? lerp(C_Z1, C_Z0, back) : lerp(C_Z0, C_Z1, push), dir: 'c' };
+    return { q: QC, x: B_X, y, z: ph < .45 && k > 0 ? lerp(C_Z1, C_Z0, back) : lerp(C_Z0, C_Z1, push), dir: 'c' };
   }
   if (t < r.p2) {                                                  // pull out the back, stand up for the crosswise cuts
     const u = easeInOut((t - r.p3e) / (r.p2 - r.p3e)), q = QC.clone().slerp(qb, u);
@@ -414,13 +439,13 @@ function knifeAt(r, t) {
   const u = easeInOut((t - r.p2e) / .5), q = qb.clone().slerp(qa, u);
   return { q, x: lerp(B_X, xCut(r, 1), u), y: lerp(0, REST_Y + 4.5, u), z: lerp(zCut(r, r.b), A_Z - 3.0, u) };
 }
-function placeKnife(r, t) {
+function placeKnife(r, t, sx) {
   const k = knifeAt(r, t);
-  pose(knife, k.q, k.x, k.y, k.z);
+  pose(knife, k.q, k.x + sx, k.y, k.z);
   const win = { a: [r.p1, r.p1e, r.a], c: [r.p3, r.p3e, r.c], b: [r.p2, r.p2e, r.b] }[k.dir];
   const rate = win ? win[2] * r.pow * Math.pow(clamp((t - win[0]) / (win[1] - win[0]), .03, 1), r.pow - 1) / (win[1] - win[0]) : 0;
   const fast = rate > 9;
-  ghosts.forEach((g, i) => { g.visible = fast; if (!fast) return; const kk = knifeAt(r, t - (i + 1) / FPS / 4); pose(g, kk.q, kk.x, kk.y, kk.z); });
+  ghosts.forEach((g, i) => { g.visible = fast; if (!fast) return; const kk = knifeAt(r, t - (i + 1) / FPS / 4); pose(g, kk.q, kk.x + sx, kk.y, kk.z); });
 }
 
 // ---------- camera: fixed, like the reference (no push-in) ----------
@@ -438,14 +463,15 @@ const fmtC = n => n >= 100000 ? '≈' + fmt(Math.round(n / 1000) * 1000) : fmt(n
 window.renderAt = t => {
   t = Math.min(t, DURATION - 1e-6);
   const r = roundAt(t);
-  const c = drawMelon(sets[0], r, t, 0);                            // hard cut between rounds: one coconut at a time
-  placeKnife(r, t); placeCamera();
+  const sx = -slabOffsets(r, t)[0] / 2;                             // keep the opened slices centred on the board
+  const c = drawMelon(sets[0], r, t, sx);                           // hard cut between rounds: one coconut at a time
+  placeKnife(r, t, sx); placeCamera();
   c.cubes = cubesAt(r, c);
   document.getElementById('cuts').textContent = fmt(c.ka + c.kc + c.kb);
   document.getElementById('pieces').textContent = fmtC(c.cubes);
   r3.render(scene, cam);
   return c;
 };
-window.kitchenReady = true; window._R = ROUNDS;
+window.kitchenReady = true; window._R = ROUNDS; window._knifeAt = knifeAt;
 window.ready = true;
 </script></body></html>

@@ -131,8 +131,10 @@ def build():
         rate = 1 / max(min(prev[i], nxt[i]), 1e-3)
         gain = min(1.0, 4.0 / rate) ** .5
         s = int(t * SR) - pre
-        if s < 0 or s >= N:
+        if s >= N:
             continue
+        if s < 0:                                                 # starts before the video: keep the hit, trim the lead-in
+            c = c[-s:].copy(); s = 0; fi = min(len(c), int(.004 * SR)); c[:fi] *= np.linspace(0, 1, fi)
         e = min(N, s + len(c)); mix[s:e] += c[: e - s] * gain
     # quiet room tone so the pauses between rounds are not dead silent
     room = np.cumsum(rng.standard_normal(N)); room -= np.convolve(room, np.ones(4800) / 4800, "same")
