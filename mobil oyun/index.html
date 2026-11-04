@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Kes Kes Bahçe</title>
+<title>Cut Counter</title>
 <meta name="theme-color" content="#2b1a12">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,89 +125,89 @@
 <div id="hud" class="hidden">
   <div>
     <div id="score">0</div>
-    <div id="best">En iyi: 0</div>
+    <div id="best">Best: 0</div>
   </div>
   <div id="goal" class="hidden">
-    <div id="goalTxt">Hedef 0/15</div>
+    <div id="goalTxt">Target 0/15</div>
     <div class="gbar"><i id="goalFill"></i></div>
   </div>
   <div id="right">
     <div id="lives"></div>
     <div id="timer" class="hidden">60</div>
-    <button id="pauseBtn" class="iconBtn" aria-label="Duraklat">⏸</button>
+    <button id="pauseBtn" class="iconBtn" aria-label="Pause">⏸</button>
   </div>
 </div>
 
 <div id="menu" class="screen">
-  <h1>Kes Kes<br><span class="l2">Bahçe!</span></h1>
-  <p class="sub">Parmağını kaydırıp meyveleri kes, bombalardan uzak dur. Süre bitmeden bölüm hedefine ulaş!</p>
-  <button class="btn big" id="levelsBtn">Bölümler<small>Survival · her bölüm daha zor</small></button>
-  <div class="label">Serbest oyun</div>
+  <h1>Cut<br><span class="l2">Counter!</span></h1>
+  <p class="sub">Swipe to slice the fruit, stay away from bombs, and hit each level's target before time runs out!</p>
+  <button class="btn big" id="levelsBtn">Levels<small>Survival · every level gets harder</small></button>
+  <div class="label">Free play</div>
   <div class="row">
-    <button class="btn" data-mode="classic">Klasik<small>3 can</small></button>
-    <button class="btn alt" data-mode="timed">Süreli<small>60 sn</small></button>
-    <button class="btn alt2" data-mode="zen">Zen<small>bombasız</small></button>
+    <button class="btn" data-mode="classic">Classic<small>3 lives</small></button>
+    <button class="btn alt" data-mode="timed">Timed<small>60 sec</small></button>
+    <button class="btn alt2" data-mode="zen">Zen<small>no bombs</small></button>
   </div>
 </div>
 
 <div id="levels" class="screen hidden">
-  <h2>Bölümler</h2>
-  <p class="sub" id="levelsInfo">Bir bölüm seç</p>
+  <h2>Levels</h2>
+  <p class="sub" id="levelsInfo">Pick a level</p>
   <div id="levelGrid"></div>
   <div id="legend">
-    <span style="color:#7ee05a">+3 sn · Nadir</span>
-    <span style="color:#6ab8ff">+5 sn · Çok nadir</span>
-    <span style="color:#c890ff">+10 sn · Destansı</span>
-    <span style="color:#ffc040">+15 sn · Efsanevi</span>
+    <span style="color:#7ee05a">+3 sec · Rare</span>
+    <span style="color:#6ab8ff">+5 sec · Very rare</span>
+    <span style="color:#c890ff">+10 sec · Epic</span>
+    <span style="color:#ffc040">+15 sec · Legendary</span>
   </div>
-  <button class="btn ghost" id="levelsBack">← Ana Menü</button>
+  <button class="btn ghost" id="levelsBack">← Main Menu</button>
 </div>
 
 <div id="intro" class="screen hidden">
-  <h2 id="introNum">Bölüm 1</h2>
+  <h2 id="introNum">Level 1</h2>
   <div id="introCard">
-    <div id="introTheme" class="label" style="margin:0;opacity:1;font-size:14px">Bahçe Tezgahı</div>
+    <div id="introTheme" class="label" style="margin:0;opacity:1;font-size:14px">Garden Counter</div>
     <div class="facts">
-      <div class="fact"><b id="introGoal">15</b><span>puan hedefi</span></div>
-      <div class="fact"><b id="introTime">40</b><span>saniye</span></div>
+      <div class="fact"><b id="introGoal">15</b><span>target score</span></div>
+      <div class="fact"><b id="introTime">40</b><span>seconds</span></div>
     </div>
     <div id="introFruits"></div>
     <div class="tip" id="introTip"></div>
   </div>
-  <button class="btn big" id="introGo">Başla!</button>
-  <button class="btn ghost" id="introMap">Bölüm Haritası</button>
+  <button class="btn big" id="introGo">Play!</button>
+  <button class="btn ghost" id="introMap">Level Map</button>
 </div>
 
 <div id="pauseScreen" class="screen hidden">
-  <h2>Mola</h2>
-  <button class="btn" id="resumeBtn">Devam Et</button>
-  <button class="btn alt2" id="quitBtn">Ana Menü</button>
+  <h2>Paused</h2>
+  <button class="btn" id="resumeBtn">Resume</button>
+  <button class="btn alt2" id="quitBtn">Main Menu</button>
 </div>
 
 <div id="done" class="screen hidden">
-  <h2 id="doneTitle">Bölüm Tamamlandı!</h2>
+  <h2 id="doneTitle">Level Complete!</h2>
   <div id="stars"><span>★</span><span>★</span><span>★</span></div>
   <div id="doneCard">
     <div class="facts">
-      <div class="fact"><b id="doneLeft">0</b><span>kalan saniye</span></div>
-      <div class="fact"><b id="doneBonus">+0</b><span>süre bonusu</span></div>
+      <div class="fact"><b id="doneLeft">0</b><span>seconds left</span></div>
+      <div class="fact"><b id="doneBonus">+0</b><span>time bonus</span></div>
     </div>
-    <div class="fact"><b id="doneTotal">0</b><span>toplam puan</span></div>
+    <div class="fact"><b id="doneTotal">0</b><span>total score</span></div>
   </div>
-  <button class="btn big alt" id="nextBtn">Sonraki Bölüm →</button>
-  <button class="btn ghost" id="doneMap">Bölüm Haritası</button>
+  <button class="btn big alt" id="nextBtn">Next Level →</button>
+  <button class="btn ghost" id="doneMap">Level Map</button>
 </div>
 
 <div id="over" class="screen hidden">
-  <h2 id="overTitle">Oyun Bitti</h2>
+  <h2 id="overTitle">Game Over</h2>
   <div id="finalScore">0</div>
-  <div id="newBest" class="hidden">🏆 Yeni rekor!</div>
+  <div id="newBest" class="hidden">🏆 New record!</div>
   <div id="stats" class="sub"></div>
-  <button class="btn" id="againBtn">Tekrar Dene</button>
-  <button class="btn alt2" id="menuBtn">Ana Menü</button>
+  <button class="btn" id="againBtn">Try Again</button>
+  <button class="btn alt2" id="menuBtn">Main Menu</button>
 </div>
 
-<button id="muteBtn" class="iconBtn" aria-label="Ses">🔊</button>
+<button id="muteBtn" class="iconBtn" aria-label="Sound">🔊</button>
 
 <script>
 (() => {
@@ -301,28 +301,28 @@
   const FREEZE = { name: 'buz',   r: 38, skin: '#a8ecff', skin2: '#2a90d0', rind: '#ffffff', flesh: '#d8f6ff', juice: '#c8f2ff', fleshScale: 0.88, freeze: true, pts: 2 };
   // Süre veren meyveler: nadirlik arttıkça daha çok saniye
   const TIME_FRUITS = [
-    { name: 'zaman3',  sec: 3,  chance: 0.016,  rarity: 'NADİR',     skin: '#4cd04c', skin2: '#126a12', glow: '110,240,90',  text: '#7ee05a' },
-    { name: 'zaman5',  sec: 5,  chance: 0.0065, rarity: 'ÇOK NADİR', skin: '#3aa0ff', skin2: '#0a3a90', glow: '80,170,255',  text: '#6ab8ff' },
-    { name: 'zaman10', sec: 10, chance: 0.0025, rarity: 'DESTANSI',  skin: '#b05aff', skin2: '#40109a', glow: '190,110,255', text: '#c890ff' },
-    { name: 'zaman15', sec: 15, chance: 0.001,  rarity: 'EFSANEVİ',  skin: '#ffb020', skin2: '#b03a00', glow: '255,190,40',  text: '#ffc040' },
+    { name: 'zaman3',  sec: 3,  chance: 0.016,  rarity: 'RARE',      skin: '#4cd04c', skin2: '#126a12', glow: '110,240,90',  text: '#7ee05a' },
+    { name: 'zaman5',  sec: 5,  chance: 0.0065, rarity: 'VERY RARE', skin: '#3aa0ff', skin2: '#0a3a90', glow: '80,170,255',  text: '#6ab8ff' },
+    { name: 'zaman10', sec: 10, chance: 0.0025, rarity: 'EPIC',      skin: '#b05aff', skin2: '#40109a', glow: '190,110,255', text: '#c890ff' },
+    { name: 'zaman15', sec: 15, chance: 0.001,  rarity: 'LEGENDARY', skin: '#ffb020', skin2: '#b03a00', glow: '255,190,40',  text: '#ffc040' },
   ];
   TIME_FRUITS.forEach(t => Object.assign(t, { r: 37, rind: '#ffffff', flesh: lighten(t.skin, 90), juice: t.skin, fleshScale: 0.86, timeBonus: t.sec, pts: 1 }));
   [...FRUITS, ...DESSERTS, GOLDEN, FREEZE, ...TIME_FRUITS].forEach(d => { d.pts = d.pts || 1; d.dots = randDisk(60); d.dots2 = randDisk(70); });
 
   // ---------- Bölüm temaları ----------
   const THEMES = [
-    { key: 'wood',   name: 'Bahçe Tezgahı', color: '#a0622a', fruits: ['elma', 'portakal', 'karpuz', 'şeftali'] },
-    { key: 'market', name: 'Yaz Pazarı',    color: '#3a6ab0', fruits: ['limon', 'çilek', 'kiraz', 'karpuz', 'portakal'] },
-    { key: 'beach',  name: 'Tropik Sahil',  color: '#1aa0b0', fruits: ['muz', 'ananas', 'mango', 'hindistan'] },
-    { key: 'bakery', name: 'Pastane',       color: '#d86a9a', dessert: true, fruits: ['donut', 'kruvasan', 'pasta', 'cupcake', 'kurabiye'] },
-    { key: 'night',  name: 'Gece Bahçesi',  color: '#3a3a8a', fruits: ['erik', 'kiraz', 'kivi', 'limon', 'elma'] },
-    { key: 'snow',   name: 'Karlı Dağ',     color: '#5a9ad0', fruits: ['nar', 'kivi', 'erik', 'elma', 'portakal'] },
-    { key: 'candy',  name: 'Şeker Diyarı',  color: '#9a5ad8', dessert: true, fruits: ['lolipop', 'çikolata', 'makaron', 'donut', 'cupcake'] },
-    { key: 'lava',   name: 'Volkan Adası',  color: '#c0401a', fruits: ['ejder', 'mango', 'nar', 'çilek', 'ananas'] },
+    { key: 'wood',   name: 'Garden Counter', color: '#a0622a', fruits: ['elma', 'portakal', 'karpuz', 'şeftali'] },
+    { key: 'market', name: 'Summer Market', color: '#3a6ab0', fruits: ['limon', 'çilek', 'kiraz', 'karpuz', 'portakal'] },
+    { key: 'beach',  name: 'Tropical Beach', color: '#1aa0b0', fruits: ['muz', 'ananas', 'mango', 'hindistan'] },
+    { key: 'bakery', name: 'Bakery',        color: '#d86a9a', dessert: true, fruits: ['donut', 'kruvasan', 'pasta', 'cupcake', 'kurabiye'] },
+    { key: 'night',  name: 'Night Garden',  color: '#3a3a8a', fruits: ['erik', 'kiraz', 'kivi', 'limon', 'elma'] },
+    { key: 'snow',   name: 'Snowy Peak',    color: '#5a9ad0', fruits: ['nar', 'kivi', 'erik', 'elma', 'portakal'] },
+    { key: 'candy',  name: 'Candy Land',    color: '#9a5ad8', dessert: true, fruits: ['lolipop', 'çikolata', 'makaron', 'donut', 'cupcake'] },
+    { key: 'lava',   name: 'Volcano Island', color: '#c0401a', fruits: ['ejder', 'mango', 'nar', 'çilek', 'ananas'] },
   ];
-  const FRUIT_LABEL = { karpuz: 'Karpuz', portakal: 'Portakal', limon: 'Limon', elma: 'Elma', nar: 'Nar', kivi: 'Kivi', 'şeftali': 'Şeftali',
-    'çilek': 'Çilek', kiraz: 'Kiraz', erik: 'Erik', mango: 'Mango', ejder: 'Ejder meyvesi', hindistan: 'Hindistan cevizi', ananas: 'Ananas', muz: 'Muz',
-    donut: 'Donut', kruvasan: 'Kruvasan', 'çikolata': 'Tablet çikolata', lolipop: 'Lolipop', cupcake: 'Cupcake', pasta: 'Pasta', makaron: 'Makaron', kurabiye: 'Kurabiye' };
+  const FRUIT_LABEL = { karpuz: 'Watermelon', portakal: 'Orange', limon: 'Lemon', elma: 'Apple', nar: 'Pomegranate', kivi: 'Kiwi', 'şeftali': 'Peach',
+    'çilek': 'Strawberry', kiraz: 'Cherry', erik: 'Plum', mango: 'Mango', ejder: 'Dragon fruit', hindistan: 'Coconut', ananas: 'Pineapple', muz: 'Banana',
+    donut: 'Donut', kruvasan: 'Croissant', 'çikolata': 'Chocolate bar', lolipop: 'Lollipop', cupcake: 'Cupcake', pasta: 'Cake', makaron: 'Macaron', kurabiye: 'Cookie' };
   function themeFor(L) { return THEMES[(L - 1) % THEMES.length]; }
   function fruitsFor(L) {
     const t = themeFor(L), names = [...t.fruits];
@@ -708,7 +708,7 @@
         const wg = c.createLinearGradient(0, -h, 0, h); wg.addColorStop(0, '#e8343a'); wg.addColorStop(1, '#9a1018');
         c.fillStyle = wg; c.fillRect(w * 0.25, -h - 2, w, h * 2 + 4);
         c.fillStyle = '#fff3c8'; c.font = `900 ${r * 0.26}px Nunito, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
-        c.save(); c.translate(w * 0.64, 0); c.rotate(-Math.PI / 2); c.fillText('ÇİKO', 0, 0); c.restore();
+        c.save(); c.translate(w * 0.64, 0); c.rotate(-Math.PI / 2); c.fillText('CHOCO', 0, 0); c.restore();
         gloss(c, w * 0.5, -h * 0.5, r * 0.3, r * 0.1, 0.4);
         c.restore();
         break;
@@ -1377,22 +1377,22 @@
     }
     scoreEl.textContent = score;
     if (mode === 'level') {
-      bestEl.textContent = `Bölüm ${level}`;
+      bestEl.textContent = `Level ${level}`;
       goalEl.classList.remove('hidden');
       const shown = Math.min(levelScore, LP.target);
-      goalTxt.textContent = `Hedef ${shown}/${LP.target}`;
+      goalTxt.textContent = `Target ${shown}/${LP.target}`;
       goalFill.style.width = (shown / LP.target * 100) + '%';
       goalEl.classList.toggle('full', levelScore >= LP.target);
     } else {
       goalEl.classList.add('hidden');
-      bestEl.textContent = 'En iyi: ' + store.get(bestKey(), 0);
+      bestEl.textContent = 'Best: ' + store.get(bestKey(), 0);
     }
     if (MODES[mode].lives) {
       livesEl.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, MODES[mode].lives - lives));
       livesEl.classList.remove('hidden'); timerEl.classList.add('hidden');
     } else {
       livesEl.classList.add('hidden'); timerEl.classList.remove('hidden');
-      timerEl.innerHTML = Math.ceil(timeLeft) + '<small>sn</small>';
+      timerEl.innerHTML = Math.ceil(timeLeft) + '<small>s</small>';
       timerEl.classList.toggle('low', timeLeft < 10 && state === 'play');
     }
     updTimeBar();
@@ -1430,33 +1430,33 @@
       b.className = 'lvl' + (locked ? ' locked' : '') + (L === prog.unlocked ? ' next' : '');
       b.style.background = `linear-gradient(${lighten(themeFor(L).color, 40)}, ${themeFor(L).color})`;
       b.innerHTML = locked ? '🔒' : `${L}<span class="st">${'★'.repeat(st)}${'☆'.repeat(3 - st)}</span>`;
-      b.setAttribute('aria-label', locked ? `Bölüm ${L}, kilitli` : `Bölüm ${L}, ${st} yıldız`);
+      b.setAttribute('aria-label', locked ? `Level ${L}, locked` : `Level ${L}, ${st} stars`);
       if (!locked) b.addEventListener('click', () => { scoreAtLevelStart = 0; score = 0; openIntro(L); });
       grid.appendChild(b);
     }
-    $('levelsInfo').textContent = prog.best ? `En iyi toplam puan: ${prog.best}` : 'Her bölümde süre bitmeden puan hedefine ulaş.';
+    $('levelsInfo').textContent = prog.best ? `Best total score: ${prog.best}` : 'Reach the target score in each level before time runs out.';
     show('levels');
   }
 
   const TIPS = [
-    'Tek hamlede 3 veya daha fazla nesne kesersen kombo bonusu kazanırsın.',
-    'Bombayı kesersen süreden saniye kaybedersin. Dikkat!',
-    'Parlayan +sn meyveleri çok nadir çıkar. Kesersen süren uzar!',
-    'Buz meyvesi zamanı yavaşlatır, süre de daha yavaş akar.',
-    'Kalan her saniye bölüm sonunda 2 bonus puan kazandırır.',
-    'Altın meyve tek başına 5 puan değerinde.',
+    'Slice 3 or more items in one swipe for a combo bonus.',
+    'Slicing a bomb costs you seconds. Careful!',
+    'Glowing +sec fruits are very rare. Slice one to add time!',
+    'The ice fruit slows everything down, including the clock.',
+    'Every second left earns 2 bonus points at the end of the level.',
+    'A golden fruit is worth 5 points on its own.',
   ];
   function openIntro(L) {
     level = L; LP = levelParams(L); levelFruits = fruitsFor(L);
     mode = 'level'; state = 'intro';
     setTheme(themeFor(L).key);
     resetWorld(); showHud(false);
-    $('introNum').textContent = `Bölüm ${L}`;
+    $('introNum').textContent = `Level ${L}`;
     $('introTheme').textContent = themeFor(L).name;
     $('introGoal').textContent = LP.target;
     $('introTime').textContent = LP.time;
-    $('introFruits').textContent = (themeFor(L).dessert ? 'Tatlılar: ' : 'Meyveler: ') + levelFruits.map(f => FRUIT_LABEL[f.name]).join(', ');
-    $('introTip').textContent = (L === 1 ? '' : `Bomba: −${LP.bombPenalty} sn. `) + TIPS[(L - 1) % TIPS.length];
+    $('introFruits').textContent = (themeFor(L).dessert ? 'Desserts: ' : 'Fruits: ') + levelFruits.map(f => FRUIT_LABEL[f.name]).join(', ');
+    $('introTip').textContent = (L === 1 ? '' : `Bomb: −${LP.bombPenalty} sec. `) + TIPS[(L - 1) % TIPS.length];
     show('intro');
   }
   function startLevel() {
@@ -1465,7 +1465,7 @@
     timeLeft = timeMax = LP.time; lives = 0;
     stats = { sliced: 0, bestCombo: 0 };
     show(null); showHud(true); audio(); updHud();
-    popText(W / 2, H * 0.42, `BÖLÜM ${level}`, '#ffcf4a', 52);
+    popText(W / 2, H * 0.42, `LEVEL ${level}`, '#ffcf4a', 52);
   }
   function levelComplete() {
     if (state !== 'play') return;
@@ -1478,8 +1478,8 @@
     prog.best = Math.max(prog.best, score);
     saveProg();
     sfx.win();
-    popText(W / 2, H * 0.4, 'HEDEF TAMAM!', '#9ef07a', 48);
-    $('doneTitle').textContent = `Bölüm ${level} Tamamlandı!`;
+    popText(W / 2, H * 0.4, 'TARGET HIT!', '#9ef07a', 48);
+    $('doneTitle').textContent = `Level ${level} Complete!`;
     $('doneLeft').textContent = left;
     $('doneBonus').textContent = '+' + bonus;
     $('doneTotal').textContent = score;
@@ -1497,15 +1497,15 @@
     let isBest;
     if (mode === 'level') {
       isBest = score > prog.best; if (isBest) { prog.best = score; saveProg(); }
-      $('stats').innerHTML = `Bölüm ${level}: <b>${levelScore}/${LP.target}</b> puan · Kesilen meyve: <b>${stats.sliced}</b>`;
-      $('againBtn').textContent = 'Bölümü Tekrar Dene';
-      $('menuBtn').textContent = 'Bölüm Haritası';
+      $('stats').innerHTML = `Level ${level}: <b>${levelScore}/${LP.target}</b> points · Sliced: <b>${stats.sliced}</b>`;
+      $('againBtn').textContent = 'Retry Level';
+      $('menuBtn').textContent = 'Level Map';
     } else {
       const best = store.get(bestKey(), 0); isBest = score > best;
       if (isBest) store.set(bestKey(), score);
-      $('stats').innerHTML = `Kesilen meyve: <b>${stats.sliced}</b> · En iyi kombo: <b>${stats.bestCombo}</b>`;
-      $('againBtn').textContent = 'Tekrar Oyna';
-      $('menuBtn').textContent = 'Ana Menü';
+      $('stats').innerHTML = `Sliced: <b>${stats.sliced}</b> · Best combo: <b>${stats.bestCombo}</b>`;
+      $('againBtn').textContent = 'Play Again';
+      $('menuBtn').textContent = 'Main Menu';
     }
     $('overTitle').textContent = title;
     $('finalScore').textContent = score;
@@ -1568,7 +1568,7 @@
     if (pattern < 0.1 + d * 0.06) {
       const n = 5 + ((Math.random() * (2 + waveMax * 0.6)) | 0);
       for (let i = 0; i < n; i++) later(i * 0.11, () => launch(i === n - 1 ? pickKind() : undefined, i % 2 ? 'left' : 'right'));
-      popText(W / 2, H * 0.45, 'MEYVE YAĞMURU!', '#9ef07a', 30);
+      popText(W / 2, H * 0.45, 'FRUIT FRENZY!', '#9ef07a', 30);
     } else if (pattern < 0.28) {
       const side = Math.random() < 0.5 ? 'left' : 'right', n = 3 + ((Math.random() * 3) | 0);
       for (let i = 0; i < n; i++) later(i * 0.14, () => launch(i === n - 1 ? pickKind() : undefined, side));
@@ -1619,12 +1619,12 @@
     const def = o.def;
     stats.sliced++;
     sfx.slice();
-    if (def.golden) { sfx.special(); popText(o.x, o.y - o.r, '+5 ALTIN!', '#ffd700', 32); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#fff3a0'); }
-    if (def.freeze) { sfx.special(); slowmo = 4; popText(o.x, o.y - o.r, 'YAVAŞ ÇEKİM!', '#a8ecff', 30); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#ffffff'); }
+    if (def.golden) { sfx.special(); popText(o.x, o.y - o.r, '+5 GOLDEN!', '#ffd700', 32); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#fff3a0'); }
+    if (def.freeze) { sfx.special(); slowmo = 4; popText(o.x, o.y - o.r, 'SLOW MOTION!', '#a8ecff', 30); for (let i = 0; i < 16; i++) spark(o.x, o.y, '#ffffff'); }
     if (def.timeBonus) {
       addTime(def.timeBonus); sfx.time(def.timeBonus);
       popText(o.x, o.y - o.r * 1.4, def.rarity + '!', def.text, 26);
-      popText(o.x, o.y - o.r * 0.2, `+${def.timeBonus} SN`, def.text, 44);
+      popText(o.x, o.y - o.r * 0.2, `+${def.timeBonus} SEC`, def.text, 44);
       for (let i = 0; i < 24 + def.timeBonus * 2; i++) spark(o.x, o.y, i % 2 ? '#ffffff' : def.text);
       flash = Math.max(flash, 0.25);
     }
@@ -1666,11 +1666,11 @@
     }
     if (mode === 'classic') {
       lives = 0; updHud();
-      popText(o.x, o.y, 'BOMBA!', '#ff4a4a', 46);
-      gameOver('Bom! 💥');
+      popText(o.x, o.y, 'BOMB!', '#ff4a4a', 46);
+      gameOver('Boom! 💥');
     } else if (mode === 'level') {
       timeLeft = Math.max(0, timeLeft - LP.bombPenalty);
-      popText(o.x, o.y, `−${LP.bombPenalty} SN`, '#ff4a4a', 44);
+      popText(o.x, o.y, `−${LP.bombPenalty} SEC`, '#ff4a4a', 44);
       if (timerEl.animate) timerEl.animate([{ transform: 'scale(1.5)', color: '#ff4a4a' }, { transform: 'scale(1)' }], { duration: 450 });
       updHud();
     } else {
@@ -1691,7 +1691,7 @@
     if (n >= 3 && state === 'play') {
       stats.bestCombo = Math.max(stats.bestCombo, n);
       const p = swipeHits.reduce((a, o) => ({ x: a.x + o.x / n, y: a.y + o.y / n }), { x: 0, y: 0 });
-      popText(p.x, p.y - 40 * S, `${n}x KOMBO! +${n}`, '#ffcf4a', 36);
+      popText(p.x, p.y - 40 * S, `${n}x COMBO! +${n}`, '#ffcf4a', 36);
       sfx.combo(n); shake = Math.max(shake, 0.15);
       addScore(n);
     } else if (n) stats.bestCombo = Math.max(stats.bestCombo, n);
@@ -1785,7 +1785,7 @@
     ctx.save(); ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.clip();
     ctx.fillStyle = `rgba(220,30,30,${0.75 + pulse * 0.25})`; ctx.fillRect(-r, -r * 0.14, r * 2, r * 0.28);
     ctx.fillStyle = '#fff'; ctx.font = `900 ${r * 0.26}px ${'Nunito, sans-serif'}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('BOMBA', 0, r * 0.02);
+    ctx.fillText('BOMB', 0, r * 0.02);
     ctx.restore();
     const sp = ctx.createRadialGradient(-r * 0.4, -r * 0.45, 0, -r * 0.4, -r * 0.45, r * 0.45);
     sp.addColorStop(0, 'rgba(255,255,255,0.7)'); sp.addColorStop(1, 'rgba(255,255,255,0)');
@@ -1889,7 +1889,7 @@
     const t = '+' + o.def.timeBonus;
     ctx.strokeText(t, o.x, o.y - s * 0.12); ctx.fillStyle = '#ffffff'; ctx.fillText(t, o.x, o.y - s * 0.12);
     ctx.font = `900 ${s * 0.42}px Nunito, sans-serif`;
-    ctx.lineWidth = s * 0.14; ctx.strokeText('SN', o.x, o.y + s * 0.55); ctx.fillText('SN', o.x, o.y + s * 0.55);
+    ctx.lineWidth = s * 0.14; ctx.strokeText('SEC', o.x, o.y + s * 0.55); ctx.fillText('SEC', o.x, o.y + s * 0.55);
     ctx.restore();
   }
 
@@ -1911,7 +1911,7 @@
       if (MODES[mode].time) {
         const before = Math.ceil(timeLeft);
         timeLeft -= dt; // yavaş çekimde süre de yavaş akar
-        if (timeLeft <= 0) { timeLeft = 0; updHud(); gameOver(mode === 'level' ? 'Süre Doldu! ⏰' : 'Süre Doldu! ⏰'); }
+        if (timeLeft <= 0) { timeLeft = 0; updHud(); gameOver("Time's Up! ⏰"); }
         else if (Math.ceil(timeLeft) !== before) {
           updHud();
           if (timeLeft < 5.5) sfx.tick();
@@ -1932,7 +1932,7 @@
         o.dead = true;
         if (state === 'play' && o.kind === 'fruit' && MODES[mode].lives) {
           lives--; sfx.miss(); popText(Math.max(30, Math.min(W - 30, o.x)), H - 50 * S, '✕', '#ff4a4a', 44);
-          updHud(); if (lives <= 0) gameOver('Oyun Bitti');
+          updHud(); if (lives <= 0) gameOver('Game Over');
         }
       }
     }
