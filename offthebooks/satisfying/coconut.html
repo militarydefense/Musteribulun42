@@ -268,47 +268,35 @@ function prepCells(r) {
     }
     r.cells.push(row);
   }
-  // the carpet: like the reference, every freed piece tips over forwards and the pieces spread into a flat, even layer over
-  // the board (no cone). Each piece lands in front of the cut face that freed it, on the lowest of a few spots near the
-  // place its x points to, so the layer stays level; a height field keeps the pieces resting on the ones below.
-  const GX0 = -4.6, GX1 = 4.3, GZ1 = 4.15, CELL = .07, NX = Math.ceil((GX1 - GX0) / CELL), NZ = Math.ceil((GZ1 + 3.4) / CELL);
-  const hf = new Float32Array(NX * NZ), ix = x => clamp(Math.floor((x - GX0) / CELL), 0, NX - 1), iz = z => clamp(Math.floor((z + 3.4) / CELL), 0, NZ - 1);
-  // cells under a piece: those whose centre it covers (at least the one under its centre)
-  const span = (x, a, f) => { const i0 = f(x - a / 2 + CELL / 2), i1 = f(x + a / 2 - CELL / 2); return i1 >= i0 ? [i0, i1] : [f(x), f(x)]; };
-  const top = (x, z, a, b) => { let m = 0; const [i0, i1] = span(x, a, ix), [k0, k1] = span(z, b, iz);
-    for (let i = i0; i <= i1; i++) for (let k = k0; k <= k1; k++) m = Math.max(m, hf[i * NZ + k]); return m; };
-  // pieces buried under the carpet are not drawn any more (they cannot be seen, and software rendering is slow): once a
-  // cell has grown more than a layer above a piece, the piece is hidden from the moment the covering piece lands
-  const pend = new Map(), small = (2 * RX / r.VA) <= CELL * 1.2;
+  // the pile: pieces pour into a cone on the board in front of the coconut that grows as more land (like sand). The k-th
+  // piece lands on the surface of the cone holding the first k pieces; within a row the higher pieces land nearer the tip.
+  const all = r.cells.flat(), N = all.length;
+  const vol = all.reduce((v, c) => v + c.sx * c.sy * c.sz, 0) / .7;
+  const H = 2 * RY * 1.2, R = Math.min(2.6, Math.sqrt(3 * vol / (Math.PI * H))), CX = -.35 - gapOf(r) * r.VA * .25, CZ = RZ * .9;
   let k = 0;
-  r.cells.forEach((row, j) => {
-    const zr = RZ - hv * (j + 1);
-    for (const c of row) {
-      k++;
-      const h1 = hash(k, j, 17 + r.n), h2 = hash(j, k, 29), tip = c.sy > 1.3 * c.sz || h1 < .78 ? 1 : 2;   // most tip over once, some twice; tall ones lie down
-      const ve = tip === 1 ? c.sz : c.sy, fa = c.sx, fb = tip === 1 ? c.sy : c.sz;
-      const sx0 = c.x + offFull(r, c.v), bx = -.15 + (c.x / RX) * 3.8;
-      let best = null;
-      for (let q = 0; q < 6; q++) {
-        const cx = clamp(bx + (hash(k, q, 3) - .5) * 1.4, GX0 + fa / 2, GX1 - fa / 2);
-        const z0 = zr + .3 + fb / 2, cz = lerp(z0, GZ1 - fb / 2, Math.pow(hash(q, k, 5), .8));
-        const hgt = top(cx, cz, fa, fb) + .015 * Math.hypot(cx - sx0, cz - c.z);
-        if (!best || hgt < best[2]) best = [cx, cz, hgt];
-      }
-      const [fx, fz] = best, h = top(fx, fz, fa, fb);
-      { const [i0, i1] = span(fx, fa, ix), [k0, k1] = span(fz, fb, iz), cover = Math.min(1, fa * fb / ((i1 - i0 + 1) * (k1 - k0 + 1) * CELL * CELL));
-        for (let i = i0; i <= i1; i++) for (let q = k0; q <= k1; q++) hf[i * NZ + q] = Math.max(hf[i * NZ + q], h + ve * cover * .95); }   // a small piece only partly fills its cell
-      c.fx = fx; c.fz = fz; c.fy = h + ve / 2;
-      c.qf = new THREE.Quaternion().setFromAxisAngle(UP, (h2 - .5) * .5).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), tip * Math.PI / 2 + (hash(k, 9, j) - .5) * .2));
-      c.x0 = sx0; c.dur = .32 + .2 * Math.sqrt(Math.hypot(c.fx - sx0, c.fy - c.y, c.fz - c.z));
-      c.land = row.tc + c.dur / 1.12 + .08; c.hide = Infinity;
-      if (small) {
-        const key = ix(fx) * NZ + iz(fz), hh = hf[key], list = pend.get(key) || [];
-        for (let q = list.length - 1; q >= 0; q--) { const o = list[q]; if (hh >= o.fy + o.ve * 1.1) { o.hide = Math.max(o.land, c.land); list.splice(q, 1); } }
-        c.ve = ve; list.push(c); pend.set(key, list);
-      }
-    }
-  });
+  for (const row of r.cells) {
+    const order = [...row].sort((p, q) => q.y - p.y);
+    order.forEach((c, rank) => {
+      const f = Math.cbrt((k + 1) / N), rk = R * f, hk = H * f; c.k = k; k++;
+      const u = Math.sqrt((rank + .2 + .6 * hash(rank, k, 7)) / order.length), th = hash(k, rank, 3) * 6.283;
+      const rho = rk * u, smin = Math.min(c.sx, c.sy, c.sz);
+      c.x0 = c.x + offFull(r, c.v);
+      c.fx = CX + rho * Math.cos(th); c.fz = CZ + rho * Math.sin(th); c.fy = hk * (1 - u) + smin * .45;
+      c.dur = .3 + .22 * Math.sqrt(Math.hypot(c.fx - c.x0, c.fy - c.y, c.fz - c.z));
+      c.rho = rho; c.land = row.tc + c.dur / 1.12 + .08;
+    });
+  }
+  // pieces buried deep inside the cone are not drawn any more (nobody can see them and software rendering is slow): a piece
+  // is hidden once the cone has grown more than a couple of piece sizes over it
+  const landK = new Float64Array(N); for (const c of all) landK[c.k] = c.land;
+  for (let q = 1; q < N; q++) landK[q] = Math.max(landK[q], landK[q - 1]);                   // time by which the first q+1 pieces have all landed
+  const small = 2 * RX / r.VA < .12;
+  for (const c of all) {
+    c.hide = Infinity; if (!small) continue;
+    const d = 2.5 * Math.max(c.sx, c.sy, c.sz), fNeed = (c.fy + d + H * c.rho / R) / H;
+    if (fNeed >= 1) continue;
+    const kk = Math.ceil(N * fNeed ** 3); if (kk < N) c.hide = Math.max(c.land, landK[kk]);
+  }
 }
 
 function drawMelon(set, r, t, offset) {
