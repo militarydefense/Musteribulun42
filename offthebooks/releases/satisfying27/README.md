@@ -1,6 +1,6 @@
 # Tomato vs 1,000 Cuts — @cut.counter
 
-- File: Tomato_1000_Cuts.mp4 (45.0 s, 1080x1920, 30 fps, -14 LUFS). Glossy ripe tomato with a green calyx and stem; every cut
+- File: Tomato_1000_Cuts.mp4 (45.0 s, 1080x1920, 30 fps, -14 LUFS). v2 on the coconut settings (coconut size and camera, every slice opens on its own cut). Glossy ripe tomato with a green calyx and stem; every cut
   face shows the real inside at that place (red wall and dividing walls, four jelly chambers with yellow seeds, paler core).
   Same format as the red onion: three directions, slices that come apart (small, centred gaps), cubes that shrink every
   round, CUBES counter (0 until the crosswise pass, "≈" above 100k), fixed camera, hard cuts, smooth knife (no still
