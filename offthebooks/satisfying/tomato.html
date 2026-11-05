@@ -24,7 +24,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 const W = 1080, H = 1920, FPS = 30;
 // red onion: a slightly squat ellipsoid standing on its root, papery neck on top. Written in the same terms as the star fruit:
 // along x the radius follows PROF, around x the cross-section is the ellipse RYE × RZE (STAR = its radius / RS).
-const RXE = 1.45, RYE = 1.16, RZE = 1.45;          // a ripe round tomato, a little flattened
+const RXE = 1.22, RYE = 1.0, RZE = 1.22;           // a ripe round tomato, a little flattened (coconut size: it must not look stretched)
 const RX = RXE, RS = Math.max(RYE, RZE), YC = RYE, RY = RYE, RZ = RZE;
 const STAR = th => 1 / Math.sqrt((Math.cos(th) / RYE) ** 2 + (Math.sin(th) / RZE) ** 2) / RS;   // th from straight up, towards +z
 const PROF = u => Math.sqrt(Math.max(0, 1 - u * u));
@@ -42,7 +42,7 @@ const near = (a0, a1, c) => c < a0 ? a0 - c : c > a1 ? c - a1 : 0;     // distan
 // lengthwise slices really come apart and stay apart; on the crosswise pass every freed row tips over as cubes.
 const PLAN = [[10, 2.4], [50, 5.0], [100, 5.6], [250, 6.6], [500, 7.4], [1000, 8.4]];   // brisk: viewers leave when the cuts are slow
 // drawn cube size per round (round 10: the real pieces): every round clearly smaller than the one before
-const SIZE = [0, .16, .105, .068, .046, .032];      // the onion is big: slightly larger cubes keep the counts renderable
+const SIZE = [0, .16, .1, .065, .042, .027];        // the coconut's cube sizes
 const IDLE = .12, TURN = .4, HOLD = .45, LAST_HOLD = 1.9;       // ~0.5 s of quiet between rounds
 const ROUNDS = []; let acc = 0;
 PLAN.forEach(([n, w], i) => {
@@ -103,7 +103,7 @@ r3.toneMapping = THREE.ACESFilmicToneMapping; r3.toneMappingExposure = 1.0; r3.o
 document.getElementById('wrap').prepend(r3.domElement);
 const scene = new THREE.Scene(); scene.background = new THREE.Color(0x15100c);
 scene.environment = new THREE.PMREMGenerator(r3).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
-const BASE_FOV = 41, LOOK = new THREE.Vector3(0, 0, .9), CAM = LOOK.clone().add(new THREE.Vector3(-4.2, 15.2, 13.0).multiplyScalar(.8));
+const BASE_FOV = 41, LOOK = new THREE.Vector3(0, 0, .9), CAM = LOOK.clone().add(new THREE.Vector3(-4.2, 15.2, 13.0).multiplyScalar(.9));
 const cam = new THREE.PerspectiveCamera(BASE_FOV, W / H, .1, 200); cam.position.copy(CAM); cam.lookAt(LOOK);
 const rig = new THREE.Group(); rig.rotation.y = .44; scene.add(rig);
 
@@ -277,7 +277,7 @@ const neckGeo = (() => { const parts = [];
   const st = new THREE.CylinderGeometry(.045, .06, .22, 10); st.translate(0, 2 * RYE + .1, 0); parts.push(st);
   return mergeGeometries(parts.map(g => g.toNonIndexed ? (g.index ? g.toNonIndexed() : g) : g)); })();
 const rootGeo = new THREE.BufferGeometry();
-const SLABS = 64;                                                     // slice groups drawn as separate meshes
+const SLABS = 100;                                                    // every slice is its own mesh and opens on its own cut (as in the coconut)
 const ringGeo = new THREE.CylinderGeometry(1, 1, 1, 128, 1, true); ringGeo.rotateZ(-Math.PI / 2);   // vertical cut line (around x)
 const ringGeoH = new THREE.CylinderGeometry(1, 1, 1, 128, 1, true);                       // horizontal cut line (around y)
 const boxGeo = new THREE.BoxGeometry(1, 1, 1);
@@ -387,7 +387,7 @@ function prepCells(r) {
   const all = r.cells.flat(), N = all.length;
   const vol = all.reduce((v, c) => v + c.sx * c.sy * c.sz, 0) / .7;
   // a low, rounded mound (about 33°, like real chopped pieces), not a tall sharp cone
-  const SLOPE = .62, R = Math.min(3.1, Math.cbrt(3 * vol / (Math.PI * SLOPE * .8))), H = R * SLOPE, CX = -.85, CZ = RZ * .9 + .3;
+  const SLOPE = .62, R = Math.min(3.1, Math.cbrt(3 * vol / (Math.PI * SLOPE * .8))), H = R * SLOPE, CX = -.1, CZ = RZ * .9 + .35;
   const prof = (rho, f) => { const q = rho / (R * f); return q >= 1 ? 0 : H * f * (1 - Math.pow(q, 1.6)); };   // surface height of the mound of scale f
   let k = 0;
   for (const row of r.cells) {
