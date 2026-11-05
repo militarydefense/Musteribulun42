@@ -515,7 +515,7 @@ function exactKnife(r, t) {
   }
   if (t < r.p3e) {
     const x = countAt(t, r.p3, r.p3e, r.c, r.pow), k = Math.floor(x), ph = x - k;
-    const back = k === 0 ? 1 : easeInOut(ph / .45), push = easeInOut((ph - .45) / .55);
+    const back = k === 0 ? 1 : easeInOut(ph / .45), push = k === 0 ? easeInOut(ph) : easeInOut((ph - .45) / .55);   // the first stroke slides at once (no pause)
     const y = k === 0 ? yCut(r, 1) : lerp(yCut(r, k), yCut(r, Math.min(r.c, k + 1)), back);
     return { q: QC, x: B_X, y, z: ph < .45 && k > 0 ? lerp(C_Z1, C_Z0, back) : lerp(C_Z0, C_Z1, push), dir: 'c' };
   }
