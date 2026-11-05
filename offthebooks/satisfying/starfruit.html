@@ -544,7 +544,9 @@ window.renderAt = t => {
   t = Math.min(t, DURATION - 1e-6);
   const r = roundAt(t);
   const sx = -slabOffsets(r, t)[0] / 2;                             // keep the opened slices centred on the board
-  const c = drawMelon(sets[0], r, t, sx);                           // hard cut between rounds: one coconut at a time
+  const fresh = !r.cells;
+  const c = drawMelon(sets[0], r, t, sx);                           // hard cut between rounds: one at a time
+  if (fresh && r.cells) { r3.render(scene, cam); drawMelon(sets[0], r, t, sx); }   // the frame that prepared the cubes drew stale ones: draw it again
   placeKnife(r, t, sx); placeCamera();
   c.cubes = cubesAt(r, c);
   document.getElementById('cuts').textContent = fmt(c.ka + c.kc + c.kb);
