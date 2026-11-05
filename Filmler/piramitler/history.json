@@ -1,0 +1,181 @@
+{
+ "deals": [
+  {
+   "category": "spark",
+   "seed": "2026-11-04:piramitler#1",
+   "dealt": [
+    "s1",
+    "s2",
+    "s3"
+   ],
+   "redeal_reason": null,
+   "pick": "s2",
+   "reason": "user picked: one block's journey from Merer's logbook (water engine, time-lapse, crew)",
+   "at": "2026-11-04T23:44",
+   "texts": {
+    "s1": "seed: Largemouth Bass (Micropterus nigricans) · place: a skate park · form: a silent film with title cards · medium: LIDAR point cloud · engine: two lives that never meet, until · era: today",
+    "s2": "seed: 1913: The Kaplan turbine is invented by Viktor Kaplan. · place: a recording studio · form: a time-lapse · medium: macro photography · era: the Wild West · tone: heist cool",
+    "s3": "seed: SeaWinds Global Coverage with Detail of Hurricane Floyd · place: a desert drive-in cinema · form: an ad for something impossible · medium: stained glass · era: tomorrow morning · engine: a small kindness with a big echo"
+   },
+   "seeds": {
+    "s1": {
+     "name": "Largemouth Bass (Micropterus nigricans)",
+     "fact": "The largemouth bass is a carnivorous, freshwater, ray-finned fish in the Centrarchidae (sunfish) family, native to the eastern and central United States, southeastern Canada and northern Mexico.",
+     "link": "https://en.wikipedia.org/wiki/Largemouth_bass",
+     "pool": "nature"
+    },
+    "s2": {
+     "name": "1913: The Kaplan turbine is invented by Viktor Kaplan.",
+     "fact": "The Kaplan turbine is a propeller-type water turbine which has adjustable blades. It was developed in 1913 by Austrian professor Viktor Kaplan, who combined automatically adjusted propeller blades with automatically adjusted wicket gates to achieve efficiency…",
+     "link": "https://en.wikipedia.org/wiki/Kaplan_turbine",
+     "pool": "invention"
+    },
+    "s3": {
+     "name": "SeaWinds Global Coverage with Detail of Hurricane Floyd",
+     "fact": "The distribution of ocean surface winds over the Atlantic Ocean, based on September 1999 data from NASA SeaWinds instrument on the QuikScat satellite, shows wind direction, superimposed on the color image indicating wind speed.",
+     "link": "https://images.nasa.gov/details/PIA02455",
+     "pool": "sky"
+    }
+   }
+  },
+  {
+   "category": "look",
+   "seed": "2026-11-04:piramitler#1",
+   "dealt": [
+    "l1",
+    "l2",
+    "l3",
+    "l4",
+    "l5",
+    "l6"
+   ],
+   "redeal_reason": null,
+   "pick": "(re-dealt)",
+   "reason": "medium: motion design; title sequences and explainers needed",
+   "at": "2026-11-04T23:48",
+   "texts": {
+    "l1": "Hiro Murai: deadpan dream logic, long dolly moves",
+    "l2": "Nuri Bilge Ceylan: Anatolian landscapes, patient frames, natural light",
+    "l3": "Stained glass: leaded colour light",
+    "l4": "Guillermo del Toro: amber and teal, fairy-tale creatures",
+    "l5": "Rodrigo Prieto: a different stock and palette for each world",
+    "l6": "Barry Jenkins: saturated skin tones, direct gaze, lyrical colour"
+   }
+  },
+  {
+   "category": "look",
+   "seed": "2026-11-04:piramitler#2",
+   "dealt": [
+    "l1",
+    "l2",
+    "l3",
+    "l4",
+    "l5",
+    "l6"
+   ],
+   "redeal_reason": "medium: motion design; title sequences and explainers needed",
+   "pick": null,
+   "reason": null,
+   "at": "2026-11-04T23:48",
+   "texts": {
+    "l1": "Edward Burtynsky: industrial landscapes from above",
+    "l2": "Japanese Expo 70: futurist pavilions",
+    "l3": "Norman McLaren: drawn-on-film, abstract rhythm",
+    "l4": "Andrei Tarkovsky: elements, long takes, water and fire",
+    "l5": "Moebius: clean lines, vast alien deserts",
+    "l6": "Hiroshi Sugimoto: long exposures, seascapes, theatres"
+   }
+  },
+  {
+   "category": "type",
+   "seed": "2026-11-04:piramitler#1",
+   "dealt": [
+    "noir-didone",
+    "apfel-editorial",
+    "anton-trailer"
+   ],
+   "weights": {
+    "noir-didone": 1.0,
+    "apfel-editorial": 1.0,
+    "anton-trailer": 1.0
+   },
+   "look_families": [],
+   "filters": {
+    "purpose": "cinematic",
+    "look": null,
+    "mood": "ancient ledger, dry, handwritten",
+    "latin_only": false
+   },
+   "redeal_reason": null,
+   "pick": "apfel-editorial",
+   "reason": "Newsreader carries the logbook entries like a quiet ledger; Apfel Grotezk for day numbers and place labels; both keep Turkish diacritics",
+   "at": "2026-11-04T23:53"
+  }
+ ],
+ "taste": [
+  {
+   "at": "2026-11-04T23:53:26",
+   "project": "piramitler",
+   "kind": "pairing",
+   "id": "noir-didone",
+   "verdict": "pass",
+   "families": [
+    "Bodoni Moda",
+    "IBM Plex Sans"
+   ],
+   "tags": [
+    "didone",
+    "dramatic",
+    "elegant",
+    "grotesque",
+    "high-contrast",
+    "sans",
+    "serif",
+    "technical"
+   ],
+   "reason": "Newsreader carries the logbook entries like a quiet ledger; Apfel Grotezk for day numbers and place labels; both keep Turkish diacritics"
+  },
+  {
+   "at": "2026-11-04T23:53:26",
+   "project": "piramitler",
+   "kind": "pairing",
+   "id": "apfel-editorial",
+   "verdict": "like",
+   "families": [
+    "Apfel Grotezk",
+    "Newsreader"
+   ],
+   "tags": [
+    "editorial",
+    "grotesque",
+    "independent",
+    "quirky",
+    "sans",
+    "serif",
+    "transitional"
+   ],
+   "reason": "Newsreader carries the logbook entries like a quiet ledger; Apfel Grotezk for day numbers and place labels; both keep Turkish diacritics"
+  },
+  {
+   "at": "2026-11-04T23:53:26",
+   "project": "piramitler",
+   "kind": "pairing",
+   "id": "anton-trailer",
+   "verdict": "pass",
+   "families": [
+    "Anton",
+    "Newsreader"
+   ],
+   "tags": [
+    "condensed",
+    "editorial",
+    "impact",
+    "sans",
+    "serif",
+    "trailer",
+    "transitional"
+   ],
+   "reason": "Newsreader carries the logbook entries like a quiet ledger; Apfel Grotezk for day numbers and place labels; both keep Turkish diacritics"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+# make.py stills · 2026-11-05 05:36:19
+
+$ node /home/user/Musteribulun42/Filmler/piramitler/tools/capture.mjs --url film.html --probe --params w=1080&h=1920
+[capture] renderer: canvas2d
+[capture] qc: "Sabah Akhet-Khufu'ya yel…" is 34 characters on one line (max 32); wrap() it
+[capture] page: 1080x1920, 720 frames @ 24 fps
+[capture] meta: {"title":"Merer'in Defteri","bounds":[0,2.3976023976023977,7.1928071928071935,14.385614385614387,16.783216783216783,21.57842157842158,26.373626373626376,30],"vo":0,"palette":{"bg":"#d8c39a","fibre":"#c4ab7c","ink":"#1e1a16","accent":"#a8342a","nile":"#3f6f8c","white":"#f2eee4","night":"#5a4632","dim":"#b39a6c"},"lookPalette":{"bg":"#d8c39a","ink":"#1e1a16","accent":"#a8342a","dim":"#b39a6c"},"families":["Apfel Grotezk","Newsreader"],"sfx":[]}
+
+$ node /home/user/Musteribulun42/Filmler/piramitler/tools/capture.mjs --url film.html --out /home/user/Musteribulun42/Filmler/piramitler/review/stills-7 --frames 24,132,252,372,444,576,624,708 --format jpeg --quality 0.9 --params w=540&h=960
+[capture] renderer: canvas2d
+[capture] qc: "Sabah Akhet-Khufu'ya yel…" is 34 characters on one line (max 32); wrap() it
+[capture] page: 540x960, 720 frames @ 24 fps
+[capture] done: 8 rendered, 0 skipped, 1.7 s total, 4.60 fps, 1 worker(s)
+[capture] frames: /home/user/Musteribulun42/Filmler/piramitler/review/stills-7/%06d.jpg
+
+$ ffmpeg -hide_banner -nostdin -loglevel error -y -f concat -safe 0 -i /home/user/Musteribulun42/Filmler/piramitler/review/stills-7/frames.txt -vf scale=200:-2,pad=204:ih+4:2:2:black,tile=5x2 -frames:v 1 -update 1 -q:v 4 /home/user/Musteribulun42/Filmler/piramitler/review/stills-7.jpg

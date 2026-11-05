@@ -1,0 +1,48 @@
+{
+ "query": "Great Pyramid Giza casing stones limestone",
+ "type": "image",
+ "results": [
+  {
+   "source": "wikimedia",
+   "id": "4598903",
+   "title": "KhufuPyramidCasingStone-BritishMuseum-August19-08.jpg",
+   "creator": "CaptMondo",
+   "licence": "cc-by",
+   "page": "https://commons.wikimedia.org/wiki/File:KhufuPyramidCasingStone-BritishMuseum-August19-08.jpg",
+   "file": "https://upload.wikimedia.org/wikipedia/commons/c/c2/KhufuPyramidCasingStone-BritishMuseum-August19-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/KhufuPyramidCasingStone-BritishMuseum-August19-08.jpg/500px-KhufuPyramidCasingStone-BritishMuseum-August19-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "type": "image",
+   "licence_url": "https://creativecommons.org/licenses/by/2.5",
+   "licence_name": "CC BY 2.5",
+   "n": 1
+  },
+  {
+   "source": "wikimedia",
+   "id": "175767228",
+   "title": "Towards Pyramid of Khafre.jpg",
+   "creator": "Bilal Detailz",
+   "licence": "cc-by-sa",
+   "page": "https://commons.wikimedia.org/wiki/File:Towards_Pyramid_of_Khafre.jpg",
+   "file": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Towards_Pyramid_of_Khafre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Towards_Pyramid_of_Khafre.jpg/500px-Towards_Pyramid_of_Khafre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "type": "image",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "licence_name": "CC BY-SA 4.0",
+   "n": 2
+  },
+  {
+   "source": "wikimedia",
+   "id": "175767220",
+   "title": "The Destination.jpg",
+   "creator": "Bilal Detailz",
+   "licence": "cc-by-sa",
+   "page": "https://commons.wikimedia.org/wiki/File:The_Destination.jpg",
+   "file": "https://upload.wikimedia.org/wikipedia/commons/f/fa/The_Destination.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/The_Destination.jpg/500px-The_Destination.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "type": "image",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "licence_name": "CC BY-SA 4.0",
+   "n": 3
+  }
+ ]
+}

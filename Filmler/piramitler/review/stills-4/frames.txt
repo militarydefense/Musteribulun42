@@ -1,0 +1,12 @@
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000024.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000228.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000444.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000576.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000624.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-4/000708.jpg'
+duration 1

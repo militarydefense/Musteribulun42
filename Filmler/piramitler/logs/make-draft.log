@@ -1,0 +1,121 @@
+# make.py draft · 2026-11-05 06:02:23
+
+$ node /home/user/Musteribulun42/Filmler/piramitler/tools/capture.mjs --url film.html --probe --params w=1080&h=1920
+[capture] renderer: canvas2d
+[capture] page: 1080x1920, 720 frames @ 24 fps
+[capture] meta: {"title":"Merer'in Defteri","bounds":[0,2.3976023976023977,7.1928071928071935,14.385614385614387,16.783216783216783,21.57842157842158,26.373626373626376,30],"vo":0,"palette":{"bg":"#d8c39a","fibre":"#c4ab7c","ink":"#1e1a16","accent":"#a8342a","nile":"#3f6f8c","white":"#f2eee4","night":"#5a4632","dim":"#b39a6c"},"lookPalette":{"bg":"#d8c39a","ink":"#1e1a16","accent":"#a8342a","dim":"#b39a6c"},"families":["Apfel Grotezk","Newsreader"],"sfx":[[4.4,"tick",null],[5,"tick",null],[5.6,"tick",null],[6.2,"tick",null],[5.85,"foley",null],[7.59,"tick",null],[7.82,"tick",null],[8.04,"tick",null],[8.27,"tick",null],[8.49,"tick",null],[8.72,"tick",null],[8.94,"tick",null],[9.17,"tick",null],[8.59,"foley",null],[9.79,"foley",null],[10.09,"foley",null],[10.39,"foley",null],[14.79,"tick",null],[15.2,"tick",null],[15.61,"tick",null],[16.02,"tick",null],[16.43,"tick",null],[21.28,"foley",null],[23.98,"hit",null],[24,"foley",null]]}
+
+$ node /home/user/Musteribulun42/Filmler/piramitler/tools/capture.mjs --url film.html --video /home/user/Musteribulun42/Filmler/piramitler/renders/draft-picture-v2.mp4 --audio /home/user/Musteribulun42/Filmler/piramitler/audio/film.wav --workers 2 --format jpeg --quality 0.85 --maxrate 4M --params w=540&h=960&shutter=0&weave=0&tone=0 --status /home/user/Musteribulun42/Filmler/piramitler/renders/draft.status.json
+[capture] renderer: canvas2d
+[capture] page: 540x960, 720 frames @ 24 fps
+[capture] audio: /home/user/Musteribulun42/Filmler/piramitler/audio/film.wav (30.000 s, 48000 Hz, 2 ch, 32-bit float, peak -1.1 dBFS, 4.3 s)
+[capture] 86/720 frames (0 skipped) - 7.7 fps
+[capture] 209/720 frames (0 skipped) - 13.0 fps
+[capture] 330/720 frames (0 skipped) - 15.6 fps
+[capture] 442/720 frames (0 skipped) - 16.9 fps
+[capture] 540/720 frames (0 skipped) - 17.3 fps
+[capture] 645/720 frames (0 skipped) - 17.9 fps
+[capture] done: 720 rendered, 0 skipped, 41.9 s total, 17.19 fps, 2 worker(s)
+[capture] video: /home/user/Musteribulun42/Filmler/piramitler/renders/draft-picture-v2.mp4 (720 frames @ 24 fps, no audio yet)
+
+$ /usr/local/bin/python3 /home/user/Musteribulun42/Filmler/piramitler/tools/mix.py /home/user/Musteribulun42/Filmler/piramitler/logs/mix-draft-v2.json
+ #      at    gain  bus       file
+ 0    0.00     0.0  music     audio/film.wav
+ 1    0.02     0.0  foley     audio/sfx/paper.wav
+ 2    3.40    -1.0  foley     audio/sfx/paper.wav
+ 3    9.19    -2.0  foley     audio/sfx/paper.wav
+ 4   11.80    -2.0  foley     audio/sfx/paper.wav
+ 5   14.59    -5.0  foley     audio/sfx/paper.wav
+ 6   16.79     0.0  foley     audio/sfx/paper.wav
+ 7   17.40    -2.0  foley     audio/sfx/paper.wav
+ 8   22.50    -2.0  foley     audio/sfx/paper.wav
+ 9   27.00    -1.0  foley     audio/sfx/paper.wav
+mix: audio/mix-draft-v2.wav (30.00 s, 10 layers, peak limited to -2 dBFS); next: master_audio.py
+
+$ /usr/local/bin/python3 /home/user/Musteribulun42/Filmler/piramitler/tools/master_audio.py /home/user/Musteribulun42/Filmler/piramitler/audio/mix-draft-v2.wav /home/user/Musteribulun42/Filmler/piramitler/renders/draft-v2.mp4 --video /home/user/Musteribulun42/Filmler/piramitler/renders/draft-picture-v2.mp4 --limit
+pass 1: I=-23.86 LUFS  TP=-5.05 dBTP  LRA=4.50 LU  thresh=-34.10
+limit: +9.86 dB then a lookahead limiter at -3.5 dBFS -> I=-15.19 LUFS  TP=-3.50 dBTP  LRA=3.40 LU
+pass 2: normalization_type=linear  output I=-13.76  TP=-2.31  LRA=2.00
+re-measured from /home/user/Musteribulun42/Filmler/piramitler/renders/draft-v2.mp4: I=-13.8 LUFS  LRA=2.1 LU  true peak=-1.9 dBFS
+OK
+
+$ /usr/local/bin/python3 /home/user/Musteribulun42/Filmler/piramitler/tools/qc.py all /home/user/Musteribulun42/Filmler/piramitler/renders/draft-v2.mp4 0,2.398,7.193,14.386,16.783,21.578,26.374,30
+== info: /home/user/Musteribulun42/Filmler/piramitler/renders/draft-v2.mp4
+duration=30.000000
+size=14908482
+bit_rate=3975595
+codec_name=h264
+profile=High
+width=540
+height=960
+pix_fmt=yuv420p
+color_range=tv
+color_space=bt709
+color_transfer=bt709
+color_primaries=bt709
+r_frame_rate=24/1
+frames=720
+audio_codec_name=aac
+audio_sample_rate=48000
+audio_channels=2
+audio_bit_rate=312640
+== hook (first 2 s must move from frame 1; min mean 0.5, motion >= 0.02 in every 2 frames):
+  steps=47 mean=7.92 min=2.011 first_step=2.011
+  PASS
+  (also look at the strip: qc.py strip <video> 0 2 12, so grain or flicker is not mistaken for motion)
+== sheet: /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/sheet.jpg (index: /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/sheet-index.txt, one tile every 2s)
+== black intervals (>= 0.1 s, 98% of pixels dark):
+none
+== frozen intervals (>= 1.5 s):
+none
+(grain hides freezes from this detector; also check strips and duplicates)
+== exact duplicate consecutive frames:
+frames: 720, duplicates: 0
+== one-frame pops (a frame unlike both neighbours, 48 px grey): 0
+== repeated compositions (the same picture again, 6 s or more later; 32 px grey): 0 repeats, 0 s of 30
+== brightness (4 samples/s):
+samples: 120, mean L*: 61.8, min: 19.6, max: 73.4, very dark (L*<12): 0.0%
+== hard cuts (scene score > 0.3):
+cuts: 0
+== action per scene (camera move removed; flag when the median residual < 1.0 or < 30% of the total; 4 samples/s):
+     #1 00:00.00-00:02.40  residual  1.72  total  7.28  CHECK: camera-led, the subject barely acts
+     #2 00:02.40-00:07.19  residual  2.16  total  4.92  ok
+     #3 00:07.19-00:14.39  residual  2.51  total  6.02  ok
+     #4 00:14.39-00:16.78  residual  1.00  total  1.50  ok
+     #5 00:16.78-00:21.58  residual  2.57  total  5.73  ok
+     #6 00:21.58-00:26.37  residual  1.04  total  5.21  CHECK: camera-led, the subject barely acts
+     #7 00:26.37-00:30.00  residual  1.82  total  5.48  ok
+  2 scene(s) flagged; look at their strips (qc.py strip) and give each an action
+== loudness (EBU R128, true peak):
+      I:         -13.8 LUFS
+      Threshold: -24.0 LUFS
+      LRA:         2.1 LU
+      Threshold: -33.9 LUFS
+      Peak:       -1.9 dBFS
+== silences (< -50 dB, >= 0.5 s):
+  none
+targets for web: I = -14 LUFS (+/-1), true peak <= -1 dBTP; every silence must be scripted
+== sound per scene (median -13.6 LUFS, harsh-band median -13.4 dB; flag > 3.0 LU or > 3.0 dB above):
+     #1 00:00.00-00:02.40   -13.0 LUFS  harsh -12.6 dB  ok
+     #2 00:02.40-00:07.19   -14.7 LUFS  harsh -14.1 dB  ok
+     #3 00:07.19-00:14.39   -13.6 LUFS  harsh -13.9 dB  ok
+     #4 00:14.39-00:16.78   -13.4 LUFS  harsh -13.4 dB  ok
+     #5 00:16.78-00:21.58   -13.4 LUFS  harsh -12.4 dB  ok
+     #6 00:21.58-00:26.37   -13.7 LUFS  harsh -15.5 dB  ok
+     #7 00:26.37-00:30.00   -15.6 LUFS  harsh -11.4 dB  ok
+  0 scene(s) flagged
+== spectrogram: /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/spectrogram.png (look for persistent horizontal lines = pitched layers)
+== report: /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/report.txt
+
+$ ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/sheet.jpg
+1948x1720
+
+$ ffmpeg -hide_banner -nostdin -loglevel error -y -i /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/sheet.jpg -vf scale=1008:-2 -q:v 4 -update 1 /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/sheet-small.jpg
+
+$ /usr/local/bin/python3 /home/user/Musteribulun42/Filmler/piramitler/tools/qc.py thumb /home/user/Musteribulun42/Filmler/piramitler/renders/draft-v2.mp4 768 21
+== thumb: /home/user/Musteribulun42/Filmler/piramitler/review/qc-draft-v2/thumb-draft-v2-21s-768.jpg (540x960)
+
+$ node /home/user/Musteribulun42/Filmler/piramitler/tools/capture.mjs --url film.html --text-check 0.5 --params w=540&h=960&shutter=0&weave=0&tone=0&textcheck=1
+[capture] renderer: canvas2d
+[capture] page: 540x960, 720 frames @ 24 fps
+[capture] text check: no overlapping lines, no line lost in its ground

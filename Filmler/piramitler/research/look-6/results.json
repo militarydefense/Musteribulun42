@@ -1,0 +1,54 @@
+{
+ "query": "Egyptian tomb painting facsimile boat",
+ "type": "image",
+ "results": [
+  {
+   "source": "met",
+   "id": "557841",
+   "title": "Funeral Boat, Tomb of Haremhab",
+   "creator": "Norman de Garis Davies",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/557841",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/15.5.7_EGDP019647_Cropped.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/15.5.7_EGDP019647_Cropped.jpg",
+   "type": "image",
+   "n": 1
+  },
+  {
+   "source": "met",
+   "id": "557784",
+   "title": "Boat Carrying Captives from Nubia, Tomb of Huy",
+   "creator": "Charles K. Wilkinson",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/557784",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/LC-30_4_20_EGDP025026.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/LC-30_4_20_EGDP025026.jpg",
+   "type": "image",
+   "n": 2
+  },
+  {
+   "source": "met",
+   "id": "544531",
+   "title": "Facsimile Painting of Geese, Tomb of Nefermaat and Itet",
+   "creator": "Charles K. Wilkinson",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/544531",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DT226227.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DT226227.jpg",
+   "type": "image",
+   "n": 3
+  },
+  {
+   "source": "met",
+   "id": "548577",
+   "title": "The Viceroy's Boat, Tomb of Huy",
+   "creator": "Charles K. Wilkinson",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/548577",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DT10873.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DT10873.jpg",
+   "type": "image",
+   "n": 4
+  }
+ ]
+}

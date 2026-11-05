@@ -1,0 +1,5 @@
+1 SHARES: key image of scanning a hidden void inside the pyramid, with prediction 2 (the idea itself, muon and block, is new)
+2 SHARES: world and key image of Nile boat-hauling of stone and the crew, with prediction 3 (the block-and-logbook idea is new)
+3 SHARES: key image of the gleaming white casing, with prediction 3 (the opening-day ad form is new)
+4 OVERLAP: prediction 4 (fixed frame time-lapse of the pyramid across the ages, same premise and images)
+5 SHARES: key image of a sealed inner chamber, with prediction 2 (the hidden builders' graffiti idea is new)

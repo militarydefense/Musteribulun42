@@ -1,0 +1,120 @@
+{
+ "duration": 30.0,
+ "out": "audio/mix-draft-v2.wav",
+ "layers": [
+  {
+   "file": "audio/film.wav",
+   "at": 0,
+   "gain_db": 0,
+   "bus": "music"
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 0.02,
+   "trim": [
+    3.85,
+    4.5
+   ],
+   "gain_db": 0,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 3.4,
+   "trim": [
+    5.12,
+    5.86
+   ],
+   "gain_db": -1,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 9.19,
+   "trim": [
+    13.34,
+    14.0
+   ],
+   "gain_db": -2,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 11.8,
+   "trim": [
+    17.76,
+    18.4
+   ],
+   "gain_db": -2,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 14.59,
+   "trim": [
+    10.75,
+    11.5
+   ],
+   "gain_db": -5,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 16.79,
+   "trim": [
+    8.14,
+    9.0
+   ],
+   "gain_db": 0,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 17.4,
+   "trim": [
+    15.23,
+    16.0
+   ],
+   "gain_db": -2,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 22.5,
+   "trim": [
+    19.1,
+    19.9
+   ],
+   "gain_db": -2,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  },
+  {
+   "file": "audio/sfx/paper.wav",
+   "at": 27.0,
+   "trim": [
+    21.85,
+    22.9
+   ],
+   "gain_db": -1,
+   "fade_out": 0.08,
+   "bus": "foley",
+   "pan": 0
+  }
+ ]
+}

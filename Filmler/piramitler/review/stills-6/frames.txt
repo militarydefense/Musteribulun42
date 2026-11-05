@@ -1,0 +1,16 @@
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000024.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000132.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000252.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000372.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000444.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000576.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000624.jpg'
+duration 1
+file '/home/user/Musteribulun42/Filmler/piramitler/review/stills-6/000708.jpg'
+duration 1

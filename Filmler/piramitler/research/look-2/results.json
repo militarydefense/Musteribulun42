@@ -1,0 +1,54 @@
+{
+ "query": "Nile River Egypt from space",
+ "type": "image",
+ "results": [
+  {
+   "source": "nasa",
+   "id": "iss073e0422279",
+   "title": "Egypt\u2019s Nile River stretches is pictured at night from the International Space S",
+   "creator": "JSC",
+   "licence": "nasa",
+   "page": "https://images.nasa.gov/details/iss073e0422279",
+   "file": "https://images-api.nasa.gov/asset/iss073e0422279",
+   "thumb": "https://images-assets.nasa.gov/image/iss073e0422279/iss073e0422279~medium.jpg",
+   "type": "image",
+   "n": 1
+  },
+  {
+   "source": "nasa",
+   "id": "iss073e0134645",
+   "title": "Sohag, Egypt, on the River Nile's fertile plain, pictured from the International",
+   "creator": "JSC",
+   "licence": "nasa",
+   "page": "https://images.nasa.gov/details/iss073e0134645",
+   "file": "https://images-api.nasa.gov/asset/iss073e0134645",
+   "thumb": "https://images-assets.nasa.gov/image/iss073e0134645/iss073e0134645~medium.jpg",
+   "type": "image",
+   "n": 2
+  },
+  {
+   "source": "nasa",
+   "id": "iss064e006268",
+   "title": "iss064e006268",
+   "creator": "JSC",
+   "licence": "nasa",
+   "page": "https://images.nasa.gov/details/iss064e006268",
+   "file": "https://images-api.nasa.gov/asset/iss064e006268",
+   "thumb": "https://images-assets.nasa.gov/image/iss064e006268/iss064e006268~medium.jpg",
+   "type": "image",
+   "n": 3
+  },
+  {
+   "source": "nasa",
+   "id": "iss067e089285",
+   "title": "iss067e089285",
+   "creator": "JSC",
+   "licence": "nasa",
+   "page": "https://images.nasa.gov/details/iss067e089285",
+   "file": "https://images-api.nasa.gov/asset/iss067e089285",
+   "thumb": "https://images-assets.nasa.gov/image/iss067e089285/iss067e089285~medium.jpg",
+   "type": "image",
+   "n": 4
+  }
+ ]
+}

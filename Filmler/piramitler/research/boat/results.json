@@ -1,0 +1,78 @@
+{
+ "query": "ancient egyptian wooden boat model",
+ "type": "image",
+ "results": [
+  {
+   "source": "met",
+   "id": "245537",
+   "title": "Terracotta model of a Nile boat",
+   "creator": "Roman, Egyptian",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/245537",
+   "file": "https://images.metmuseum.org/CRDImages/gr/original/DP121871.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/gr/web-large/DP121871.jpg",
+   "type": "image",
+   "n": 1
+  },
+  {
+   "source": "met",
+   "id": "544214",
+   "title": "Travelling Boat being Rowed",
+   "creator": "unknown",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/544214",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DP249000.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DP249000.jpg",
+   "type": "image",
+   "n": 2
+  },
+  {
+   "source": "met",
+   "id": "545281",
+   "title": "Model of a Granary with Scribes",
+   "creator": "unknown",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/545281",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DP351557.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DP351557.jpg",
+   "type": "image",
+   "n": 3
+  },
+  {
+   "source": "aic",
+   "id": "127874",
+   "title": "Model of a River Boat",
+   "creator": "Egyptian; Meir, Egypt",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/127874",
+   "file": "https://www.artic.edu/iiif/2/f16a5e00-31c5-1e61-a953-15c5abb42ca3/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/f16a5e00-31c5-1e61-a953-15c5abb42ca3/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 4
+  },
+  {
+   "source": "aic",
+   "id": "594",
+   "title": "Ring with a Scarab Bezel",
+   "creator": "Egyptian",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/594",
+   "file": "https://www.artic.edu/iiif/2/d9067d6e-e133-705c-cf53-528c035a5201/full/2195,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/d9067d6e-e133-705c-cf53-528c035a5201/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 5
+  },
+  {
+   "source": "aic",
+   "id": "805",
+   "title": "Funerary Papyrus of Tayuhenutmut",
+   "creator": "Egyptian; probably Thebes (now Luxor), Egypt",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/805",
+   "file": "https://www.artic.edu/iiif/2/6cb56687-a433-ae6b-ab07-af71dd755ec9/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/6cb56687-a433-ae6b-ab07-af71dd755ec9/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 6
+  }
+ ]
+}

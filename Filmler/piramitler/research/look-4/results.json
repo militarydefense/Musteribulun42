@@ -1,0 +1,102 @@
+{
+ "query": "Egyptian papyrus hieratic",
+ "type": "image",
+ "results": [
+  {
+   "source": "met",
+   "id": "549250",
+   "title": "Hieratic Papyrus fragment",
+   "creator": "unknown",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/549250",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/O.C.3569_EGDP015269.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/O.C.3569_EGDP015269.jpg",
+   "type": "image",
+   "n": 1
+  },
+  {
+   "source": "met",
+   "id": "544847",
+   "title": "Letter written in hieratic script on papyrus",
+   "creator": "unknown",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/544847",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DP234741.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DP234741.jpg",
+   "type": "image",
+   "n": 2
+  },
+  {
+   "source": "met",
+   "id": "545366",
+   "title": "Papyrus column amulet",
+   "creator": "unknown",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/545366",
+   "file": "https://images.metmuseum.org/CRDImages/eg/original/DP-17095-001.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/eg/web-large/DP-17095-001.jpg",
+   "type": "image",
+   "n": 3
+  },
+  {
+   "source": "met",
+   "id": "243787",
+   "title": "Faience wadj papyrus column",
+   "creator": "Egyptian",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/243787",
+   "file": "https://images.metmuseum.org/CRDImages/gr/original/74514519.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/gr/web-large/74514519.jpg",
+   "type": "image",
+   "n": 4
+  },
+  {
+   "source": "aic",
+   "id": "805",
+   "title": "Funerary Papyrus of Tayuhenutmut",
+   "creator": "Egyptian; probably Thebes (now Luxor), Egypt",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/805",
+   "file": "https://www.artic.edu/iiif/2/6cb56687-a433-ae6b-ab07-af71dd755ec9/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/6cb56687-a433-ae6b-ab07-af71dd755ec9/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 5
+  },
+  {
+   "source": "aic",
+   "id": "594",
+   "title": "Ring with a Scarab Bezel",
+   "creator": "Egyptian",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/594",
+   "file": "https://www.artic.edu/iiif/2/d9067d6e-e133-705c-cf53-528c035a5201/full/2195,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/d9067d6e-e133-705c-cf53-528c035a5201/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 6
+  },
+  {
+   "source": "aic",
+   "id": "64339",
+   "title": "Coffin and Mummy of Paankhaenamun",
+   "creator": "Egyptian; Thebes (now Luxor), Egypt",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/64339",
+   "file": "https://www.artic.edu/iiif/2/93270aaf-16a5-1604-c6c8-0f3c003eb7a1/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/93270aaf-16a5-1604-c6c8-0f3c003eb7a1/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 7
+  },
+  {
+   "source": "aic",
+   "id": "121629",
+   "title": "Life Study (Study of an Egyptian Girl)",
+   "creator": "John Singer Sargent (American, 1856\u20131925)",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/121629",
+   "file": "https://www.artic.edu/iiif/2/e6dd6199-c245-d1b4-a997-ce89eafb48ca/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/e6dd6199-c245-d1b4-a997-ce89eafb48ca/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 8
+  }
+ ]
+}

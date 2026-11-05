@@ -1,0 +1,147 @@
+{
+ "title": null,
+ "pairings": [
+  {
+   "id": "noir-didone",
+   "why": "Hairline contrast at opsz 96 against a condensed industrial sans (wdth 85): glamour over machinery.",
+   "setup": {
+    "display": {
+     "wght": 500,
+     "axes": {
+      "opsz": 96.0
+     }
+    },
+    "text": {
+     "wght": 500,
+     "axes": {
+      "wdth": 85
+     }
+    }
+   },
+   "card": null,
+   "roles": {
+    "display": {
+     "family": "Bodoni Moda",
+     "pkg": "bodoni-moda",
+     "version": "5.3.0",
+     "cap": 0.75,
+     "variable": "standard",
+     "varVersion": "5.3.0",
+     "axes": {
+      "opsz": [
+       6.0,
+       96.0,
+       11.0
+      ],
+      "wght": [
+       400.0,
+       900.0,
+       400.0
+      ]
+     }
+    },
+    "text": {
+     "family": "IBM Plex Sans",
+     "pkg": "ibm-plex-sans",
+     "version": "5.3.0",
+     "cap": 0.698,
+     "variable": "standard",
+     "varVersion": "5.3.0",
+     "axes": {
+      "wdth": [
+       75.0,
+       100.0,
+       100.0
+      ],
+      "wght": [
+       100.0,
+       700.0,
+       400.0
+      ]
+     }
+    },
+    "mono": null
+   }
+  },
+  {
+   "id": "apfel-editorial",
+   "why": "independent grotesque display over a text serif",
+   "setup": {},
+   "card": null,
+   "roles": {
+    "display": {
+     "family": "Apfel Grotezk",
+     "pkg": "apfel-grotezk",
+     "version": "5.3.0",
+     "cap": 0.65,
+     "subsets": [
+      "latin"
+     ],
+     "weights": [
+      400,
+      700
+     ]
+    },
+    "text": {
+     "family": "Newsreader",
+     "pkg": "newsreader",
+     "version": "5.3.0",
+     "cap": 0.67,
+     "variable": "standard",
+     "varVersion": "5.3.0",
+     "axes": {
+      "opsz": [
+       6.0,
+       72.0,
+       16.0
+      ],
+      "wght": [
+       200.0,
+       800.0,
+       400.0
+      ]
+     }
+    },
+    "mono": null
+   }
+  },
+  {
+   "id": "anton-trailer",
+   "why": "trailer caps over a quiet serif",
+   "setup": {},
+   "card": null,
+   "roles": {
+    "display": {
+     "family": "Anton",
+     "pkg": "anton",
+     "version": "5.3.0",
+     "cap": 0.859,
+     "weights": [
+      400
+     ]
+    },
+    "text": {
+     "family": "Newsreader",
+     "pkg": "newsreader",
+     "version": "5.3.0",
+     "cap": 0.67,
+     "variable": "standard",
+     "varVersion": "5.3.0",
+     "axes": {
+      "opsz": [
+       6.0,
+       72.0,
+       16.0
+      ],
+      "wght": [
+       200.0,
+       800.0,
+       400.0
+      ]
+     }
+    },
+    "mono": null
+   }
+  }
+ ]
+}

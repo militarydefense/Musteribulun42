@@ -1,0 +1,7 @@
+# Candidates (the user's idea: pyramids, crossed with the three sparks)
+
+1. (s1, muons, two lives that never meet until) A cosmic-ray muon born in the upper air, and a limestone block cut by a worker 4,500 years ago. For millennia muons pass through the stone unseen; in 2017 a detector in the Queen's Chamber catches them and the "Big Void" appears. Point-cloud / particle-trace look, title cards, no words spoken.
+2. (s2, water engine, time-lapse, macro, crew cool) One block's journey, from Merer's logbook (Wadi al-Jarf papyri, the oldest inscribed papyrus): a boat crew hauls Tura limestone across the flooded Nile to Giza. Macro on the block, time-lapse of the flood rising and falling, the logbook's dry entries as cards.
+3. (s3, an ad for something impossible) A tourism ad for the Great Pyramid on its opening day, c. 2560 BC: polished white casing, a gilded tip, a mirror in the desert. Then a cut to today, the casing gone into Cairo's walls. Stained-glass-bright colour.
+4. (s2, time-lapse) The pyramid's shadow as a clock: one fixed frame on Giza, 4,500 years in 60 s; the shadow sweeps, the casing falls away, the city creeps to its foot; the stone never moves.
+5. (s1, two lives) The work gang's red-ochre graffiti ("Friends of Khufu") painted in the relieving chambers above the King's Chamber, sealed for 4,000 years, seen by one man's lamp in 1837. The builders' names hidden where no pharaoh looked.

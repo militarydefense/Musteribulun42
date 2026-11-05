@@ -1,0 +1,66 @@
+{
+ "query": "Hiroshi Sugimoto seascape",
+ "type": "image",
+ "results": [
+  {
+   "source": "aic",
+   "id": "81557",
+   "title": "Seascape",
+   "creator": "Pierre-Auguste Renoir (French, 1841\u20131919)",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/81557",
+   "file": "https://www.artic.edu/iiif/2/caf4fa39-e2e8-344a-542c-2d9a03ec9d4b/full/2855,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/caf4fa39-e2e8-344a-542c-2d9a03ec9d4b/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 1
+  },
+  {
+   "source": "aic",
+   "id": "38666",
+   "title": "The Water Fan",
+   "creator": "Winslow Homer",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/38666",
+   "file": "https://www.artic.edu/iiif/2/1de73bb7-52d6-e099-f4e1-763e201e78fa/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/1de73bb7-52d6-e099-f4e1-763e201e78fa/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 2
+  },
+  {
+   "source": "aic",
+   "id": "16791",
+   "title": "Flamborough Head, England",
+   "creator": "Winslow Homer",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/16791",
+   "file": "https://www.artic.edu/iiif/2/680d3efd-2cf9-36f4-6454-806af8b79d98/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/680d3efd-2cf9-36f4-6454-806af8b79d98/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 3
+  },
+  {
+   "source": "aic",
+   "id": "16776",
+   "title": "After the Hurricane, Bahamas",
+   "creator": "Winslow Homer",
+   "licence": "cc0",
+   "page": "https://www.artic.edu/artworks/16776",
+   "file": "https://www.artic.edu/iiif/2/b34de958-1cbe-065f-4941-c34f64d2b366/full/3000,/0/default.jpg",
+   "thumb": "https://www.artic.edu/iiif/2/b34de958-1cbe-065f-4941-c34f64d2b366/full/200,/0/default.jpg",
+   "type": "image",
+   "n": 4
+  },
+  {
+   "source": "met",
+   "id": "845124",
+   "title": "Kana Letter on Stamped Images of Amida Buddha",
+   "creator": "Japan",
+   "licence": "cc0",
+   "page": "https://www.metmuseum.org/art/collection/search/845124",
+   "file": "https://images.metmuseum.org/CRDImages/as/original/DP-21858-002.jpg",
+   "thumb": "https://images.metmuseum.org/CRDImages/as/web-large/DP-21858-002.jpg",
+   "type": "image",
+   "n": 5
+  }
+ ]
+}

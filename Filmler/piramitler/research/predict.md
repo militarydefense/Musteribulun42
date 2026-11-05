@@ -1,0 +1,7 @@
+# Tahmin testi: "Piramitler ile ilgili yeni bir film yapmak istiyorum" cümlesinden beklenen beş film
+
+1. Konu: Giza Büyük Piramidi'nin inşası (Keops, Firavun). Ana görüntüler: kum fırtınası altında gün doğumu, binlerce işçinin taş blokları rampadan çekmesi, havadan çekim ile üç piramit ve Sfenks, altın saatte siluet. Biçim: belgesel tarzı, sinematik, anlatıcı sesli, 3D yeniden canlandırma.
+2. Konu: Piramitlerin gizemi, kim yaptı sorusu (antik uzaylılar, kayıp teknoloji, gizli odalar). Ana görüntüler: kralın odasının içi, taramalı gizli boşluk, yıldız hizalaması, hiyeroglif duvarları, parlayan taşlar. Biçim: gerilim dolu "gizem" belgeseli, dramatik müzik, uzman röportajları.
+3. Konu: Mısır'ın piramit çağı boyunca bir işçi ailesinin hikayesi (Nil, taş ocağı, kutsal tören). Ana görüntüler: Nil kıyısı, tekneyle taş taşıma, işçi kasabası, ekmek ve bira, tamamlanan zirvenin kaplaması parlayışı. Biçim: kısa dramatik canlandırma filmi, insan gözünden, sakin ritim.
+4. Konu: Piramitlerin zaman içindeki yolculuğu: yapılışından bugüne (soygun, Napolyon, arkeologlar, turizm). Ana görüntüler: zaman atlamalı sabit kadraj, eski gravürler, develer, turistler, gece ışık gösterisi. Biçim: hızlandırılmış zaman çizelgesi, tarihî arşiv kolajı, sessiz anlatı veya müzik klibi.
+5. Konu: Dünyadaki diğer piramitler (Maya, Aztek, Nubya Meroe, Çin) ve ortak insan fikri. Ana görüntüler: ormandan yükselen Maya tapınağı, Meroe'nin dar piramitleri, Çin höyükleri, her birinde gün doğumu. Biçim: karşılaştırmalı seyahat belgeseli, bölümlü, harita animasyonları.
