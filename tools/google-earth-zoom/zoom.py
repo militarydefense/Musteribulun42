@@ -12,6 +12,7 @@ N = len(PLAN)
 W, H = 1060, 1884          # still size
 OW, OH = 1080, 1920        # output size
 FPS = 60
+S0 = 0.85  # pyramid blur (level px)
 
 def load(k):
     return cv2.imread(f'stills/k{k:02d}.png', cv2.IMREAD_COLOR)
@@ -94,24 +95,39 @@ class Stack:
         r = 0.10 * W
         e = np.minimum.reduce([xx, W - 1 - xx, yy, H - 1 - yy]) / r
         self.feather = np.clip(e, 0, 1) ** 1.5
+        def gsmooth(a, sg=1.2):
+            a = np.asarray(a, float); r = int(3*sg); ker = np.exp(-0.5*(np.arange(-r, r+1)/sg)**2); ker /= ker.sum()
+            pad = np.concatenate([2*a[:1] - a[1:r+1][::-1], a, 2*a[-1:] - a[-r-1:-1][::-1]])
+            return np.convolve(pad, ker, mode='valid')
+        self.c_s = np.stack([gsmooth(self.c[:, 0]), gsmooth(self.c[:, 1])], 1)
+        self.phi_s = gsmooth(self.phi)
+        lin = np.polyfit(self.logd, np.log(self.sig), 1)
+        self.lsig_s = np.polyval(lin, self.logd) + gsmooth(np.log(self.sig) - np.polyval(lin, self.logd))
     def img(self, k):
         if self.imgs[k] is None:
             im = load(k).astype(np.float32)
             self.imgs[k] = im
-            p = [im]
-            for _ in range(4):
-                p.append(cv2.pyrDown(p[-1]))
+            # Gaussian pyramid: level L+1 = decimate(blur(level L, sigma=S0)); pixel j <-> 2j exactly
+            p = [(im, np.eye(3))]
+            cur = im; Pc = np.eye(3)
+            for lv in range(1, 6):
+                cur = cv2.GaussianBlur(cur, (0, 0), S0)[::2, ::2].copy()
+                Pc = np.diag([0.5, 0.5, 1.0]) @ Pc
+                p.append((cur, Pc.copy()))
             self.pyr[k] = p
         return self.imgs[k]
-    def interp(self, arr, ld):
-        x = self.logd
-        return np.array([np.interp(ld, x, arr[:, j]) for j in range(arr.shape[1])]) if arr.ndim == 2 else np.interp(ld, x, arr)
+    def cr(self, arr, ld):
+        # uniform Catmull-Rom over still index (log-distance is evenly spaced)
+        x = self.logd; u = (ld - x[0]) / (x[1] - x[0])
+        i = int(np.clip(math.floor(u), 0, len(x) - 2)); t = min(max(u - i, 0.0), 1.0)
+        P = [arr[max(i-1, 0)], arr[i], arr[i+1], arr[min(i+2, len(x)-1)]]
+        return 0.5*((2*P[1]) + (-P[0] + P[2])*t + (2*P[0] - 5*P[1] + 4*P[2] - P[3])*t*t + (-P[0] + 3*P[1] - 3*P[2] + P[3])*t**3)
     def view(self, t):
         ld = logD(t)
-        c = self.interp(self.c, ld)
-        phi = float(self.interp(self.phi, ld)) + math.radians(KEYS.get('spin_end', 0)) * smooth((t - KEYS['t'][-3]) / (TOTAL - KEYS['t'][-3]))
+        c = self.cr(self.c_s, ld)
+        phi = float(self.cr(self.phi_s, ld)) + math.radians(KEYS.get('spin_end', 0)) * smooth((t - KEYS['t'][-3]) / (TOTAL - KEYS['t'][-3]))
         # global px per output px; still k spans W px of its own at sigma_k global/px
-        sig = math.exp(np.interp(ld, self.logd, np.log(self.sig)) + (ld - np.interp(ld, self.logd, self.logd)))
+        sig = math.exp(float(self.cr(self.lsig_s, ld)))
         s = sig * W / OW
         cs, sn = s*math.cos(phi), s*math.sin(phi)
         V = np.array([[cs, -sn, c[0] - cs*OW/2 + sn*OH/2], [sn, cs, c[1] - sn*OW/2 - cs*OH/2], [0, 0, 1]])
@@ -135,13 +151,17 @@ class Stack:
             a_fade = smooth((rel - 0.30) / 0.45)
             if k != start and a_fade <= 0: break
             self.img(k)
-            lvl = 0
-            while spp > 1.6 and lvl < 4:
-                spp /= 2; lvl += 1
-            src = self.pyr[k][lvl]
-            Ml = np.diag([0.5**lvl, 0.5**lvl, 1.0]) @ M
-            Ml[0, 2] += 0.5**lvl * 0 ; Ml[1, 2] += 0
-            warped = cv2.warpAffine(src, Ml[:2], (OW, OH), flags=cv2.INTER_CUBIC | cv2.WARP_INVERSE_MAP, borderMode=cv2.BORDER_REPLICATE)
+            # continuous anti-aliasing: pick level L so residual r in [1,2), then blur by
+            # S0*sqrt((r^2-1)/3) -> equals S0 at r=2, matching level L+1 exactly (no pops)
+            lf = max(math.log2(max(spp, 1e-9)), 0.0)
+            L = min(int(math.floor(lf)), len(self.pyr[k]) - 1)
+            r = spp / 2**L
+            src, P = self.pyr[k][L]
+            sg = S0 * math.sqrt(max(r*r - 1.0, 0.0) / 3.0)
+            if sg > 0.03:
+                src = cv2.GaussianBlur(src, (0, 0), sg)
+            warped = cv2.warpAffine(src, (P @ M)[:2], (OW, OH), flags=cv2.INTER_CUBIC | cv2.WARP_INVERSE_MAP,
+                                    borderMode=cv2.BORDER_REPLICATE)
             if out is None:
                 out = warped
                 continue

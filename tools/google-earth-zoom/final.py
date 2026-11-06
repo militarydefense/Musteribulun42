@@ -2,7 +2,7 @@
 """Overlay texts + sound design on zoom_raw.mp4 -> final Short."""
 import os, subprocess, sys
 
-SRC, OUT = 'zoom_raw.mp4', sys.argv[1]
+SRC, OUT = 'zoom_raw2.mp4', sys.argv[1]
 TOTAL = 30.0
 LAND = 12.8   # moment the camera settles over the site
 FONT = '/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf'
@@ -48,7 +48,7 @@ cmd = ['ffmpeg', '-y', '-v', 'error', '-i', SRC,
        '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:s=48000:d={TOTAL}',
        '-f', 'lavfi', '-i', hits,
        '-filter_complex', fc, '-map', '[v]', '-map', '[a]', '-t', str(TOTAL),
-       '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '60',
+       '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-maxrate', '10M', '-bufsize', '20M', '-x264-params', 'keyint=600:min-keyint=60', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', '60',
        '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', OUT]
 subprocess.run(cmd, check=True)
 print('ok', OUT)
