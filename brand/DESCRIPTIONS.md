@@ -53,7 +53,7 @@ Imagery: Google Earth. Street View: Gezgin / Google.
 ## Video 2 – Noah's Ark (noahs_ark_short_en.mp4)
 **Title:**
 ```
-Is this Noah's Ark?! Scientists are drilling into it right now 😳 #shorts
+Is this Noah's Ark?! Scientists just drilled into it 😳 #shorts
 ```
 **Description:**
 ```
