@@ -3,9 +3,18 @@
 import os, subprocess, sys
 
 SRC, OUT = 'zoom_raw2.mp4', sys.argv[1]
+LANG = 'en' if '--en' in sys.argv[2:] else 'tr'
 TOTAL = 30.0
 LAND = 12.8   # moment the camera settles over the site
 FONT = '/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf'
+TEXTS_EN = [
+    (0.0, 3.4, "Under this hill lies\nsomething OLDER\nTHAN THE PYRAMIDS...", 74, 1290),
+    (3.6, 8.2, "Şanlıurfa, Türkiye", 76, 260),
+    (11.4, 15.6, "GÖBEKLI TEPE", 124, 250),
+    (15.6, 20.4, "About 11,600 years old.\nMore than 6,000 years\nolder than Stonehenge.", 70, 1300),
+    (20.4, 25.2, "It wasn't built\nby farmers, but by\nhunter-gatherers.", 70, 1300),
+    (25.2, 30.0, "Most of it is still\nburied underground.\nWhat else is down there?", 70, 1300),
+]
 TEXTS = [
     (0.0, 3.4, "Bu tepenin altında\nPİRAMİTLERDEN ESKİ\nbir şey var...", 84, 1280),
     (3.6, 8.2, "Şanlıurfa, Türkiye", 76, 260),
@@ -14,6 +23,7 @@ TEXTS = [
     (20.4, 25.2, "Onu yapanlar\nçiftçi değil,\navcı-toplayıcılardı.", 70, 1300),
     (25.2, 30.0, "Büyük kısmı hâlâ\ntoprağın altında.\nOrada başka ne var?", 70, 1300),
 ]
+if LANG == 'en': TEXTS = TEXTS_EN
 os.makedirs('ftxt', exist_ok=True)
 dts = []
 for i, (s, e, text, size, y) in enumerate(TEXTS):
@@ -24,7 +34,7 @@ for i, (s, e, text, size, y) in enumerate(TEXTS):
         f"drawtext=fontfile={FONT}:expansion=none:textfile={p}:fontcolor=white:fontsize={size}"
         f":line_spacing=18:borderw=7:bordercolor=black@0.9:shadowx=0:shadowy=6:shadowcolor=black@0.5"
         f":x=(w-text_w)/2:y={y}:alpha='{alpha}':enable='between(t,{s},{e})'")
-open('ftxt/attr.txt', 'w').write('Görüntü: Google Earth')
+open('ftxt/attr.txt', 'w').write('Imagery: Google Earth' if LANG == 'en' else 'Görüntü: Google Earth')
 dts.append(f"drawtext=fontfile={FONT}:expansion=none:textfile=ftxt/attr.txt:fontcolor=white@0.85"
            f":fontsize=30:borderw=3:bordercolor=black@0.8:x=w-text_w-34:y=h-80")
 

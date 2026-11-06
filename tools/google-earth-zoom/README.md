@@ -20,6 +20,7 @@ kareler düşüyor (takılma) ve uçuş sırasında görüntüler yetişmiyor (b
 node capture_stills.js
 python3 zoom.py register
 python3 zoom.py render zoom_raw.mp4
-python3 final.py gobeklitepe_short.mp4
+python3 final.py gobeklitepe_short.mp4          # Türkçe
+python3 final.py gobeklitepe_short_en.mp4 --en  # English
 ```
 Gerekenler: Playwright + Chromium, Python 3, `opencv-python-headless`, `numpy`, ffmpeg.
