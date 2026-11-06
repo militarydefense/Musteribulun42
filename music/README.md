@@ -11,3 +11,11 @@ it can be used in any video without credit.
 python3 compose.py track.wav 31.0      # length in seconds as 2nd argument
 ```
 Use it in a video: `MUSIC=track.wav python3 tools/google-earth-zoom/assemble.py final en out.mp4`
+
+## zoomtosecrets_trend.mp3
+Original dark, bass-heavy club/phonk-style groove (100 BPM, B♭ minor), made by
+`compose_trend.py` from oscillators and noise only. Eerie intro under the hook
+(0-3 s), groove from 3 s, drop at 22.2 s.
+```
+START=3.0 DROP=22.2 python3 compose_trend.py trend.wav 35.0
+```
