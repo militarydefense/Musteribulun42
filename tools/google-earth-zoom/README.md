@@ -24,3 +24,17 @@ python3 final.py gobeklitepe_short.mp4          # Türkçe
 python3 final.py gobeklitepe_short_en.mp4 --en  # English
 ```
 Gerekenler: Playwright + Chromium, Python 3, `opencv-python-headless`, `numpy`, ffmpeg.
+
+## v2: dönüş + seslendirme + 360° yer görüntüsü
+5. **`capture_spin.js`**: 26.000 km'den, boylamı her karede değiştirerek 211 karelik eksen dönüşü
+   (0-3,5 sn). `zoom.py` bu kareleri `path.json` içindeki `spin` ayarıyla yakınlaşmanın başına ekler.
+6. **`capture_streetview.js`** + **`pano_build.py`**: Street View'dan her 10°'de bir 36 fotoğraf,
+   bilinen yönlerle silindirik panoramaya dikilir (odak 1100 px, komşu fark ≈ 2,4/255) ve
+   60 fps perspektif 360° dönüş olarak işlenir.
+7. **`tts.py`** + **`lines.json`**: Microsoft Edge Neural seslendirme (en-US-AndrewNeural, tr-TR-AhmetNeural).
+8. **`assemble.py`**: dalış geçişi, yazılar, atıflar, seslendirme + arka plan kısma (ducking), -14 LUFS.
+```
+python3 assemble.py dive
+python3 assemble.py final tr gobeklitepe_short.mp4
+python3 assemble.py final en gobeklitepe_short_en.mp4
+```

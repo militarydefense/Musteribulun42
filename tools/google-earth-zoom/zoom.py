@@ -76,7 +76,9 @@ def pchip(xs, ys):
 
 KEYS = json.load(open('path.json'))  # {"t":[...], "D":[...], "spin_end": deg}
 logD = pchip(KEYS['t'], [math.log(v) for v in KEYS['D']])
-TOTAL = KEYS['t'][-1]
+SPIN = KEYS.get('spin')
+SOFF = SPIN['dur'] if SPIN else 0.0
+TOTAL = KEYS['t'][-1] + SOFF
 
 def smooth(x): x = min(max(x, 0.0), 1.0); return x*x*(3 - 2*x)
 
@@ -125,7 +127,7 @@ class Stack:
     def view(self, t):
         ld = logD(t)
         c = self.cr(self.c_s, ld)
-        phi = float(self.cr(self.phi_s, ld)) + math.radians(KEYS.get('spin_end', 0)) * smooth((t - KEYS['t'][-3]) / (TOTAL - KEYS['t'][-3]))
+        phi = float(self.cr(self.phi_s, ld)) + math.radians(KEYS.get('spin_end', 0)) * smooth((t - KEYS['t'][-3]) / (KEYS['t'][-1] - KEYS['t'][-3]))
         # global px per output px; still k spans W px of its own at sigma_k global/px
         sig = math.exp(float(self.cr(self.lsig_s, ld)))
         s = sig * W / OW
@@ -133,6 +135,20 @@ class Stack:
         V = np.array([[cs, -sn, c[0] - cs*OW/2 + sn*OH/2], [sn, cs, c[1] - sn*OW/2 - cs*OH/2], [0, 0, 1]])
         return V, ld
     def frame(self, t):
+        if SPIN is None or t >= SOFF:
+            return self.frame_zoom(t - SOFF)
+        S, X = SPIN['dur'], SPIN['xfade']
+        n = int(round(S * FPS))
+        j = min(int(round(t * FPS)), n)
+        sp = cv2.imread(f"{SPIN['dir']}/s{j:03d}.png", cv2.IMREAD_COLOR).astype(np.float32)
+        V0, _ = self.view(0.0)
+        M = np.linalg.inv(self.A[SPIN.get('still', N - 1)]) @ V0
+        out = cv2.warpAffine(sp, M[:2], (OW, OH), flags=cv2.INTER_CUBIC | cv2.WARP_INVERSE_MAP, borderMode=cv2.BORDER_REPLICATE)
+        if t > S - X:
+            a = smooth((t - (S - X)) / X)
+            out = out * (1 - a) + self.frame_zoom(0.0).astype(np.float32) * a
+        return np.clip(out, 0, 255).astype(np.uint8)
+    def frame_zoom(self, t):
         V, ld = self.view(t)
         corners = np.array([[0, 0, 1], [OW, 0, 1], [0, OH, 1], [OW, OH, 1]], float).T
         # finest still that fully covers the view
