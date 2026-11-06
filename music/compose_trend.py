@@ -40,18 +40,20 @@ def hpf(x, fc, order=2):
     return sosfilt(butter(order, fc, 'high', fs=SR, output='sos'), x)
 
 # Bb minor: i - VI - III - VII  ->  Bbm  Gb  Db  Ab   (roots, one per bar)
-ROOTS = [46, 42, 49, 44]           # Bb2 Gb2 Db3 Ab2 (mid-bass 808)
-CH = [[58, 61, 65], [54, 58, 61], [61, 65, 68], [56, 60, 63]]
+ROOTS = [46, 47, 42, 41]           # Bb2 Cb3 Gb2 F2  (i - bII - VI - V, phrygian)
+CH = [[58, 61, 65], [59, 63, 66], [54, 58, 61], [53, 57, 60]]
 # original 1-bar pluck motifs (16th grid, None = rest)
 HOOK = [
-    [70, None, None, 73, None, 70, None, None, 68, None, 65, None, None, None, 68, None],
-    [66, None, None, 70, None, 66, None, None, 65, None, 61, None, None, None, 63, None],
-    [73, None, None, 77, None, 73, None, None, 72, None, 68, None, None, None, 70, None],
-    [72, None, None, 68, None, 70, None, None, 65, None, None, None, 63, None, 65, None],
+    [70, None, None, 73, None, 70, None, None, 71, None, 70, None, None, None, 65, None],
+    [71, None, None, 75, None, 71, None, None, 70, None, 66, None, None, None, 63, None],
+    [70, None, None, 73, None, 66, None, None, 65, None, 61, None, None, None, 66, None],
+    [69, None, None, 72, None, 69, None, None, 65, None, None, None, 64, None, 65, None],
 ]
+# eerie bell line: tritones and semitones, one note every 2 beats
+BELL = [82, 83, 77, 76, 82, 81, 77, 71]
 
 kick = np.zeros(L); clap = np.zeros(L); hats = np.zeros(L); sub = np.zeros(L)
-pl = np.zeros(L); pad = np.zeros(L); lead = np.zeros(L); fx = np.zeros(L); stab = np.zeros(L)
+pl = np.zeros(L); pad = np.zeros(L); lead = np.zeros(L); fx = np.zeros(L); stab = np.zeros(L); bell = np.zeros(L); choir = np.zeros(L)
 
 def k_s():
     n = int(0.5 * SR); t = np.arange(n) / SR
@@ -80,6 +82,20 @@ def e808(n_from, n_to, dur, glide=0.0):
     env = np.minimum(1, t * 300) * np.minimum(1, (dur - t) * 60)
     return np.tanh(3.0 * x) * env
 
+def bell_s(m, dur=2.2):
+    n = int(dur * SR); t = np.arange(n) / SR; f = midi(m)
+    x = (np.sin(2*np.pi*f*t) * np.exp(-t*2.2) + 0.5*np.sin(2*np.pi*f*2.76*t) * np.exp(-t*4)
+         + 0.25*np.sin(2*np.pi*f*5.40*t) * np.exp(-t*7) + 0.12*np.sin(2*np.pi*f*8.93*t) * np.exp(-t*11))
+    return x * np.minimum(1, t * 800) * (1 + 0.15*np.sin(2*np.pi*5.5*t))
+def choir_s(notes, dur):
+    # 'ooh' choir: detuned saws through two vowel formant band-passes
+    n = int(dur * SR); t = np.arange(n) / SR; x = np.zeros(n)
+    for m in notes:
+        for d in (-0.004, 0, 0.004):
+            vib = 1 + 0.004*np.sin(2*np.pi*(4.8 + 3*d)*t)
+            x += 2*((midi(m)*(1+d)*np.cumsum(vib)/SR) % 1) - 1
+    v = sum(g*sosfilt(butter(2, [fc*0.85, fc*1.15], 'band', fs=SR, output='sos'), x) for fc, g in ((330, 1.0), (750, 0.5), (2400, 0.12)))
+    return v / (3*len(notes))
 K, C = k_s(), clap_s()
 # ---------------- intro (hook): sub drone + eerie pad + reverse swell ----------------
 n = int(START * SR); t = np.arange(n) / SR
@@ -89,6 +105,9 @@ put(sub, 0, drone, 0.8); put(pad, 0, lpf(eerie, 1800) * np.minimum(1, t / 1.0), 
 sw = int(1.2 * SR); ts = np.arange(sw) / SR
 put(fx, START - 1.2, lpf(rng.standard_normal(sw), 500 + 6000 * (ts / ts[-1]) ** 2) * (ts / ts[-1]) ** 3, 0.5)
 put(kick, 1.15, K, 0.9)                       # hit with the hook title
+ci = choir_s([46, 53, 58], START + 0.3); tci = np.arange(len(ci)) / SR
+put(choir, 0, ci * np.minimum(1, tci / 1.2), 0.5)
+put(bell, 0.4, bell_s(82, 2.6), 0.38); put(bell, 1.9, bell_s(83, 2.6), 0.34)
 
 # ---------------- groove ----------------
 nbars = int(np.ceil((TOTAL - START) / BAR)) + 1
@@ -126,6 +145,16 @@ for b in range(nbars):
         n = int(0.16 * SR); tt = np.arange(n) / SR
         stb = sum(2 * ((midi(m) * (1 + d) * tt) % 1) - 1 for m in CH[c] for d in (-0.005, 0.005)) / 6
         put(stab, t0 + bt * BEAT, lpf(stb, 2600) * np.exp(-tt * 18), 0.5)
+    # eerie bell (2 per bar) and choir bed
+    for h in range(2):
+        if gap and h == 1: continue
+        put(bell, t0 + h * 2 * BEAT, bell_s(BELL[(2*b + h) % len(BELL)]), 0.30 if not drop else 0.24)
+    cc = choir_s([CH[c][0] - 12, CH[c][2] - 12], BAR + 0.3); tcc = np.arange(len(cc)) / SR
+    put(choir, t0, cc * np.minimum(1, tcc / 0.6) * np.minimum(1, (BAR + 0.3 - tcc) / 0.4), 0.55)
+    # reverse swell into every 4th bar
+    if b % 4 == 3 and not gap:
+        rs = bell_s(BELL[(2*b) % len(BELL)] - 12, BEAT * 1.5)[::-1]
+        put(fx, t0 + 4 * BEAT - len(rs) / SR, rs, 0.35)
     # pad (quiet, dark)
     n = int(BAR * SR); tt = np.arange(n) / SR
     pd = sum(np.sin(2*np.pi*midi(m)*tt) + 0.5*np.sin(2*np.pi*midi(m)*1.003*tt) for m in CH[c]) / 6
@@ -146,8 +175,19 @@ put(fx, DROP - 2 * BAR, lpf(rng.standard_normal(n), 400 + 7000*(t/t[-1])**2) * (
 side = np.ones(L)
 for i in np.nonzero(np.abs(np.diff(np.concatenate([[0], (kick > 0.5).astype(int)]))) > 0)[0][::2]:
     m = min(L - i, int(0.18 * SR)); side[i:i+m] = np.minimum(side[i:i+m], np.linspace(0.45, 1, m))
+def reverb(x, rt=2.6, wet=0.35):
+    from scipy.signal import fftconvolve
+    n = int(rt * SR); t = np.arange(n) / SR
+    ir = rng.standard_normal(n) * np.exp(-t * 6.9 / rt); ir = lpf(ir, 5000); ir /= np.sqrt((ir**2).sum())
+    return x + wet * fftconvolve(x, ir)[:len(x)]
+def delay(x, d=0.75 * BEAT, fb=0.38, n=4):
+    y = x.copy(); k = int(d * SR)
+    for j in range(1, n + 1): y[k*j:] += (fb ** j) * lpf(x, 3500 - 500 * j)[:-k*j]
+    return y
+pl = delay(pl)
+bell = reverb(bell, 3.2, 0.6); choir = reverb(choir, 3.0, 0.5); pl = reverb(pl, 2.2, 0.28); pad = reverb(pad, 3.0, 0.45)
 pre = T < DROP
-mix = (kick * 0.80 + clap * 0.60 + hats * 0.45 + hpf(sub, 70) * 0.34 * side + pl * 1.45 + pad * 1.8 * side + stab * 0.9 * side
+mix = (bell * 0.55 + choir * 0.65 + kick * 0.80 + clap * 0.60 + hats * 0.45 + hpf(sub, 70) * 0.34 * side + pl * 1.45 + pad * 1.8 * side + stab * 0.9 * side
        + lead * np.where(pre, 0, 1) + fx * 0.6)
 mix = lpf(mix, 11000)
 mid = sosfilt(butter(2, [300, 1800], 'band', fs=SR, output='sos'), mix)
