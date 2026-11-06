@@ -109,24 +109,26 @@ def final(lang, out):
              f"+0.07*sin(2*PI*110*t)+0.04*sin(2*PI*164.8*t)*(0.5+0.5*sin(2*PI*0.07*t))':s=48000:d={TOTAL}")
     boom = lambda T, g: f"{g}*gt(t,{T})*sin(2*PI*(36+80*exp(-10*(t-{T})))*(t-{T}))*exp(-2.8*(t-{T}))"
     hits = f"aevalsrc='{boom(0.02, 0.6)}+{boom(LAND, 0.9)}+{boom(DV + DIVE*0.65, 0.8)}':s=48000:d={TOTAL}"
-    ins = ['-i', 'base.mp4', '-f', 'lavfi', '-i', drone,
+    MUSIC = os.environ.get('MUSIC')
+    hits = f"aevalsrc='{boom(LAND, 0.5)}':s=48000:d={TOTAL}" if MUSIC else hits
+    ins = ['-i', 'base.mp4'] + (['-i', MUSIC] if MUSIC else ['-f', 'lavfi', '-i', drone]) + [
            '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:s=48000:d={TOTAL}', '-f', 'lavfi', '-i', hits]
     vo_f = []
     for k, (t0, fn) in enumerate(C['vo']):
         ins += ['-i', f'{TTS}/{fn}']
         vo_f.append(f"[{4+k}:a]aresample=48000,adelay={int(t0*1000)}|{int(t0*1000)},apad=whole_dur={TOTAL}[v{k}]")
     nv = len(C['vo'])
-    fc = ("[0:v]" + ",".join(dts) + "[v];"
-          "[1:a]lowpass=f=700,aecho=0.8:0.6:140:0.3[dr];"
+    fc = ("[0:v]" + ",".join(dts) + "[v];" 
+          + ("[1:a]aresample=48000,volume=1.2[dr];" if MUSIC else "[1:a]lowpass=f=700,aecho=0.8:0.6:140:0.3[dr];") +
           "[2:a]highpass=f=250,lowpass=f=2600,"
           f"volume='0.02+0.50*exp(-pow((t-13.7)/2.0,2))+0.65*exp(-pow((t-{DV+0.45})/0.35,2))':eval=frame[wh];"
           "[3:a]lowpass=f=300[hit];"
           "[dr][wh][hit]amix=inputs=3:normalize=0,volume=0.45[bg];"
           + ";".join(vo_f) + ";"
           + "".join(f"[v{k}]" for k in range(nv)) + f"amix=inputs={nv}:normalize=0,volume=1.6,asplit=2[vo][sc];"
-          "[bg][sc]sidechaincompress=threshold=0.06:ratio=3:attack=30:release=450:makeup=1[bgd];"
+          + ("[bg][sc]sidechaincompress=threshold=0.012:ratio=10:attack=10:release=420:makeup=1[bgd];" if MUSIC else "[bg][sc]sidechaincompress=threshold=0.06:ratio=3:attack=30:release=450:makeup=1[bgd];") +
           "[bgd][vo]amix=inputs=2:normalize=0,"
-          f"afade=t=in:d=0.3,afade=t=out:st={TOTAL-1.5}:d=1.5,loudnorm=I=-14:TP=-1.5:LRA=11[a]")
+          f"afade=t=in:d=0.3,afade=t=out:st={TOTAL-1.5}:d=1.5,aformat=channel_layouts=stereo,loudnorm=I=-14:TP=-1.5:LRA=11[a]")
     if os.environ.get('STEMS'):
         fs = fc.split('[v];', 1)[1].replace('[bgd][vo]amix=inputs=2:normalize=0,', '[vo]anullsink;[bgd]').replace('loudnorm=I=-14:TP=-1.5:LRA=11[a]', 'anull[a]')
         subprocess.run(['ffmpeg', '-y', '-v', 'error'] + ins + ['-filter_complex', fs, '-map', '[a]', '-t', f'{TOTAL}', '-ac', '1', '-ar', '16000', f'stem_bg_{lang}.wav'], check=True)
