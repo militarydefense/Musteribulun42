@@ -71,3 +71,33 @@ Imagery: Google Earth. Street View: Yasin çiçek / Google. Music: original by Z
 #noahsark #mountararat #mystery #history #archaeology #googleearth #shorts
 ```
 **Tags:** noahs ark, noah's ark found, durupinar, durupinar formation, mount ararat, noahs ark google earth, noahs ark 2026, bible mysteries, ancient mysteries, archaeology, google earth mysteries, found on google earth, zoom from space, mysterious places, turkey, history shorts
+
+## Video 3 – Eye of the Sahara / Atlantis (eye_of_sahara_short_en.mp4)
+**Title:**
+```
+Is this Atlantis?! A giant eye in the Sahara you can see from space 😳 #shorts
+```
+**Description:**
+```
+Is this Atlantis? 😳
+
+The Richat Structure – the "Eye of the Sahara" – is a ring formation about 40 km wide in Mauritania, so big it's visible from space. Some people say its rings match Plato's description of Atlantis. Geologists say it's an eroded rock dome, more than 100 million years old.
+
+📍 Coordinates: 21.1240, -11.4020 – check it yourself on Google Earth 🌍
+
+Atlantis or just geology? 👇
+Subscribe for a new secret every day 🔔
+
+Imagery: Google Earth. Street View: Giulio Aprin / Google. Music: original by Zoom To Secrets.
+
+#atlantis #eyeofthesahara #richatstructure #mystery #history #googleearth #shorts
+```
+**Tags:** atlantis, atlantis found, eye of the sahara, richat structure, sahara, mauritania, lost city of atlantis, plato atlantis, visible from space, google earth mysteries, found on google earth, zoom from space, ancient mysteries, mysterious places, geology, history shorts
+
+**Pinned comment:**
+```
+📍 21.1240, -11.4020 – paste it into Google Earth and zoom out 🌍
+🏛️ = Atlantis
+🪨 = Just geology
+Vote below 👇
+```
