@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:transparent}
+</style></head><body>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+<defs>
+  <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+    <stop offset="0" stop-color="#12285a"/><stop offset="0.55" stop-color="#0a1633"/><stop offset="1" stop-color="#050a1a"/>
+  </radialGradient>
+  <radialGradient id="ocean" cx="38%" cy="34%" r="75%">
+    <stop offset="0" stop-color="#3fd3ff"/><stop offset="0.45" stop-color="#1590d6"/><stop offset="1" stop-color="#0a3d7a"/>
+  </radialGradient>
+  <radialGradient id="atmo" cx="50%" cy="50%" r="50%">
+    <stop offset="0.80" stop-color="#4fe3ff" stop-opacity="0"/><stop offset="0.90" stop-color="#4fe3ff" stop-opacity="0.45"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="shade" cx="30%" cy="28%" r="85%">
+    <stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.55"/>
+  </radialGradient>
+  <linearGradient id="land" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fd08a"/><stop offset="0.6" stop-color="#4f9a5c"/><stop offset="1" stop-color="#c9a66b"/></linearGradient>
+  <clipPath id="globe"><circle cx="400" cy="400" r="200"/></clipPath>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="800" height="800" fill="url(#bg)"/>
+<g fill="#fff" opacity="0.8">
+  <circle cx="140" cy="170" r="2.5"/><circle cx="650" cy="140" r="2"/><circle cx="690" cy="560" r="2.5"/><circle cx="120" cy="600" r="2"/>
+  <circle cx="230" cy="90" r="1.6"/><circle cx="560" cy="700" r="1.8"/><circle cx="720" cy="330" r="1.5"/><circle cx="80" cy="380" r="1.5"/>
+</g>
+<circle cx="400" cy="400" r="232" fill="url(#atmo)"/>
+<circle cx="400" cy="400" r="200" fill="url(#ocean)"/>
+<g clip-path="url(#globe)" fill="url(#land)">
+  <!-- stylised continents (original shapes) -->
+  <path d="M250 255 C300 225 360 230 392 262 C410 282 398 300 372 306 C350 312 352 338 330 350 C300 366 268 350 256 322 C246 300 230 276 250 255Z" opacity="0.95"/>
+  <path d="M405 318 C445 300 498 310 528 340 C556 368 548 410 520 432 C500 448 506 482 484 505 C462 528 430 520 420 492 C410 466 384 452 388 420 C392 390 380 340 405 318Z" opacity="0.95"/>
+  <path d="M300 420 C328 410 352 430 350 462 C348 492 330 520 306 528 C288 534 276 512 282 488 C288 466 276 432 300 420Z" opacity="0.9"/>
+  <path d="M470 228 C500 222 536 236 548 258 C556 274 534 282 512 278 C488 274 458 252 470 228Z" fill="url(#land)" opacity="0.85"/>
+</g>
+<g clip-path="url(#globe)" fill="none" stroke="#bff3ff" stroke-opacity="0.22" stroke-width="3">
+  <ellipse cx="400" cy="400" rx="200" ry="70"/><ellipse cx="400" cy="400" rx="200" ry="140"/>
+  <ellipse cx="400" cy="400" rx="70" ry="200"/><ellipse cx="400" cy="400" rx="140" ry="200"/>
+  <line x1="200" y1="400" x2="600" y2="400"/><line x1="400" y1="200" x2="400" y2="600"/>
+</g>
+<circle cx="400" cy="400" r="200" fill="url(#shade)"/>
+<!-- viewfinder brackets -->
+<g fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M150 250 V150 H250"/><path d="M550 150 H650 V250"/><path d="M650 550 V650 H550"/><path d="M250 650 H150 V550"/>
+</g>
+<!-- target marker -->
+<g fill="none" stroke="#06122b" stroke-opacity="0.55" stroke-width="24" stroke-linecap="round">
+  <circle cx="452" cy="372" r="46"/>
+  <line x1="452" y1="304" x2="452" y2="318"/><line x1="452" y1="426" x2="452" y2="440"/>
+  <line x1="384" y1="372" x2="398" y2="372"/><line x1="506" y1="372" x2="520" y2="372"/>
+</g>
+<g filter="url(#glow)">
+  <circle cx="452" cy="372" r="46" fill="none" stroke="#ff8a1f" stroke-width="12"/>
+  <circle cx="452" cy="372" r="13" fill="#ff8a1f"/>
+  <g stroke="#ff8a1f" stroke-width="10" stroke-linecap="round">
+    <line x1="452" y1="304" x2="452" y2="318"/><line x1="452" y1="426" x2="452" y2="440"/>
+    <line x1="384" y1="372" x2="398" y2="372"/><line x1="506" y1="372" x2="520" y2="372"/>
+  </g>
+</g>
+</svg></body></html>
