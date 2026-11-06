@@ -160,6 +160,10 @@ TEXT = {
 
 def final(lang, out):
     C = TEXT[lang]
+    V = os.environ.get('VARIANT')
+    if V:
+        C = dict(C); C['texts'] = C['texts'][1:]
+        C['vo'] = [((1.35, 'en_0.mp3') if V == 'A' else (0.45, 'en_0B.mp3'))] + C['vo'][1:]
     subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', 'hook.mp4', '-i', f'{GE}/zoom_spin.mp4', '-i', 'dive.mp4', '-i', 'ground.mp4',
                     '-filter_complex', '[0:v][1:v][2:v][3:v]concat=n=4:v=1:a=0[v]', '-map', '[v]',
                     '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', 'base.mp4'], check=True)
@@ -182,7 +186,8 @@ def final(lang, out):
     boom = lambda T, g: f"{g}*gt(t,{T})*sin(2*PI*(36+80*exp(-10*(t-{T})))*(t-{T}))*exp(-2.8*(t-{T}))"
     hits = f"aevalsrc='{boom(0.02, 0.6)}+{boom(LAND, 0.9)}+{boom(DV + DIVE*0.65, 0.8)}':s=48000:d={TOTAL}"
     MUSIC = os.environ.get('MUSIC')
-    hits = f"aevalsrc='{boom(1.15, 0.7)}+{boom(LAND, 0.5)}':s=48000:d={TOTAL}" if MUSIC else hits
+    HH = {'A': [(0.12, 0.8), (1.28, 1.0), (2.0, 0.5)], 'B': [(0.75, 0.9), (2.3, 0.9)]}.get(os.environ.get('VARIANT'), [(1.15, 0.7)])
+    hits = ("aevalsrc='" + "+".join(boom(a, b) for a, b in HH) + f"+{boom(LAND, 0.5)}':s=48000:d={TOTAL}") if MUSIC else hits
     ins = ['-i', 'base.mp4'] + (['-i', MUSIC] if MUSIC else ['-f', 'lavfi', '-i', drone]) + [
            '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:s=48000:d={TOTAL}', '-f', 'lavfi', '-i', hits]
     vo_f = []
