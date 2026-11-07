@@ -11,9 +11,9 @@ GE = '.'; TTS = 'tts'
 OW, OH, FPS = 1080, 1920, 60
 HOOK = 3.0
 SH = HOOK - 1.6   # shift of everything after the hook vs. the 1.6 s plan
-Z_END = HOOK + 12.0  # end of hook+spin+zoom
-DIVE = 0.9
-G_DUR = 9.5
+Z_END = HOOK + 8.0   # end of hook+spin+zoom
+DIVE = 12.8          # AI story section
+G_DUR = 6.0
 TOTAL = Z_END + DIVE + G_DUR
 FONT = '/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf'
 
@@ -147,14 +147,17 @@ def hook():
 
 TEXT = {
  'en': dict(
-   texts=[(3.15, 8.4, "Karakum Desert,\nTurkmenistan", 72, 250),
-          (8.6, Z_END, "THE GATES\nOF HELL", 112, 220),
-          (8.7, Z_END - 0.1, "1971: a Soviet drill\nhit a gas pocket", 66, 1300),
-          (15.9, 19.3, "They set it on fire,\nhoping it would stop\nin weeks...", 64, 1300),
-          (19.4, 23.0, "54 years later:\nthe flames are\nfinally dying", 64, 1300),
-          (23.0, TOTAL, "Would you visit\nbefore it's gone?", 74, 1300)],
+   texts=[(3.15, 6.6, "Karakum Desert,\nTurkmenistan", 72, 250),
+          (6.7, Z_END, "THE GATES\nOF HELL", 112, 220),
+          (11.15, 13.55, "1971", 150, 230),
+          (13.7, 16.25, "The ground\nCOLLAPSED", 104, 230),
+          (16.4, 19.25, "They set it\non fire...", 96, 230),
+          (19.35, 20.75, "...to burn out\nin WEEKS", 96, 230),
+          (20.85, 23.75, "54 years later:\nSTILL BURNING", 90, 230),
+          (23.9, 27.4, "But the flames\nare finally dying", 76, 1300),
+          (27.4, TOTAL, "Would you visit\nbefore it's gone?", 76, 1300)],
    attr_air='Imagery: Google Earth', attr_gnd='Street View: Sanju Mehta / Google',
-   vo=[(0.3, 'en_0.mp3'), (3.1, 'en_1.mp3'), (8.7, 'en_2.mp3'), (15.9, 'en_3.mp3'), (19.4, 'en_4.mp3')]),
+   vo=[(0.3, 'en_0.mp3'), (3.1, 'en_1.mp3'), (8.5, 'n2.mp3'), (13.7, 'n3.mp3'), (16.4, 'n4.mp3'), (20.95, 'n5.mp3'), (24.0, 'n6.mp3')]),
 }
 
 def final(lang, out):
@@ -163,7 +166,7 @@ def final(lang, out):
     if V:
         C = dict(C); C['texts'] = C['texts'][1:]
         C['vo'] = [((1.35, 'en_0.mp3') if V == 'A' else (0.45, 'en_0B.mp3'))] + C['vo'][1:]
-    subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', 'hook.mp4', '-i', f'{GE}/zoom_spin.mp4', '-i', 'dive.mp4', '-i', 'ground.mp4',
+    subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', 'hook.mp4', '-i', 'zoom_spin2.mp4', '-i', 'story/story.mp4', '-i', 'ground2.mp4',
                     '-filter_complex', '[0:v][1:v][2:v][3:v]concat=n=4:v=1:a=0[v]', '-map', '[v]',
                     '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', 'base.mp4'], check=True)
     os.makedirs(f'ftxt_{lang}', exist_ok=True)
@@ -175,11 +178,11 @@ def final(lang, out):
         dts.append(f"drawtext=fontfile={FONT}:expansion=none:textfile={fp}:fontcolor=white:fontsize={size}"
                    f":line_spacing=18:borderw=7:bordercolor=black@0.9:shadowx=0:shadowy=6:shadowcolor=black@0.5"
                    f":x=(w-text_w)/2:y={y}:alpha='{al}':enable='between(t,{s},{e})'")
-    for nm, txt, s, e in (('a1', C['attr_air'], HOOK, Z_END + DIVE * 0.5), ('a2', C['attr_gnd'], Z_END + DIVE * 0.5, TOTAL)):
+    for nm, txt, s, e in (('a1', C['attr_air'], HOOK, Z_END), ('a2', C['attr_gnd'], Z_END + DIVE, TOTAL)):
         fp = f'ftxt_{lang}/{nm}.txt'; open(fp, 'w').write(txt)
         dts.append(f"drawtext=fontfile={FONT}:expansion=none:textfile={fp}:fontcolor=white@0.85:fontsize=30"
                    f":borderw=3:bordercolor=black@0.8:x=w-text_w-34:y=h-80:enable='between(t,{s},{e})'")
-    LAND, DV = HOOK + 8.5, Z_END
+    LAND, DV = Z_END + 2.6, Z_END
     drone = ("aevalsrc='0.16*sin(2*PI*55*t)*(0.7+0.3*sin(2*PI*0.2*t))+0.10*sin(2*PI*82.41*t)*(0.6+0.4*sin(2*PI*0.13*t+1))"
              f"+0.07*sin(2*PI*110*t)+0.04*sin(2*PI*164.8*t)*(0.5+0.5*sin(2*PI*0.07*t))':s=48000:d={TOTAL}")
     boom = lambda T, g: f"{g}*gt(t,{T})*sin(2*PI*(36+80*exp(-10*(t-{T})))*(t-{T}))*exp(-2.8*(t-{T}))"
