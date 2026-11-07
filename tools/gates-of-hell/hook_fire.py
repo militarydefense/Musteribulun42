@@ -33,7 +33,7 @@ glowmap = cv2.GaussianBlur(flame, (0, 0), 45)
 spin0 = cv2.resize(cv2.imread('spin/s000.png'), (OW, OH), interpolation=cv2.INTER_CUBIC).astype(np.float32)
 rng = np.random.default_rng(5)
 emb = [dict(x=fcx + rng.normal(0, 90), y=fcy + rng.uniform(-10, 30), vx=rng.normal(0, 25), vy=-rng.uniform(120, 320),
-            t0=rng.uniform(0, 2.6), r=rng.uniform(2, 5.5), life=rng.uniform(0.9, 1.8)) for _ in range(160)]
+            t0=rng.uniform(0.3, 2.6), r=rng.uniform(2, 5.5), life=rng.uniform(0.9, 1.8)) for _ in range(160)]
 FB = '/usr/share/fonts/opentype/inter/Inter-Black.otf'; FS = '/usr/share/fonts/opentype/inter/Inter-SemiBold.otf'
 _f = {}
 def font(p, s):
@@ -62,6 +62,19 @@ def text(fr, blocks):
     dr.text((40, OH - 90), 'Photo: Sanju Mehta / Google Street View', font=font(FS, 28), fill=(255, 255, 255, 220), stroke_width=3, stroke_fill=(0, 0, 0, 255))
     return cv2.cvtColor(np.asarray(pil.convert('RGB')), cv2.COLOR_RGB2BGR).astype(np.float32)
 
+def intensity(t):
+    if t < 0.25: return 0.0
+    if t < 0.6: return 1.6 * smooth((t - 0.25) / 0.35)
+    if t < 1.9: return 1.6 - 0.6 * smooth((t - 0.6) / 0.4)
+    k = smooth((t - 1.9) / 0.8)
+    stut = 0.25 * math.sin(t * 47) * (1 - k)
+    return max(0.08, 1.0 - 0.92 * k + stut)
+def dark(t):
+    if t < 0.25: return 0.0
+    if t < 0.6: return 0.25 + 0.75 * smooth((t - 0.25) / 0.35)
+    if t < 1.9: return 1.0
+    return 1.0 - 0.55 * smooth((t - 1.9) / 0.8)
+fl3 = flame[..., None]
 N = int(DUR * FPS)
 p = subprocess.Popen(['ffmpeg', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{OW}x{OH}', '-r', str(FPS),
                       '-i', '-', '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', sys.argv[2]], stdin=subprocess.PIPE)
@@ -69,7 +82,15 @@ for i in range(N):
     t = i / FPS
     # flicker: sum of noisy sines
     fk = 1.0 + 0.35 * math.sin(t * 23) * math.sin(t * 7.3 + 1) + 0.25 * math.sin(t * 41 + 2) + 0.15 * rng.standard_normal()
-    fr = base + flame[..., None] * np.array([40, 140, 255]) * 0.55 * fk + glowmap[..., None] * np.array([10, 60, 180]) * 0.9 * fk
+    I = intensity(t); L = dark(t)
+    sc_ = base * (1 - fl3 * (1 - min(I, 1.0)) * 0.85)
+    fr = sc_ * L + flame[..., None] * np.array([40, 140, 255]) * 0.55 * fk * I + glowmap[..., None] * np.array([10, 60, 180]) * 0.9 * fk * I
+    if 0.18 < t < 0.3:
+        sp_ = math.exp(-((t - 0.24) / 0.03) ** 2)
+        sl = np.zeros((OH, OW), np.float32); cv2.circle(sl, (int(fcx), int(fcy)), 6, 1.0, -1, cv2.LINE_AA)
+        sg = sl * 1.5 + cv2.GaussianBlur(sl, (0, 0), 25) * 60 + cv2.GaussianBlur(sl, (0, 0), 80) * 120
+        fr = fr + (sg * sp_)[..., None] * np.array([90, 190, 255])
+    if 0.25 < t < 0.45: fr = fr + 140 * math.exp(-((t - 0.3) / 0.05) ** 2)
     # heat shimmer above the crater
     amp = 3.5 * np.exp(-((yy - (fcy - 120)) / 160) ** 2) * np.exp(-((xx - fcx) / 330) ** 2)
     mx = (xx + amp * np.sin(yy / 9.0 + t * 14)).astype(np.float32); my = (yy + amp * 0.6 * np.cos(xx / 11.0 + t * 11)).astype(np.float32)
@@ -82,15 +103,17 @@ for i in range(N):
             x = e['x'] + e['vx'] * a + 12 * math.sin(a * 6 + e['r']); y = e['y'] + e['vy'] * a
             al = (1 - a / e['life'])
             cv2.circle(el, (int(x), int(y)), max(1, int(e['r'])), al, -1, cv2.LINE_AA)
-    eg = el + cv2.GaussianBlur(el, (0, 0), 7) * 2.5
+    eg = (el + cv2.GaussianBlur(el, (0, 0), 7) * 2.5) * min(I, 1.2)
     fr = fr + eg[..., None] * np.array([90, 200, 255])
     # camera: push-in towards the fire + tiny handheld shake
-    s = 1.0 + 0.22 * smooth(t / DUR)
+    s = (1.55 - 0.55 * smooth((t - 0.25) / 0.55)) if t < 0.8 else 1.0 + 0.12 * smooth((t - 0.8) / 2.2)
     fr = scale_about(fr, s, fcx, fcy, math.sin(t * 31) * 3, math.cos(t * 27) * 3)
-    blocks = [([("This hole has been", (255, 255, 255))], 230, 90, pop(t, 0.12)),
-              ([("BURNING", (40, 150, 255)[::-1])], 330, 170, pop(t, 0.45)),
-              ([("for 54 YEARS", (255, 255, 255))], 520, 110, pop(t, 0.75))]
-    if t > 1.55: blocks.append(([("...and it's about", (255, 255, 255)), ("to go OUT", (255, 70, 60))], 1400, 96, pop(t, 1.55)))
+    blocks = []
+    if t > 0.4:
+        yr = int(round(1971 + (2025 - 1971) * smooth((t - 0.45) / 1.3)))
+        blocks.append(([(str(yr), (40, 150, 255)[::-1])], 300, 230, pop(t, 0.4)))
+        blocks.append(([("STILL BURNING", (255, 255, 255))], 560, 96, pop(t, 0.6)))
+    if t > 1.95: blocks.append(([("...and it's about", (255, 255, 255)), ("to go OUT", (255, 70, 60))], 1400, 100, pop(t, 1.95)))
     fr = text(fr, blocks)
     w = smooth((t - (DUR - 0.22)) / 0.22)
     if w > 0:

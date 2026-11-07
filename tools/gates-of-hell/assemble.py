@@ -185,7 +185,7 @@ def final(lang, out):
     boom = lambda T, g: f"{g}*gt(t,{T})*sin(2*PI*(36+80*exp(-10*(t-{T})))*(t-{T}))*exp(-2.8*(t-{T}))"
     hits = f"aevalsrc='{boom(0.02, 0.6)}+{boom(LAND, 0.9)}+{boom(DV + DIVE*0.65, 0.8)}':s=48000:d={TOTAL}"
     MUSIC = os.environ.get('MUSIC')
-    HH = {'A': [(0.12, 0.8), (1.28, 1.0), (2.0, 0.5)], 'B': [(0.75, 0.9), (2.3, 0.9)]}.get(os.environ.get('VARIANT'), [(0.12, 0.5), (1.55, 0.6)])
+    HH = {'A': [(0.12, 0.8), (1.28, 1.0), (2.0, 0.5)], 'B': [(0.75, 0.9), (2.3, 0.9)]}.get(os.environ.get('VARIANT'), [(0.3, 0.0)])
     hits = ("aevalsrc='" + "+".join(boom(a, b) for a, b in HH) + f"+{boom(LAND, 0.5)}':s=48000:d={TOTAL}") if MUSIC else hits
     ins = ['-i', 'base.mp4'] + (['-i', MUSIC] if MUSIC else ['-f', 'lavfi', '-i', drone]) + [
            '-f', 'lavfi', '-i', f'anoisesrc=color=pink:amplitude=0.6:s=48000:d={TOTAL}', '-f', 'lavfi', '-i', hits]
