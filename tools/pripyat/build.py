@@ -7,23 +7,24 @@ import os, subprocess, sys, json
 OUT = sys.argv[1]
 FONT = '/usr/share/fonts/opentype/inter/Inter-Black.otf'; FS = '/usr/share/fonts/opentype/inter/Inter-SemiBold.otf'
 X = 0.3
-DUR = {'A': 14.0, 'Z': 3.6, 'B': 4.8, 'G': 7.6}
+DUR = {'A': 18.2, 'Z': 3.6, 'B': 4.8, 'G': 7.6}
 oZ = DUR['A'] - X; oB = oZ + DUR['Z'] - X; oG = oB + DUR['B'] - X; TOTAL = oG + DUR['G']
 # one look for real footage: cool desaturated shadows, warm-neutral highs, grain, vignette
 LOOK = ("eq=saturation=0.88:contrast=1.04:gamma=0.98,colorbalance=rs=-0.03:bs=0.04:rh=0.02:bh=-0.01,"
         "noise=alls=7:allf=t,vignette=PI/5")
 TEXT = [  # (start, end, text, size, y, colour)
-    (0.25, 4.0, "THIS RIDE\nNEVER OPENED", 120, 230, 'white'),
-    (4.45, 8.5, "APRIL 26, 1986\n1:23 AM", 96, 230, '#ffb347'),
-    (8.85, 11.4, "50,000 PEOPLE\nLEFT IN ONE DAY", 92, 230, 'white'),
-    (11.5, oZ + 0.1, "NO ONE\nCAME BACK", 120, 230, '#ff5a4e'),
+    (0.25, 3.6, "THIS RIDE\nNEVER OPENED", 120, 230, 'white'),
+    (4.0, 6.5, "APRIL 26, 1986", 96, 230, 'white'),
+    (6.85, 10.4, "1:23 AM\nREACTOR 4 EXPLODED", 92, 230, '#ffb347'),
+    (10.85, 14.2, "50,000 PEOPLE\nLEFT IN ONE DAY", 92, 230, 'white'),
+    (15.45, oZ + 0.1, "NO ONE\nCAME BACK", 120, 230, '#ff5a4e'),
     (oZ + 0.4, oB, "PRIPYAT, UKRAINE", 80, 250, 'white'),
     (oB + 0.3, oG, "40 YEARS LATER", 96, 230, 'white'),
-    (oG + 2.2, TOTAL, "Would you\nwalk here?", 96, 1350, 'white'),
+    (oG + 2.6, TOTAL, "Would you\nwalk here?", 96, 1350, 'white'),
 ]
 ATTR = [(0, oZ + X / 2, 'AI reconstruction'), (oZ + X / 2, oB + X / 2, 'Imagery: Google Earth'),
         (oB + X / 2, oG + X / 2, 'AI reconstruction'), (oG + X / 2, TOTAL, 'Street View: Nikolai Fomin / Google')]
-VO = [(0.15, 'v0'), (4.55, 'v1'), (9.0, 'v2'), (14.95, 'v3'), (17.85, 'v4'), (22.3, 'v5')]
+VO = [(0.15, 'v0'), (4.55, 'v1'), (10.75, 'v2a'), (15.5, 'v2b'), (oZ + 0.35, 'v3'), (oB + 0.2, 'v4'), (oG + 0.4, 'v5')]
 
 os.makedirs('ftxt', exist_ok=True)
 dts = []

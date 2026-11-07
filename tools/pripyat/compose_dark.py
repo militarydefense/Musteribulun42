@@ -7,7 +7,7 @@ import sys, wave
 import numpy as np
 from scipy.signal import butter, sosfilt, fftconvolve
 
-SR = 48000; TOTAL = 30.0; L = int((TOTAL + 3) * SR); rng = np.random.default_rng(31)
+SR = 48000; TOTAL = 33.3; L = int((TOTAL + 3) * SR); rng = np.random.default_rng(31)
 def midi(n): return 440.0 * 2 ** ((n - 69) / 12)
 def put(b, t0, x, g=1.0):
     i = int(t0 * SR); j = min(len(b), i + len(x))
@@ -24,10 +24,10 @@ T = np.arange(L) / SR
 pad = np.zeros(L); piano = np.zeros(L); box = np.zeros(L); geig = np.zeros(L); hits = np.zeros(L); air = np.zeros(L)
 
 # sub drone E1 + B1, swelling at the reactor and zoom
-env = np.interp(T, [0, 1.5, 4.2, 8.6, 14, 17.6, 22.4, 28.5, 30], [0.3, 0.55, 0.6, 0.9, 0.7, 0.95, 0.6, 0.5, 0.0])
+env = np.interp(T, [0, 1.5, 3.8, 6.6, 10.6, 17.9, 21.2, 25.7, 31.8, 33.3], [0.3, 0.55, 0.5, 0.95, 0.7, 0.95, 0.6, 0.55, 0.5, 0.0])
 drone = (np.sin(2 * np.pi * midi(28) * T) + 0.5 * np.sin(2 * np.pi * midi(35) * T + 1) + 0.25 * np.sin(2 * np.pi * midi(40) * T * 1.002)) * env
 # string pad: Em - Cmaj7 - Am(add9) - B(sus) blocks following the cuts
-CH = [(0, [52, 55, 59, 64]), (4.2, [48, 52, 55, 59]), (8.6, [45, 52, 57, 59]), (14.0, [47, 52, 54, 59]), (17.6, [48, 55, 59, 64]), (22.4, [52, 55, 59, 66])]
+CH = [(0, [52, 55, 59, 64]), (3.8, [48, 52, 55, 59]), (6.6, [47, 52, 54, 59]), (10.6, [45, 52, 57, 59]), (14.4, [45, 48, 52, 57]), (17.9, [47, 52, 54, 59]), (21.2, [48, 55, 59, 64]), (25.7, [52, 55, 59, 66])]
 for k, (t0, notes) in enumerate(CH):
     t1 = CH[k + 1][0] if k + 1 < len(CH) else TOTAL
     n = int((t1 - t0 + 1.2) * SR); t = np.arange(n) / SR
@@ -39,16 +39,16 @@ def piano_n(m, dur=3.0, v=1.0):
     n = int(dur * SR); t = np.arange(n) / SR; f = midi(m)
     x = sum(a * np.sin(2 * np.pi * f * h * t * (1 + 0.0004 * h * h)) * np.exp(-t * (1.6 + 1.3 * h)) for h, a in ((1, 1), (2, .45), (3, .22), (4, .12), (5, .06)))
     return lp(x, 2600) * np.minimum(1, t * 300) * v
-MOTIF = [(0.3, 76), (1.15, 74), (2.0, 71), (3.2, 67), (5.0, 72), (6.4, 71), (9.0, 69), (10.2, 71), (11.4, 64), (18.0, 76), (19.4, 79), (20.8, 74), (23.0, 76), (24.6, 71), (26.4, 67), (28.0, 64)]
+MOTIF = [(0.3, 76), (1.15, 74), (2.0, 71), (3.8, 67), (4.9, 72), (10.8, 69), (12.0, 71), (13.2, 64), (14.6, 64), (21.4, 76), (22.8, 79), (24.2, 74), (26.2, 76), (27.8, 71), (29.6, 67), (31.2, 64)]
 for t0, m in MOTIF: put(piano, t0, piano_n(m, 3.2, 0.8))
 # music-box shimmer on the wheel (hook) and the final 360 (wheel again)
 def boxn(m):
     n = int(1.6 * SR); t = np.arange(n) / SR; f = midi(m)
     return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * f * 4.2 * t) * np.exp(-t * 9)) * np.exp(-t * 3.2)
 for i, m in enumerate([88, 86, 83, 79, 83, 86]): put(box, 0.5 + i * 0.55, boxn(m), 0.22)
-for i, m in enumerate([88, 86, 83, 79]): put(box, 23.0 + i * 0.7, boxn(m), 0.2)
+for i, m in enumerate([88, 86, 83, 79]): put(box, 26.2 + i * 0.7, boxn(m), 0.2)
 # Geiger counter: Poisson clicks, rate ramps over the reactor shot, fades in class
-rate = np.interp(T, [0, 4.0, 4.6, 8.6, 10.5, 14, 30], [0, 0, 6, 38, 4, 0, 0])
+rate = np.interp(T, [0, 3.8, 4.4, 6.6, 10.4, 12.0, 14.4, 17.9, 33.3], [0, 0, 4, 10, 40, 6, 3, 0, 0])
 p = rate / SR; clicks = rng.random(L) < p
 cl = np.zeros(L); cl[clicks] = 1.0
 ck = hp(rng.standard_normal(int(0.004 * SR)), 2500) * np.exp(-np.arange(int(0.004 * SR)) / SR * 900)
@@ -57,15 +57,18 @@ geig = np.convolve(cl, ck)[:L]
 def boom(dec=2.2, f0=34):
     n = int(2.5 * SR); t = np.arange(n) / SR
     return np.tanh(2 * np.sin(2 * np.pi * (f0 + 40 * np.exp(-t * 8)) * t) * np.exp(-t * dec)) + lp(rng.standard_normal(n), 300) * np.exp(-t * 6) * 0.4
-for t0, g in ((0.18, 0.9), (4.2, 1.0), (14.0, 0.8), (22.4, 0.7)): put(hits, t0, boom(), g)
+for t0, g in ((0.18, 0.9), (3.8, 0.7), (6.6, 1.0), (14.6, 0.8), (17.9, 0.8), (25.7, 0.7)): put(hits, t0, boom(), g)
 # reverse swell into the zoom
 n = int(1.4 * SR); t = np.arange(n) / SR
 sw = np.zeros(n); src = rng.standard_normal(n)
 for k in range(0, n, 2400):
     fc = 300 + 5000 * (k / n) ** 2; sw[k:k + 2400] = lp(src[max(0, k - 4800):k + 2400], fc)[-len(sw[k:k + 2400]):]
-put(hits, 14.0 - 1.4, sw * (t / t[-1]) ** 2.5 * 0.6)
+put(hits, 17.9 - 1.4, sw * (t / t[-1]) ** 2.5 * 0.6)
 # wind / air bed
-air = bp(rng.standard_normal(L), 200, 1800) * (0.06 + 0.04 * np.sin(2 * np.pi * 0.11 * T)) * np.interp(T, [0, 1, 29, 30], [0, 1, 1, 0])
+air = bp(rng.standard_normal(L), 200, 1800) * (0.06 + 0.04 * np.sin(2 * np.pi * 0.11 * T)) * np.interp(T, [0, 1, 32, 33.3], [0, 1, 1, 0])
+for k in range(6):
+    n = int(0.05 * SR); tt = np.arange(n) / SR
+    put(hits, 3.9 + k * 0.45, bp(rng.standard_normal(n), 1500, 6000) * np.exp(-tt * 120) * (1.0 if k < 4 else 0.4), 0.5)
 pad = reverb(pad, 4.0, 0.5); piano = reverb(piano, 3.5, 0.55); box = reverb(box, 3.0, 0.6)
 mix = drone * 0.45 + pad * 0.9 + piano * 0.55 + box + geig * 0.35 + hits * 0.8 + air
 mix = hp(mix, 25)

@@ -1,11 +1,17 @@
 [
- {"img":"img/wheel.png","dur":4.2,"focus":[0.62,0.42],"zoom":[1.0,1.15],"dolly":[0.0,0.42],"truck":[0.015,-0.015],"ease":"inout",
+ {"img":"img/wheel.png","dur":3.8,"focus":[0.62,0.42],"zoom":[1.0,1.32],"dolly":[0.0,0.45],"truck":[0.012,-0.008],"ease":"in",
   "fog":{"col":[0.66,0.68,0.72],"amt":0.16,"pow":2.6},
   "grade":{"exp":0.0,"lift":[0.008,0.012,0.02],"gain":[0.98,1.0,1.04],"sat":0.9,"bloom":0.15,"bloom_th":0.8,"grain":0.02}},
- {"img":"img/reactor.png","dur":4.4,"focus":[0.55,0.50],"zoom":[1.0,1.22],"dolly":[0.0,0.25],"truck":[-0.01,0.01],"ease":"out",
+ {"img":"img/clock.jpg","dur":2.8,"focus":[0.514,0.50],"zoom":[1.35,1.08],"dolly":[0.25,0.0],"ease":"out",
+  "fog":{"col":[0.75,0.68,0.55],"amt":0.12,"pow":2.0},
+  "grade":{"exp":0.05,"lift":[0.008,0.01,0.014],"gain":[1.02,1.0,0.98],"sat":0.9,"bloom":0.3,"bloom_th":0.7,"grain":0.02}},
+ {"img":"img/reactor.png","dur":4.0,"focus":[0.55,0.50],"zoom":[1.0,1.22],"dolly":[0.0,0.25],"truck":[-0.01,0.01],"ease":"out",
   "fog":{"col":[0.10,0.13,0.22],"amt":0.22,"pow":2.0},
   "grade":{"exp":0.3,"lift":[0.006,0.01,0.022],"gain":[1.02,1.0,1.03],"sat":1.0,"bloom":0.35,"bloom_th":0.6,"grain":0.022}},
- {"img":"img/class.jpg","dur":5.4,"focus":[0.62,0.50],"zoom":[1.0,1.24],"dolly":[0.0,0.55],"ped":[0.01,-0.01],"ease":"inout",
-  "fog":{"col":[0.60,0.66,0.68],"amt":0.14,"pow":2.2},
-  "grade":{"exp":0.05,"lift":[0.008,0.012,0.016],"gain":[0.99,1.0,1.03],"sat":0.88,"bloom":0.2,"bloom_th":0.75,"grain":0.02}}
+ {"img":"img/bus.jpg","dur":3.8,"focus":[0.5,0.45],"zoom":[1.0,1.18],"dolly":[0.0,0.35],"truck":[0.008,-0.008],"ease":"inout",
+  "fog":{"col":[0.80,0.78,0.70],"amt":0.15,"pow":2.2},
+  "grade":{"exp":0.0,"lift":[0.008,0.01,0.012],"gain":[1.0,1.0,1.0],"sat":0.88,"bloom":0.2,"bloom_th":0.75,"grain":0.02}},
+ {"img":"img/masks.jpg","dur":3.8,"focus":[0.56,0.30],"zoom":[1.0,1.22],"dolly":[0.0,0.5],"ped":[0.008,-0.008],"ease":"inout",
+  "fog":{"col":[0.62,0.66,0.68],"amt":0.18,"pow":2.0},
+  "grade":{"exp":0.0,"lift":[0.008,0.012,0.016],"gain":[0.99,1.0,1.03],"sat":0.85,"bloom":0.2,"bloom_th":0.75,"grain":0.02}}
 ]
