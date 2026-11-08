@@ -7,8 +7,8 @@ import os, subprocess, sys, json
 OUT = sys.argv[1]
 FONT = '/usr/share/fonts/opentype/inter/Inter-Black.otf'; FS = '/usr/share/fonts/opentype/inter/Inter-SemiBold.otf'
 X = 0.3
-DUR = {'A': 18.2, 'Z': 3.6, 'B': 4.8, 'G': 7.6}
-oZ = DUR['A'] - X; oB = oZ + DUR['Z'] - X; oG = oB + DUR['B'] - X; TOTAL = oG + DUR['G']
+DUR = {'A': 18.2, 'Z': 8.5, 'B': 12.8}
+oZ = DUR['A'] - X; oB = oZ + DUR['Z'] - X; TOTAL = oB + DUR['B']; W1, W2 = oB + 3.6, oB + 7.0
 # one look for real footage: cool desaturated shadows, warm-neutral highs, grain, vignette
 LOOK = ("eq=saturation=0.88:contrast=1.04:gamma=0.98,colorbalance=rs=-0.03:bs=0.04:rh=0.02:bh=-0.01,"
         "noise=alls=7:allf=t,vignette=PI/5")
@@ -18,13 +18,14 @@ TEXT = [  # (start, end, text, size, y, colour)
     (6.85, 10.4, "1:23 AM\nREACTOR 4 EXPLODED", 92, 230, '#ffb347'),
     (10.85, 14.2, "50,000 PEOPLE\nLEFT IN ONE DAY", 92, 230, 'white'),
     (15.45, oZ + 0.1, "NO ONE\nCAME BACK", 120, 230, '#ff5a4e'),
-    (oZ + 0.4, oB, "PRIPYAT, UKRAINE", 80, 250, 'white'),
-    (oB + 0.3, oG, "40 YEARS LATER", 96, 230, 'white'),
-    (oG + 2.6, TOTAL, "Would you\nwalk here?", 96, 1350, 'white'),
+    (oZ + 3.3, oB, "PRIPYAT, UKRAINE", 80, 250, 'white'),
+    (oB + 0.3, W1, "40 YEARS LATER", 96, 230, 'white'),
+    (W1 + 0.3, W2, "THE CITY BELONGS\nTO THEM NOW", 88, 230, 'white'),
+    (W2 + 0.3, W2 + 3.2, "SEALED FOR\n100 YEARS", 112, 230, '#ffd27a'),
+    (W2 + 3.3, TOTAL, "Would you\nwalk here?", 100, 230, 'white'),
 ]
-ATTR = [(0, oZ + X / 2, 'AI reconstruction'), (oZ + X / 2, oB + X / 2, 'Imagery: Google Earth'),
-        (oB + X / 2, oG + X / 2, 'AI reconstruction'), (oG + X / 2, TOTAL, 'Street View: Nikolai Fomin / Google')]
-VO = [(0.15, 'v0'), (4.55, 'v1'), (10.75, 'v2a'), (15.5, 'v2b'), (oZ + 0.35, 'v3'), (oB + 0.2, 'v4'), (oG + 0.4, 'v5')]
+ATTR = [(0, oZ + X / 2, 'AI reconstruction'), (oZ + X / 2, oB + X / 2, 'Imagery: Google Earth'), (oB + X / 2, TOTAL, 'AI reconstruction')]
+VO = [(0.15, 'v0'), (4.55, 'v1'), (10.75, 'v2a'), (15.5, 'v2b'), (oZ + 3.4, 'v3'), (oB + 0.4, 'v4'), (W1 + 0.3, 'v4b'), (W2 + 0.3, 'v6')]
 
 os.makedirs('ftxt', exist_ok=True)
 dts = []
@@ -38,19 +39,18 @@ for i, (s, e, t) in enumerate(ATTR):
     fp = f'ftxt/a{i}.txt'; open(fp, 'w').write(t)
     dts.append(f"drawtext=fontfile={FS}:expansion=none:textfile={fp}:fontcolor=white@0.85:fontsize=28"
                f":borderw=3:bordercolor=black@0.8:x=40:y=h-90:enable='between(t,{s},{e})'")
-vf = (f"[0:v]setpts=PTS-STARTPTS[a];[1:v]{LOOK},setpts=PTS-STARTPTS[z];[2:v]setpts=PTS-STARTPTS[b];[3:v]{LOOK},setpts=PTS-STARTPTS[g];"
+vf = (f"[0:v]setpts=PTS-STARTPTS[a];[1:v]{LOOK},setpts=PTS-STARTPTS[z];[2:v]setpts=PTS-STARTPTS[b];"
       f"[a][z]xfade=transition=fade:duration={X}:offset={oZ}[az];"
-      f"[az][b]xfade=transition=fade:duration={X}:offset={oB}[azb];"
-      f"[azb][g]xfade=transition=fade:duration={X}:offset={oG},format=yuv420p," + ",".join(dts) + "[v]")
-ins = ['-i', 'segA.mp4', '-i', 'zoom.mp4', '-i', 'segB.mp4', '-i', 'ground.mp4', '-i', 'dark.wav']
+      f"[az][b]xfade=transition=fade:duration={X}:offset={oB},format=yuv420p," + ",".join(dts) + "[v]")
+ins = ['-i', 'segA.mp4', '-i', 'zoom.mp4', '-i', 'segB.mp4', '-i', 'dark.wav']
 vo = []
 for k, (t0, f) in enumerate(VO):
     ins += ['-i', f'tts/{f}.mp3']; ms = int(t0 * 1000)
-    vo.append(f"[{5 + k}:a]aresample=48000,adelay={ms}|{ms},apad=whole_dur={TOTAL}[v{k}]")
+    vo.append(f"[{4 + k}:a]aresample=48000,adelay={ms}|{ms},apad=whole_dur={TOTAL}[v{k}]")
 n = len(VO)
 af = (";".join(vo) + ";" + "".join(f"[v{k}]" for k in range(n)) + f"amix=inputs={n}:normalize=0,volume=1.6,asplit=2[vo0][sc];"
       "[vo0]adelay=70|70[vo];"
-      f"[4:a]aresample=48000,atrim=0:{TOTAL},volume=0.62[m];"
+      f"[3:a]aresample=48000,atrim=0:{TOTAL},volume=0.62[m];"
       "[m][sc]sidechaincompress=threshold=0.004:ratio=16:attack=8:release=380:makeup=1[md];"
       f"[md][vo]amix=inputs=2:normalize=0,afade=t=out:st={TOTAL - 1.2}:d=1.2,aformat=channel_layouts=stereo[a]")
 if os.environ.get('STEMS'):

@@ -1,5 +1,11 @@
 [
- {"img":"img/aerial.jpg","dur":4.8,"focus":[0.42,0.62],"zoom":[1.0,1.2],"dolly":[0.0,0.3],"ped":[-0.02,0.02],"ease":"inout",
+ {"img":"img/aerial.jpg","dur":3.6,"focus":[0.42,0.62],"zoom":[1.0,1.18],"dolly":[0.0,0.3],"ped":[-0.02,0.02],"ease":"inout",
   "fog":{"col":[0.85,0.78,0.72],"amt":0.2,"pow":2.0},
-  "grade":{"exp":0.0,"lift":[0.008,0.01,0.012],"gain":[1.02,1.0,0.98],"sat":0.92,"bloom":0.25,"bloom_th":0.7,"grain":0.018}}
+  "grade":{"exp":0.0,"lift":[0.008,0.01,0.012],"gain":[1.02,1.0,0.98],"sat":0.92,"bloom":0.25,"bloom_th":0.7,"grain":0.018}},
+ {"img":"img/wolf.jpg","dur":3.4,"focus":[0.51,0.66],"zoom":[1.0,1.16],"dolly":[0.0,0.4],"truck":[0.006,-0.006],"ease":"inout",
+  "fog":{"col":[0.38,0.44,0.55],"amt":0.2,"pow":2.0},
+  "grade":{"exp":0.05,"lift":[0.006,0.01,0.018],"gain":[1.0,1.0,1.03],"sat":0.92,"bloom":0.25,"bloom_th":0.7,"grain":0.02}},
+ {"img":"img/arch.jpg","dur":5.8,"focus":[0.48,0.42],"zoom":[1.2,1.0],"dolly":[0.35,0.0],"ped":[0.0,-0.01],"ease":"out",
+  "fog":{"col":[0.95,0.78,0.55],"amt":0.22,"pow":1.8},
+  "grade":{"exp":0.0,"lift":[0.01,0.008,0.006],"gain":[1.02,1.0,0.97],"sat":0.95,"bloom":0.3,"bloom_th":0.7,"grain":0.018}}
 ]
