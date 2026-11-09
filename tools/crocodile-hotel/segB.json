@@ -1,0 +1,8 @@
+[
+ {"img":"img/court.jpg","dur":6.1,"focus":[0.5,0.6],"zoom":[1.0,1.18],"dolly":[0.0,0.38],"ped":[0.008,-0.008],"ease":"inout",
+  "fog":{"col":[0.95,0.8,0.7],"amt":0.12,"pow":2.2},
+  "grade":{"exp":0.0,"lift":[0.008,0.008,0.01],"gain":[1.01,1.0,0.99],"sat":0.98,"bloom":0.25,"bloom_th":0.75,"grain":0.016}},
+ {"img":"img/aerial.png","dur":4.6,"focus":[0.5,0.55],"zoom":[1.2,1.0],"dolly":[0.3,0.0],"ease":"out",
+  "fog":{"col":[1.0,0.75,0.45],"amt":0.2,"pow":1.8},
+  "grade":{"exp":0.0,"lift":[0.01,0.008,0.006],"gain":[1.02,1.0,0.97],"sat":0.98,"bloom":0.3,"bloom_th":0.7,"grain":0.016}}
+]
